@@ -21,7 +21,7 @@ jobs:
           USERNAME: ${{ secrets.SSH_USER }}
           KEY: ${{ secrets.SSH_KEY }}
           source: "./"
-          target: ${{ secrets.PATH }}
+          target: ${{ secrets.APP_PATH }}
 
       - name: Executing remote  command
         uses: appleboy/ssh-action@master
@@ -31,7 +31,7 @@ jobs:
           KEY: ${{ secrets.SSH_KEY }}
           script: |
             # move to project directory
-            cd ${{ secrets.PATH }} && \
+            cd ${{ secrets.APP_PATH }} && \
             # upload new ENV
             echo "${{secrets.ENV}}" > .env && \
             # install npm packages
