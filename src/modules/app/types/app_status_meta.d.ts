@@ -1,0 +1,1 @@
+export type AppStatusMeta = { message: string; reason: string };
