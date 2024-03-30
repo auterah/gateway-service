@@ -25,4 +25,7 @@ export default class Customer {
 
   @Column({ nullable: true })
   otp: number;
+
+  @Column({ default: false, type: 'boolean' })
+  verified: boolean;
 }
