@@ -4,7 +4,13 @@ import { Bootstrap } from './bootstrap';
 const app = new Bootstrap({
   serverPort: configs.SERVER_PORT,
   serverName: configs.SERVER_NAME,
-  routesToExclude: ['auth', 'auth/register', 'auth/customer-x-token', 'auth/2'],
+  routesToExclude: [
+    'auth',
+    'auth/register',
+    'auth/customer-x-token',
+    'auth/2',
+    'auth/2/verify-otp',
+  ],
   logger: {
     // Logger should be setup in a SINGLETON manner. It should be accessible to all services, controllers, modules.
     provider: 'PINO',

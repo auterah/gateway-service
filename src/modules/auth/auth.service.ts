@@ -20,6 +20,7 @@ import { OtpSignInDto } from './dtos/otp_signin.dto';
 import { AppService } from '../app/app.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { MailEvents } from 'src/shared/events/mail.events';
+import { VerifyOtpDto } from './dtos/veriy_otp.dto';
 
 @Injectable()
 export class AuthService {
@@ -120,6 +121,8 @@ export class AuthService {
     }
 
     const otp = AppService.generateOtp(6);
+    customer.otp = parseInt(otp);
+    this.customerService.save(customer);
 
     // send otp
     this.authEvents.emit(MailEvents.PUSH_MAIL, {
@@ -127,5 +130,18 @@ export class AuthService {
       html: `<b>${otp}</b>`,
       subject: 'Here is your OTP',
     });
+  }
+
+  async verifyOtp(verifyOtpDto: VerifyOtpDto) {
+    const customer = await this.customerService.findOneByEmail(
+      verifyOtpDto.email,
+    );
+
+    if (!customer || (customer && customer.otp != verifyOtpDto.otp)) {
+      throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
+    }
+
+    const accessToken = this.encryptToken(customer);
+    return { ...customer, tokens: { accessToken } };
   }
 }

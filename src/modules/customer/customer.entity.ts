@@ -22,4 +22,7 @@ export default class Customer {
 
   @Column({ type: 'enum', default: Roles.ADMIN, enum: Roles })
   role: Roles;
+
+  @Column({ nullable: true })
+  otp: number;
 }
