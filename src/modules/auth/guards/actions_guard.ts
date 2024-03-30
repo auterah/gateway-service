@@ -15,7 +15,8 @@ import AppRequest from 'src/modules/app/entities/app_request.entity';
 import App from 'src/modules/app/entities/app.entity';
 import { EAppRequestStatus } from 'src/modules/app/enums/app_request_status';
 import { AppRequestEvents } from 'src/shared/events/app.events';
-import { CurrentApp } from 'src/shared/types/request';
+import { CurrentApp, CurrentCustomer } from 'src/shared/types/request';
+import Customer from 'src/modules/customer/customer.entity';
 
 @Injectable()
 export class ActionsGuard implements CanActivate {
@@ -27,15 +28,22 @@ export class ActionsGuard implements CanActivate {
   }
 
   async canActivate(ctx: ExecutionContext) {
-    const request = ctx.switchToHttp().getRequest();
+    const request: Request & { currentApp: App; currentCustomer: Customer } =
+      ctx.switchToHttp().getRequest();
 
     if (request.headers['x-api-key']) {
       const app = await this.verifyAppKey(request);
       request.currentApp = app;
-      return app;
+    } else if (
+      request.headers['authorization'] &&
+      request.headers['authorization'].includes('Bearer ')
+    ) {
+      const customer = await this.verifyCustomer(request);
+      request.currentCustomer = customer;
     } else {
-      return this.verifyCustomer(request);
+      throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
     }
+    return true;
   }
 
   private async verifyAppKey(request: CurrentApp) {
@@ -70,7 +78,8 @@ export class ActionsGuard implements CanActivate {
         status: EAppRequestStatus.SUCCESS,
       };
 
-      if (!request.url.includes('scopes')) { //
+      if (!request.url.includes('scopes')) {
+        //
         const permitted = app.scopes.find((e) => e.target == request.url);
 
         if (!permitted) {
@@ -81,7 +90,6 @@ export class ActionsGuard implements CanActivate {
         }
       }
 
-      request.currentApp = app;
       this.actionGuardEvent.emit(AppRequestEvents.NEW_REQUEST, appReq);
 
       this.logger.verbose(`app: ${app.name}`, JSON.stringify(app));
@@ -94,7 +102,7 @@ export class ActionsGuard implements CanActivate {
     }
   }
 
-  private async verifyCustomer(request: Request) {
+  private async verifyCustomer(request: CurrentCustomer) {
     const { authorization }: any = request.headers;
     const xCustomerURL = `${request.protocol}://${request.get('Host')}/${configs.API_VERSION}/customers/x-customer`;
 
@@ -107,17 +115,17 @@ export class ActionsGuard implements CanActivate {
     }
 
     const token = authorization.split('Bearer')[1].trim();
-    const customer = this.aesEncrypt.decrypt(token);
+    const decryptedToken = this.aesEncrypt.decrypt(token);
 
     // const customer = new JwtService({
     //   secret: configs.JWT_SECRET,
     // }).decode(token);
 
-    if (!customer) {
+    if (!decryptedToken) {
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
     }
 
-    if (!JSON.parse(customer)?.customer) {
+    if (!JSON.parse(decryptedToken)?.customer) {
       throw new HttpException(
         'Invalid token. Missing customer',
         HttpStatus.UNAUTHORIZED,
@@ -126,7 +134,7 @@ export class ActionsGuard implements CanActivate {
 
     try {
       const { data } = await axios.get(
-        `${xCustomerURL}/${JSON.parse(customer)?.customer?.email}`,
+        `${xCustomerURL}/${JSON.parse(decryptedToken)?.customer?.email}`,
         {
           headers: {
             Authorization: '%x-customer/:email%',
@@ -134,19 +142,20 @@ export class ActionsGuard implements CanActivate {
         },
       );
 
+      const customer: Customer = data?.data;
+
       // If customer is null
-      if (!data?.data) {
+      if (!customer) {
         throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
       }
 
-      console.log('customer', data?.data);
+      console.log('customer', customer);
+      return customer;
     } catch (e: any) {
       throw new HttpException(
         e?.message || 'Something went wrong',
         e?.status || HttpStatus.EXPECTATION_FAILED,
       );
     }
-
-    return JSON.parse(customer)?.customer;
   }
 }
