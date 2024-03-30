@@ -6,6 +6,8 @@ import { HttpRequestHandler } from 'src/shared/handlers/http-request.handler';
 
 @Injectable()
 export class EmailService {
+  private logger = new Logger(EmailService.name);
+
   @OnEvent(MailEvents.PUSH_MAIL)
   async sendMail(data) {
     await HttpRequestHandler.fetch({

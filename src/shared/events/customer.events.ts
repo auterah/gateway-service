@@ -1,3 +1,3 @@
-export enum CsutomerEvents {
+export enum CustomerEvents {
   CREATED = 'Customer.Created',
 }

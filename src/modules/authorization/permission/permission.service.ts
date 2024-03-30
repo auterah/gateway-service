@@ -46,8 +46,8 @@ export class PermissionService {
   }
 
   // Find Permission By IDS
-  findByIds(ids: string[]): Promise<Permission[]> {
-    return this.permRepo.findByIds(ids);
+  findByIds(ids: string[], strict = false): Promise<Permission[]> {
+    return this.permRepo.findByIds(ids, strict);
   }
 
   /**

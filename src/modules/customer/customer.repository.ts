@@ -6,46 +6,37 @@ import { PaginationData } from 'src/shared/types/pagination';
 import { EvemitterService } from 'src/shared/evemitter/evemitter.service';
 import Customer from './customer.entity';
 import { CustomerDto } from './dtos/customer.dto';
-import {
-  FindManyOptions,
-  FindOneOptions,
-  Repository,
-} from 'typeorm';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { CustomerEvents } from 'src/shared/events/customer.events';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { RoleService } from '../authorization/role/role.service';
-import { CustomerRepository } from './customer.repository';
+import { Roles } from 'src/shared/enums/roles';
 
 @Injectable()
-export class CustomerService {
+export class CustomerRepository {
   constructor(
-    private customerEvents: EvemitterService<Customer>,
-    private readonly customerRepo: CustomerRepository,
-    private readonly roleService: RoleService,
     private event: EventEmitter2,
+    private customerEvents: EvemitterService<Customer>,
+    @InjectRepository(Customer)
+    private readonly customerRepo: Repository<Customer>,
+    private readonly roleService: RoleService,
   ) {}
 
   // Add New Customer
-  async addCustomer(customerDto: CustomerDto): Promise<Customer> {
-    const exist = await this.findOneByEmail(customerDto.email);
-    if (exist) {
-      throw new HttpException(
-        'Sorry! Email is unavailable',
-        HttpStatus.BAD_REQUEST,
+  async create(customerDto?: Partial<CustomerDto>): Promise<Customer> {
+    if (customerDto && customerDto.role) {
+      const role = await this.roleService.findOneByRolename(
+        customerDto?.role || Roles.ADMIN,
       );
-    }
-
-    if (customerDto.role) {
-      const role = await this.roleService.findOneByRolename(customerDto.role);
       if (!role) {
         throw new HttpException('Invalid role', HttpStatus.BAD_REQUEST);
       }
       customerDto.role = role.role;
     }
-
-    const salt = await bcrypt.genSalt();
-    const hashPassword = await bcrypt.hash(customerDto.password, salt);
-    customerDto.password = hashPassword;
-    return this.customerRepo.create(customerDto);
+    const newCustomer = this.customerRepo.create(customerDto);
+    const customer = await this.customerRepo.save(newCustomer);
+    this.event.emit(CustomerEvents.CREATED, customer);
+    return customer;
   }
 
   // Find Customer
@@ -66,14 +57,22 @@ export class CustomerService {
   }
 
   // Fetch All Customers
-  findAllRecords(findOpts: FindManyOptions<Customer>): Promise<any> {
-    return this.customerRepo.findAllRecords(findOpts);
+  async findAllRecords(findOpts: FindManyOptions<Customer>): Promise<any> {
+    const take = Number(findOpts.take || '10');
+    const skip = Number(findOpts.skip || '0');
+
+    const customers = await this.customerRepo.findAndCount({
+      ...findOpts,
+      take,
+      skip,
+      // relations: ['App']
+    });
+    return calculate_pagination_data(customers, skip, take);
   }
 
   // Update Customer By id
-  async updateOneBy(id: string, updates: Partial<Customer>): Promise<any> {
-    const update = await this.customerRepo.updateOneBy(id, updates);
-    return update;
+  updateOneBy(id: string, updates: Partial<Customer>): Promise<any> {
+    return this.customerRepo.update({ id }, updates);
   }
 
   async save(customer: Customer): Promise<Customer> {

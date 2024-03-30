@@ -10,6 +10,7 @@ import { PaginationData } from 'src/shared/types/pagination';
 import { defaultRoles } from '../constants/default_roles';
 import { configs } from 'config/config.env';
 import { PermissionService } from '../permission/permission.service';
+import { Roles } from 'src/shared/enums/roles';
 
 @Injectable()
 export class RoleService {
@@ -21,17 +22,6 @@ export class RoleService {
     private roleEvents: EvemitterService<Role>,
   ) {
     this.setRolesToMemo(); // setRolesToMemo sets all roles to app memory
-    if (configs.SYNC_SEEDERS) {
-      // seed default permissions
-      defaultRoles.forEach(async ({ role }) => {
-        const _role: RoleDto = { role };
-        try {
-          await this.createRole(_role);
-        } catch (e) {
-          console.warn(`Role ["${role}"] already exist`);
-        }
-      });
-    }
   }
 
   async createRole(roleDto: RoleDto): Promise<Role> {
@@ -58,7 +48,7 @@ export class RoleService {
   }
 
   // Find Role By Rolename
-  findOneByRolename(role: string): Promise<Role> {
+  findOneByRolename(role: Roles): Promise<Role> {
     return this.findOne({
       where: { role },
     });

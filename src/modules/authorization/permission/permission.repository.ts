@@ -42,11 +42,22 @@ export class PermissionRepository {
   }
 
   // Find permissions by IDs
-  async findByIds(ids: string[]): Promise<Permission[]> {
+  async findByIds(ids: string[], strict = false): Promise<Permission[]> {
+    const errors = [];
     const permissions: Permission[] = [];
     for (const id of ids) {
       const permission = await this.permRepo.findOne({ where: { id } });
+      if (strict && !permission) {
+        errors.push(`"${id}"`);
+      }
       permissions.push(permission);
+    }
+
+    if (errors.length) {
+      throw new HttpException(
+        `Invalid permissions: ${errors.toString()}`,
+        HttpStatus.EXPECTATION_FAILED,
+      );
     }
     return permissions;
   }
