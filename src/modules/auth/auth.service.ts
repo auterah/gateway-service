@@ -141,6 +141,7 @@ export class AuthService {
       throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
     }
 
+    delete customer.apps;
     const accessToken = this.encryptToken(customer);
     return { ...customer, tokens: { accessToken } };
   }
