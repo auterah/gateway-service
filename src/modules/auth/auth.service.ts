@@ -200,6 +200,10 @@ export class AuthService {
   async verifyAdminOtp(verifyOtpDto: VerifyOtpDto) {
     const admin = await this.adminService.findOneByEmail(verifyOtpDto.email);
 
+    if (admin.verified) {
+      throw new HttpException('Already verified', HttpStatus.BAD_REQUEST);
+    }
+
     if (!admin || (admin && admin.otp != verifyOtpDto.otp)) {
       throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
     }
