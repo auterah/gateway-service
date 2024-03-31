@@ -52,10 +52,10 @@ export class AuthController {
     return this.authService.requestCustomerOTP(payload);
   }
 
-  // Verify OTP
+  // Verify Customer OTP
   @Post('2/verify-otp')
-  verifyOtp(@Body() payload: VerifyOtpDto) {
-    return this.authService.verifyOtp(payload);
+  verifyCustomerOtp(@Body() payload: VerifyOtpDto) {
+    return this.authService.verifyCustomerOtp(payload);
   }
 
   // Get Customer Info.
@@ -69,5 +69,11 @@ export class AuthController {
   @Post('admin')
   signInAdmin(@Body() payload: SignAdminToken) {
     return this.authService.signInAdmin(payload);
+  }
+
+  // Verify OTP
+  @Post('admin/verify-otp')
+  verifyAdminOtp(@Body() payload: VerifyOtpDto) {
+    return this.authService.verifyAdminOtp(payload);
   }
 }

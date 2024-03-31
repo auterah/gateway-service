@@ -154,7 +154,7 @@ export class AuthService {
     );
   }
 
-  async verifyOtp(verifyOtpDto: VerifyOtpDto) {
+  async verifyCustomerOtp(verifyOtpDto: VerifyOtpDto) {
     const customer = await this.customerService.findOneByEmail(
       verifyOtpDto.email,
     );
@@ -195,5 +195,16 @@ export class AuthService {
 
     const accessToken = this.encryptAdminToken(admin);
     return { ...admin, tokens: { accessToken } };
+  }
+
+  async verifyAdminOtp(verifyOtpDto: VerifyOtpDto) {
+    const admin = await this.adminService.findOneByEmail(verifyOtpDto.email);
+
+    if (!admin || (admin && admin.otp != verifyOtpDto.otp)) {
+      throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
+    }
+
+    admin.verified = true;
+    await this.adminService.update(admin.id, admin);
   }
 }

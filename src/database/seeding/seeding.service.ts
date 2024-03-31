@@ -16,6 +16,7 @@ import { MailEvents } from 'src/shared/events/mail.events';
 import { PermissionEvents } from 'src/shared/events/permission.events';
 import { RoleEvents } from 'src/shared/events/roles.events';
 import { DataSource } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class SeedingService {
@@ -64,7 +65,8 @@ export class SeedingService {
 
       // -- Seed superadmin
       const superAdmin = adminRepository.create(defaultAdmin);
-
+      const salt = await bcrypt.genSalt();
+      superAdmin.password = await bcrypt.hash(defaultAdmin.password, salt);
       await adminRepository.save(superAdmin);
       // send otp
       this.seederEvents.emit(MailEvents.PUSH_MAIL, {
