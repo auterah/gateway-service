@@ -4,16 +4,8 @@ import Setting from './setting.entity';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { calculate_pagination_data } from 'src/shared/utils/pagination';
 import { PaginationData } from 'src/shared/types/pagination';
-import { EvemitterService } from 'src/shared/evemitter/evemitter.service';
 import { MailEvents } from 'src/shared/events/mail.events';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-
-type MailerCredentials = {
-  username: string;
-  host: string;
-  password: string;
-  port: string;
-};
 
 @Injectable()
 export class SettingService {

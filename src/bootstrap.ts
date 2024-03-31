@@ -4,10 +4,10 @@ import { configs } from 'config/config.env';
 import { IBootstrapConfigs } from './shared/interfaces/app_bootstrap';
 import { ILogger } from './shared/interfaces/logger';
 import { APP_LOGGER } from './shared/utils/Loggers';
-import { LoggingInterceptor } from './global/Interceptors/logging.interceptor';
-import { TransformInterceptor } from './global/Interceptors/transform.interceptor';
 import { ValidationPipe } from '@nestjs/common';
 import { json, urlencoded } from 'express';
+import { LoggingInterceptor } from './shared/Interceptors/logging.interceptor';
+import { TransformInterceptor } from './shared/Interceptors/transform.interceptor';
 
 export class Bootstrap {
   protected serverName: string;
