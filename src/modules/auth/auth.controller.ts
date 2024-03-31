@@ -57,10 +57,10 @@ export class AuthController {
     return this.authService.verifyOtp(payload);
   }
 
-  // Get Business Info.
+  // Get Customer Info.
   @Get('me')
   @UseGuards(ActionsGuard)
-  getBusinessInfo(@GetCurrentCustomer() customer: Customer) {
+  getCustomerInfo(@GetCurrentCustomer() customer: Customer) {
     return customer;
   }
 }

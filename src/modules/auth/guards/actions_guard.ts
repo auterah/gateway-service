@@ -149,7 +149,10 @@ export class ActionsGuard implements CanActivate {
         throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
       }
 
-      console.log('customer', customer);
+      this.logger.verbose(
+        `customer: ${customer.businessName}`,
+        JSON.stringify(customer),
+      );
       return customer;
     } catch (e: any) {
       throw new HttpException(
