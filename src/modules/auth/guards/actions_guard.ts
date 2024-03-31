@@ -80,7 +80,7 @@ export class ActionsGuard implements CanActivate {
 
       if (!app.customer.verified) {
         throw new HttpException(
-          'Access denied. Verify your business email address to proceed',
+          'Access denied. Verify your email address to use this service',
           HttpStatus.FORBIDDEN,
         );
       }
