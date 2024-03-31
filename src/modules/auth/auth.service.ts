@@ -124,7 +124,7 @@ export class AuthService {
     return this.aesEncrypt.decrypt(token);
   }
 
-  async signInWthOtp(dto: OtpSignInDto): Promise<void> {
+  async requestCustomerOTP(dto: OtpSignInDto): Promise<void> {
     const customer = await this.customerService.findOneByEmail(dto.email);
 
     if (!customer) {

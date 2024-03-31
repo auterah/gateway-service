@@ -46,10 +46,10 @@ export class AuthController {
     return this.authService.getCustomerBySignedToken(token);
   }
 
-  // OTP Sign In
+  // Request customer OTP
   @Post('2')
-  optSignIn(@Body() payload: OtpSignInDto) {
-    return this.authService.signInWthOtp(payload);
+  requestCustomerOTP(@Body() payload: OtpSignInDto) {
+    return this.authService.requestCustomerOTP(payload);
   }
 
   // Verify OTP
