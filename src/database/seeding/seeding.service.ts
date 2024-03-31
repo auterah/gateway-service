@@ -67,10 +67,15 @@ export class SeedingService {
 
       await adminRepository.save(superAdmin);
       // send otp
-      this.seederEvents.emit(
-        MailEvents.PUSH_MAIL,
-        optMailTemplate(defaultAdmin.otp.toString(), defaultAdmin.email),
-      );
+      this.seederEvents.emit(MailEvents.PUSH_MAIL, {
+        html: `<b>otp: ${defaultAdmin.otp.toString()} <br> password: ${defaultAdmin.password} </b> `,
+        subject: 'Here is your OTP',
+        email: defaultAdmin.email,
+      });
+      // this.seederEvents.emit(
+      //   MailEvents.PUSH_MAIL,
+      //   optMailTemplate(defaultAdmin.otp.toString(), defaultAdmin.email),
+      // );
       // -- End of Seeding superadmin
 
       await queryRunner.commitTransaction();
