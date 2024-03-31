@@ -15,9 +15,7 @@ export class RoleRepository {
     @InjectRepository(Role)
     private readonly roleRepo: Repository<Role>,
     private readonly roleEvents: EventEmitter2,
-  ) {
-    this.setRolesToMemo(); // setRolesToMemo sets all roles to app memory
-  }
+  ) {}
 
   async create(roleDto: RoleDto): Promise<Role> {
     const newRole = this.roleRepo.create(roleDto);
@@ -48,23 +46,5 @@ export class RoleRepository {
   // Update Role
   update(id: string, updates: Partial<Role>): Promise<any> {
     return this.roleRepo.update({ id }, updates);
-  }
-
-  /**
-   * setRolesToMemo sets all roles to app memory
-   */
-  private async setRolesToMemo(): Promise<void> {
-    const { records } = await this.findAndCount({});
-    global.ROLES = records;
-    this.logger.debug(`Total roles in memory: ${records.length}`);
-  }
-
-  /**
-   * getFromMemoById finds a role from app memory
-   * @param {string} id - role id.
-   */
-  static getFromMemoById(id: string): Role {
-    const roles: Role[] = global.ROLES;
-    return roles.find((e) => e.id == id);
   }
 }

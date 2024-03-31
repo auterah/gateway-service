@@ -1,17 +1,13 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { EvemitterService } from 'src/shared/evemitter/evemitter.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import Role from './role.entity';
 import { RoleDto } from '../dtos/mail.dto';
-import { RoleEvents } from 'src/shared/events/roles.events';
-import { calculate_pagination_data } from 'src/shared/utils/pagination';
 import { PaginationData } from 'src/shared/types/pagination';
-import { defaultRoles } from '../constants/default_roles';
-import { configs } from 'config/config.env';
 import { PermissionService } from '../permission/permission.service';
 import { Roles } from 'src/shared/enums/roles';
 import { RoleRepository } from './role.repository';
+import { OnEvent } from '@nestjs/event-emitter';
+import { RoleEvents } from 'src/shared/events/roles.events';
 
 @Injectable()
 export class RoleService {
@@ -86,5 +82,25 @@ export class RoleService {
     findOpts: FindManyOptions<Role>,
   ): Promise<PaginationData> {
     return this.roleRepo.findAndCount(findOpts);
+  }
+
+
+  /**
+   * setRolesToMemo sets all roles to app memory
+   */
+  @OnEvent(RoleEvents.SEEDED)
+  private async setRolesToMemo(): Promise<void> {
+    const { records } = await this.findAllRecords({});
+    global.ROLES = records;
+    this.logger.debug(`Total roles in memory: ${records.length}`);
+  }
+
+  /**
+   * getFromMemoById finds a role from app memory
+   * @param {string} id - role id.
+   */
+  static getFromMemoById(id: string): Role {
+    const roles: Role[] = global.ROLES;
+    return roles.find((e) => e.id == id);
   }
 }

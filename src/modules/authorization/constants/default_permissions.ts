@@ -1,11 +1,20 @@
-export const defaultPermissions = [
-  {
-    actions: 'send single mail', // default
-  },
-  {
-    actions: 'track open mail', // default
-  },
-  {
-    actions: 'record mail transactions', // default
-  },
-];
+import { configs } from 'config/config.env';
+import Permission from '../permission/permission.entity';
+
+export const canSendSingleMail: Partial<Permission> = {
+  name: 'Mail Action',
+  action: 'Send Single Mail',
+  target: `${configs.API_VERSION}/emails/send`,
+};
+
+export const canSendBulkMails: Partial<Permission> = {
+  name: 'Mail Action',
+  action: 'Send Bulk Mails',
+  target: `${configs.API_VERSION}/emails/sendbulk`,
+};
+
+export const canTrackOpenMail: Partial<Permission> = {
+  name: 'Mail Action',
+  action: 'Track Open Mail',
+  target: `${configs.API_VERSION}/emails`,
+};

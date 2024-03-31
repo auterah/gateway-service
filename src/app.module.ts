@@ -11,9 +11,9 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AuthService } from './modules/auth/auth.service';
 import { CustomerModule } from './modules/customer/customer.module';
 import { DatabaseModule } from './database/database.module';
-import { AuthorizationModule } from './modules/authorization/authorization.module';
 import { SettingModule } from './modules/Setting/setting.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { SeedingModule } from './database/seeding/seeding.module';
 
 @Module({
   imports: [
@@ -39,6 +39,7 @@ import { AdminModule } from './modules/admin/admin.module';
     AuthModule,
     SettingModule,
     AdminModule,
+    SeedingModule,
   ],
   controllers: [StatusController],
   providers: [StatusService, AuthService],

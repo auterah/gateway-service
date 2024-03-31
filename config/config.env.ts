@@ -10,6 +10,7 @@ import {
 import { config } from 'dotenv';
 import { plainToClass } from 'class-transformer';
 import { Logger } from '@nestjs/common';
+import { EmailUtils } from 'src/global/utils/email.utils';
 
 const logger = new Logger('EnvConfig');
 const NODE_ENVS = ['development', 'production', 'staging', 'test'] as const;
@@ -80,6 +81,9 @@ class EnvConfig {
   @IsString()
   Q_LOOP_PUBLIC_KEY: string;
 
+  @IsString()
+  SUPER_ADMIN_EMAIL: string;
+
   static getDefaultObject(): EnvConfig {
     const obj = new EnvConfig();
 
@@ -110,6 +114,7 @@ class EnvConfig {
     obj.Q_LOOP_QUEUE_HOST =
       process.env.Q_LOOP_QUEUE_HOST || 'http://localhost:8001/api/v1';
     obj.Q_LOOP_PUBLIC_KEY = process.env.Q_LOOP_PUBLIC_KEY;
+    obj.SUPER_ADMIN_EMAIL = process.env.SUPER_ADMIN_EMAIL;
 
     return obj;
   }
@@ -129,5 +134,17 @@ if (errors.length > 0) {
   logger.error(JSON.stringify(errors, undefined, '  '));
   throw new Error('Invalid env variables.');
 }
+
+const verifyEmailFields = async () => {
+  if (!(await EmailUtils.validateEmail(configs.SUPER_ADMIN_EMAIL))) {
+    Logger.error(
+      `Invalid Superadmin email ===> "${configs.SUPER_ADMIN_EMAIL}"`,
+    );
+    throw new Error(
+      `Invalid Superadmin email ===> "${configs.SUPER_ADMIN_EMAIL}"`,
+    );
+  }
+};
+verifyEmailFields();
 
 export { configs };

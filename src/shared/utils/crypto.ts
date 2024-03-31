@@ -1,8 +1,8 @@
-import { randomBytes } from "crypto";
+import { randomBytes } from 'crypto';
 
 export class CryptoUtil {
-  static async generateRandomStringAsync(length) {
-    const buffer = await randomBytes(length);
+  static generateRandomStringAsync(length) {
+    const buffer = randomBytes(length);
     return buffer.toString('hex');
   }
 }

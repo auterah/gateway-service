@@ -24,6 +24,7 @@ import { VerifyOtpDto } from './dtos/veriy_otp.dto';
 import { SignAdminToken } from './dtos/sign_admin_token.dto';
 import { AdminService } from '../admin/admin.service';
 import Admin from '../admin/admin.entity';
+import { optMailTemplate } from '../email/templates/auth';
 
 @Injectable()
 export class AuthService {
@@ -38,6 +39,17 @@ export class AuthService {
   ) {
     this.jwtPrivateKey = configs.JWT_SECRET;
     this.aesEncrypt = new AesEncryption(configs.ENCRYPTION_PRIVATE_KEY);
+  }
+
+  static generateOtp(length: number) {
+    const digits = '0123456789';
+    let OTP = '';
+
+    for (let i = 0; i < length; i++) {
+      OTP += digits[Math.floor(Math.random() * 10)];
+    }
+
+    return OTP;
   }
 
   async getCustomerBySignedToken(token: string): Promise<Customer> {
@@ -136,11 +148,10 @@ export class AuthService {
     this.customerService.save(customer);
 
     // send otp
-    this.authEvents.emit(MailEvents.PUSH_MAIL, {
-      email: customer.email,
-      html: `<b>${otp}</b>`,
-      subject: 'Here is your OTP',
-    });
+    this.authEvents.emit(
+      MailEvents.PUSH_MAIL,
+      optMailTemplate(otp, customer.email),
+    );
   }
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto) {

@@ -11,9 +11,7 @@ import { PermissionRepository } from './permission.repository';
 export class PermissionService {
   private logger = new Logger(PermissionService.name);
 
-  constructor(private readonly permRepo: PermissionRepository) {
-    this.setPermissionsToMemo();
-  }
+  constructor(private readonly permRepo: PermissionRepository) {}
 
   @OnEvent(RoleEvents.CREATED)
   async createPermission(permDto: PermissionDto): Promise<Permission> {
@@ -53,6 +51,7 @@ export class PermissionService {
   /**
    * setPermissionsToMemo sets all permissions to app memory
    */
+  @OnEvent(RoleEvents.SEEDED)
   private async setPermissionsToMemo(): Promise<void> {
     const { records } = await this.permRepo.findAllRecords({});
     global.PERMISSIONS = records;

@@ -1,10 +1,10 @@
-import { Roles } from "src/shared/enums/roles";
+import { Roles } from 'src/shared/enums/roles';
+import Role from '../role/role.entity';
 
-export const defaultRoles = {
-  admin: {
-    name: Roles.ADMIN,
-  },
-  superadmin: {
-    name: Roles.SUPER_ADMIN,
-  }
-}
+export const adminRole: Partial<Role> = {
+  role: Roles.ADMIN,
+};
+
+export const superAdminRole: Partial<Role> = {
+  role: Roles.SUPER_ADMIN,
+};
