@@ -13,6 +13,7 @@ import { CustomerModule } from './modules/customer/customer.module';
 import { DatabaseModule } from './database/database.module';
 import { AuthorizationModule } from './modules/authorization/authorization.module';
 import { SettingModule } from './modules/Setting/setting.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -36,8 +37,8 @@ import { SettingModule } from './modules/Setting/setting.module';
     EmailModule,
     AppModule__,
     AuthModule,
-    AuthorizationModule,
     SettingModule,
+    AdminModule,
   ],
   controllers: [StatusController],
   providers: [StatusService, AuthService],

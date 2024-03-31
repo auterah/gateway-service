@@ -7,6 +7,7 @@ import { PermissionController } from './permission/permission.controller';
 import { PermissionService } from './permission/permission.service';
 import Role from './role/role.entity';
 import { PermissionRepository } from './permission/permission.repository';
+import { RoleRepository } from './role/role.repository';
 
 @Module({
   imports: [
@@ -14,7 +15,17 @@ import { PermissionRepository } from './permission/permission.repository';
     TypeOrmModule.forFeature([Permission]),
   ],
   controllers: [RoleController, PermissionController],
-  providers: [RoleService, PermissionService, PermissionRepository],
-  exports: [RoleService, PermissionService],
+  providers: [
+    RoleService,
+    PermissionService,
+    PermissionRepository,
+    RoleRepository,
+  ],
+  exports: [
+    RoleService,
+    PermissionService,
+    PermissionRepository,
+    RoleRepository,
+  ],
 })
 export class AuthorizationModule {}

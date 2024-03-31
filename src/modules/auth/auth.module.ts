@@ -6,6 +6,7 @@ import { CustomerModule } from 'src/modules/customer/customer.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt/jwt-strategy';
 import { configs } from 'config/config.env';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   controllers: [AuthController],
@@ -18,6 +19,7 @@ import { configs } from 'config/config.env';
       signOptions: { expiresIn: '60s' },
     }),
     CustomerModule,
+    AdminModule,
   ],
 })
 export class AuthModule {}
