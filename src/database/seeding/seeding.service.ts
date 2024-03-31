@@ -25,7 +25,7 @@ export class SeedingService {
   ) {}
 
   @OnEvent(BootEvents.SEED_DATABASE)
-  async seedApp() {
+  async seedApp(): Promise<boolean> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -74,6 +74,7 @@ export class SeedingService {
       // -- End of Seeding superadmin
 
       await queryRunner.commitTransaction();
+      return true;
     } catch (e) {
       await queryRunner.rollbackTransaction();
       throw e;

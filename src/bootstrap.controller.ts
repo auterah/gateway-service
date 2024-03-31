@@ -1,12 +1,12 @@
 import { Controller, Get, Post } from '@nestjs/common';
-import { StatusService } from './status.service';
+import { BootService } from './bootstrap.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { BootEvents } from './shared/events/local.events';
 
 @Controller()
-export class StatusController {
+export class BootController {
   constructor(
-    private readonly statusService: StatusService,
+    private readonly bootService: BootService,
     private readonly statusEvents: EventEmitter2,
   ) {}
 
@@ -18,6 +18,6 @@ export class StatusController {
 
   @Get('status')
   getHealthTalk(): string {
-    return this.statusService.exeHealthTalk();
+    return this.bootService.exeHealthTalk();
   }
 }

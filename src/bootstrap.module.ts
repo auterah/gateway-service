@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { LoggerModule } from 'nestjs-pino';
-import { StatusController } from './status.controller';
-import { StatusService } from './status.service';
 import { GlobalModule } from './global/global.module';
 import { EmailModule } from './modules/email/email.module';
 import { AppModule as AppModule__ } from './modules/app/app.module';
@@ -14,6 +12,8 @@ import { DatabaseModule } from './database/database.module';
 import { SettingModule } from './modules/Setting/setting.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { SeedingModule } from './database/seeding/seeding.module';
+import { BootService } from './bootstrap.service';
+import { BootController } from './bootstrap.controller';
 
 @Module({
   imports: [
@@ -41,7 +41,7 @@ import { SeedingModule } from './database/seeding/seeding.module';
     AdminModule,
     SeedingModule,
   ],
-  controllers: [StatusController],
-  providers: [StatusService, AuthService],
+  controllers: [BootController],
+  providers: [BootService, AuthService],
 })
 export class AppModule {}

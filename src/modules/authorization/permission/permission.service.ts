@@ -11,7 +11,9 @@ import { PermissionRepository } from './permission.repository';
 export class PermissionService {
   private logger = new Logger(PermissionService.name);
 
-  constructor(private readonly permRepo: PermissionRepository) {}
+  constructor(private readonly permRepo: PermissionRepository) {
+    this.setPermissionsToMemo();
+  }
 
   @OnEvent(RoleEvents.CREATED)
   async createPermission(permDto: PermissionDto): Promise<Permission> {
@@ -53,9 +55,15 @@ export class PermissionService {
    */
   @OnEvent(RoleEvents.SEEDED)
   private async setPermissionsToMemo(): Promise<void> {
-    const { records } = await this.permRepo.findAllRecords({});
-    global.PERMISSIONS = records;
-    this.logger.debug(`Total scopes in memory: ${records.length}`);
+    try {
+      const { records } = await this.permRepo.findAllRecords({});
+      global.PERMISSIONS = records;
+      this.logger.debug(`Total scopes in memory: ${records.length}`);
+    } catch (error) {
+      this.logger.warn(
+        'Database migration required. Use npm run migration:run',
+      );
+    }
   }
 
   /**

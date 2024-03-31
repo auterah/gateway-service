@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './bootstrap.module';
 import { configs } from 'config/config.env';
 import { IBootstrapConfigs } from './shared/interfaces/app_bootstrap';
 import { ILogger } from './shared/interfaces/logger';

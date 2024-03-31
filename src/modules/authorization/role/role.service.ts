@@ -15,7 +15,9 @@ export class RoleService {
   constructor(
     private readonly roleRepo: RoleRepository,
     private readonly permissionService: PermissionService,
-  ) {}
+  ) {
+    this.setRolesToMemo();
+  }
 
   async createRole(roleDto: RoleDto): Promise<Role> {
     const exist = await this.findOneByRolename(roleDto.role);
@@ -84,15 +86,20 @@ export class RoleService {
     return this.roleRepo.findAndCount(findOpts);
   }
 
-
   /**
    * setRolesToMemo sets all roles to app memory
    */
   @OnEvent(RoleEvents.SEEDED)
   private async setRolesToMemo(): Promise<void> {
-    const { records } = await this.findAllRecords({});
-    global.ROLES = records;
-    this.logger.debug(`Total roles in memory: ${records.length}`);
+    try {
+      const { records } = await this.findAllRecords({});
+      global.ROLES = records;
+      this.logger.debug(`Total roles in memory: ${records.length}`);
+    } catch (error) {
+      this.logger.warn(
+        'Database migration required. Use npm run migration:run',
+      );
+    }
   }
 
   /**
