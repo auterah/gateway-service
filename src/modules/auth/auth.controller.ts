@@ -35,10 +35,10 @@ export class AuthController {
   }
 
   // sign user token
-  @Post()
-  signToken(@Body() payload: GenTokenDto) {
-    return this.authService.generateAccessToken(payload);
-  }
+  // @Post()
+  // signToken(@Body() payload: GenTokenDto) {
+  //   return this.authService.generateAccessToken(payload);
+  // }
 
   @Get('customer-x-token/:token')
   getCustomerBySignedToken(@Param('token') token: string) {
