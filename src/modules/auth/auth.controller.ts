@@ -17,6 +17,7 @@ import { VerifyOtpDto } from './dtos/veriy_otp.dto';
 import { ActionsGuard } from './guards/actions_guard';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
 import Customer from '../customer/customer.entity';
+import { SignAdminToken } from './dtos/sign_admin_token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -62,5 +63,11 @@ export class AuthController {
   @UseGuards(ActionsGuard)
   getCustomerInfo(@GetCurrentCustomer() customer: Customer) {
     return customer;
+  }
+
+  // Sign Admin token.
+  @Post('admin')
+  signInAdmin(@Body() payload: SignAdminToken) {
+    return this.authService.signInAdmin(payload);
   }
 }

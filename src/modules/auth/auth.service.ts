@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 // import { ConfigService } from 'config/config.service';
 // import User from '../entities/user.entity';
 import { configs } from 'config/config.env';
-import { JwtPayload } from './jwt/jwt-payload.model';
+import { AdminJwtPayload, JwtPayload } from './jwt/jwt-payload.model';
 import App from 'src/modules/app/entities/app.entity';
 import { SignTokenDto } from 'src/modules/app/dtos/sign_token.dto';
 import { CustomerService } from 'src/modules/customer/customer.service';
@@ -21,6 +21,9 @@ import { AppService } from '../app/app.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { MailEvents } from 'src/shared/events/mail.events';
 import { VerifyOtpDto } from './dtos/veriy_otp.dto';
+import { SignAdminToken } from './dtos/sign_admin_token.dto';
+import { AdminService } from '../admin/admin.service';
+import Admin from '../admin/admin.entity';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +32,7 @@ export class AuthService {
 
   constructor(
     private readonly customerService: CustomerService,
+    private readonly adminService: AdminService,
     private customerEvents: EvemitterService<Customer>,
     private authEvents: EventEmitter2,
   ) {
@@ -91,7 +95,7 @@ export class AuthService {
       );
     }
 
-    const accessToken = this.encryptToken(customer);
+    const accessToken = this.encryptCustomerToken(customer);
     return { ...customer, tokens: { accessToken } };
   }
 
@@ -102,9 +106,16 @@ export class AuthService {
     return sign(payload, this.jwtPrivateKey, {});
   }
 
-  encryptToken(customer: Omit<Customer, 'apps'>): string {
+  encryptCustomerToken(customer: Omit<Customer, 'apps'>): string {
     const payload: JwtPayload = {
       customer,
+    };
+    return this.aesEncrypt.encrypt(JSON.stringify(payload));
+  }
+
+  encryptAdminToken(admin: Admin): string {
+    const payload: AdminJwtPayload = {
+      admin,
     };
     return this.aesEncrypt.encrypt(JSON.stringify(payload));
   }
@@ -142,7 +153,36 @@ export class AuthService {
     }
 
     delete customer.apps;
-    const accessToken = this.encryptToken(customer);
+    const accessToken = this.encryptCustomerToken(customer);
     return { ...customer, tokens: { accessToken } };
+  }
+
+  async signInAdmin(signAdminToken: SignAdminToken) {
+    const admin = await this.adminService.findOneByEmail(signAdminToken.email);
+
+    if (!admin) {
+      throw new HttpException(
+        'Invalid email or password.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!admin.verified) {
+      throw new HttpException(
+        'You are not a valid admin user',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const match = await bcrypt.compare(signAdminToken.password, admin.password);
+    if (!match) {
+      throw new HttpException(
+        'Invalid email or password.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const accessToken = this.encryptAdminToken(admin);
+    return { ...admin, tokens: { accessToken } };
   }
 }

@@ -37,7 +37,6 @@ import { AdminModule } from './modules/admin/admin.module';
     EmailModule,
     AppModule__,
     AuthModule,
-    AuthorizationModule,
     SettingModule,
     AdminModule,
   ],

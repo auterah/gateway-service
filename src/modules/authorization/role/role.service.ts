@@ -11,35 +11,22 @@ import { defaultRoles } from '../constants/default_roles';
 import { configs } from 'config/config.env';
 import { PermissionService } from '../permission/permission.service';
 import { Roles } from 'src/shared/enums/roles';
+import { RoleRepository } from './role.repository';
 
 @Injectable()
 export class RoleService {
   private logger = new Logger(RoleService.name);
   constructor(
-    @InjectRepository(Role)
-    private readonly roleRepo: Repository<Role>,
+    private readonly roleRepo: RoleRepository,
     private readonly permissionService: PermissionService,
-    private roleEvents: EvemitterService<Role>,
-  ) {
-    this.setRolesToMemo(); // setRolesToMemo sets all roles to app memory
-  }
+  ) {}
 
   async createRole(roleDto: RoleDto): Promise<Role> {
     const exist = await this.findOneByRolename(roleDto.role);
     if (exist) {
       throw new HttpException('Role already exist', HttpStatus.BAD_REQUEST);
     }
-
-    const newRole = this.roleRepo.create(roleDto);
-    const role = await this.roleRepo.save(newRole);
-
-    // Emit new role event
-    this.roleEvents.emitEvent<Role>({
-      ev: RoleEvents.CREATED,
-      payload: role,
-    });
-
-    return role;
+    return this.roleRepo.create(roleDto);
   }
 
   // Find Single Role
@@ -91,39 +78,13 @@ export class RoleService {
     const permissions = role.permissions;
     permissions.push(permission);
     role.permissions = permissions;
-    return this.roleRepo.save(role);
+    return this.roleRepo.update(role.id, role);
   }
 
   // Find All Roles
   async findAllRecords(
     findOpts: FindManyOptions<Role>,
   ): Promise<PaginationData> {
-    const take = Number(findOpts.take || '10');
-    const skip = Number(findOpts.skip || '0');
-
-    const roles = await this.roleRepo.findAndCount({
-      ...findOpts,
-      take,
-      skip,
-    });
-    return calculate_pagination_data(roles, skip, take);
-  }
-
-  /**
-   * setRolesToMemo sets all roles to app memory
-   */
-  private async setRolesToMemo(): Promise<void> {
-    const { records } = await this.findAllRecords({});
-    global.ROLES = records;
-    this.logger.debug(`Total roles in memory: ${records.length}`);
-  }
-
-  /**
-   * getFromMemoById finds a role from app memory
-   * @param {string} id - role id.
-   */
-  static getFromMemoById(id: string): Role {
-    const roles: Role[] = global.ROLES;
-    return roles.find((e) => e.id == id);
+    return this.roleRepo.findAndCount(findOpts);
   }
 }
