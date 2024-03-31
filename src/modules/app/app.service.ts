@@ -11,12 +11,15 @@ import Customer from 'src/modules/customer/customer.entity';
 import { AppRepository } from './repositories/app.repository';
 import { AppScopeDto } from './dtos/app_scope.dto';
 import { PermissionService } from '../authorization/permission/permission.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { AppEvents } from 'src/shared/events/app.events';
 
 @Injectable()
 export class AppService {
   constructor(
     private readonly appRepo: AppRepository,
     private readonly permService: PermissionService,
+    private readonly appEvent: EventEmitter2,
   ) {}
 
   static generatePrivateKey() {
@@ -60,7 +63,9 @@ export class AppService {
     newApp.privateKey = AppService.generatePrivateKey();
     newApp.publicKey = AppService.generatePublicKey();
 
-    return this.appRepo.createApp(newApp);
+    const app = await this.appRepo.create(newApp);
+    this.appEvent.emit(AppEvents.CREATED, app);
+    return app;
   }
 
   // Find Single App
@@ -97,7 +102,7 @@ export class AppService {
   }
 
   async addScope(scopeDto: AppScopeDto, app: App) {
-    const permissions = await this.permService.findByIds(scopeDto.scopes);
+    const permissions = await this.permService.findByIds(scopeDto.scopes, true);
     app.scopes.push(...permissions);
     return this.appRepo.save(app);
   }

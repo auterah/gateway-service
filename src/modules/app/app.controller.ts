@@ -22,6 +22,7 @@ import { AppRequestService } from './app_request.service';
 import { AppScopeDto } from './dtos/app_scope.dto';
 import App from './entities/app.entity';
 import { GetCurrentApp } from 'src/shared/decorators/get_current_app';
+import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
 
 @Controller('apps')
 export class AppController {
@@ -76,8 +77,20 @@ export class AppController {
     return this.appService.addScope(scopeDto, app);
   }
 
-  @Get(':app_id')
+  @Get('/id/:app_id')
   getSingleApp(@Param('app_id') appId: string) {
     return this.appService.findById(appId);
+  }
+
+  @Get('me')
+  @UseGuards(ActionsGuard)
+  getCustomerApps(
+    @GetCurrentCustomer('apps') apps: App[],
+    @Query('id') id: string,
+  ) {
+    if (id) {
+      return apps.find((app) => app.id == id);
+    }
+    return apps;
   }
 }

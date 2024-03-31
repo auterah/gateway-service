@@ -3,17 +3,26 @@ import { calculate_pagination_data } from 'src/shared/utils/pagination';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import App from '../entities/app.entity';
+import { CustomerRepository } from 'src/modules/customer/customer.repository';
+import { AppDto } from '../dtos/newapp.dto';
 
 @Injectable()
 export class AppRepository {
   constructor(
     @InjectRepository(App)
     private readonly appEntity: Repository<App>,
+    private readonly customerRepo: CustomerRepository,
   ) {}
 
   // Create App
-  async createApp(newApp: Partial<App>): Promise<App> {
-    return this.appEntity.save(newApp);
+  async create(newApp: AppDto): Promise<App> {
+    const customer = await this.customerRepo.create({ email: newApp?.email });
+
+    const app = this.appEntity.create({
+      customer,
+      ...newApp,
+    });
+    return this.appEntity.save(app);
   }
 
   // Find Single App

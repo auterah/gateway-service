@@ -12,7 +12,7 @@ import { SignTokenDto } from 'src/modules/app/dtos/sign_token.dto';
 import { CustomerService } from 'src/modules/customer/customer.service';
 import { CustomerDto } from 'src/modules/customer/dtos/customer.dto';
 import { EvemitterService } from 'src/shared/evemitter/evemitter.service';
-import { CsutomerEvents } from 'src/shared/events/customer.events';
+import { CustomerEvents } from 'src/shared/events/customer.events';
 import Customer from 'src/modules/customer/customer.entity';
 import { GenTokenDto } from './dtos/generate_token.dto';
 import { AesEncryption } from 'src/shared/utils/encryption';
@@ -20,6 +20,7 @@ import { OtpSignInDto } from './dtos/otp_signin.dto';
 import { AppService } from '../app/app.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { MailEvents } from 'src/shared/events/mail.events';
+import { VerifyOtpDto } from './dtos/veriy_otp.dto';
 
 @Injectable()
 export class AuthService {
@@ -63,7 +64,7 @@ export class AuthService {
 
     // Emit Customer
     this.customerEvents.emitEvent<Customer>({
-      ev: CsutomerEvents.CREATED,
+      ev: CustomerEvents.CREATED,
       payload: customer,
     });
 
@@ -112,28 +113,36 @@ export class AuthService {
     return this.aesEncrypt.decrypt(token);
   }
 
-  async signInWthOtp(dto: OtpSignInDto) {
-    const { apps, ...customer } = await this.customerService.findOneByEmail(
-      dto.email,
-    );
+  async signInWthOtp(dto: OtpSignInDto): Promise<void> {
+    const customer = await this.customerService.findOneByEmail(dto.email);
 
     if (!customer) {
-      throw new HttpException(
-        'Invalid email or password.',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Invalid email address.', HttpStatus.BAD_REQUEST);
     }
 
     const otp = AppService.generateOtp(6);
-    
+    customer.otp = parseInt(otp);
+    this.customerService.save(customer);
+
     // send otp
     this.authEvents.emit(MailEvents.PUSH_MAIL, {
       email: customer.email,
       html: `<b>${otp}</b>`,
       subject: 'Here is your OTP',
     });
+  }
 
-    // const accessToken = this.encryptToken(customer);
-    // return { ...customer, tokens: { accessToken } };
+  async verifyOtp(verifyOtpDto: VerifyOtpDto) {
+    const customer = await this.customerService.findOneByEmail(
+      verifyOtpDto.email,
+    );
+
+    if (!customer || (customer && customer.otp != verifyOtpDto.otp)) {
+      throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
+    }
+
+    delete customer.apps;
+    const accessToken = this.encryptToken(customer);
+    return { ...customer, tokens: { accessToken } };
   }
 }

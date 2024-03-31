@@ -23,7 +23,7 @@ export class SettingService {
     private readonly settingRepo: Repository<Setting>,
     private event: EventEmitter2,
   ) {
-    this.retrieveMailCredentials();
+    // this.retrieveMailCredentials();
   }
 
   // Find Setting By Skey
@@ -69,6 +69,10 @@ export class SettingService {
           acc[newKey] = value;
           return acc;
         }, {});
+
+      if (Object.entries(smtpCredentials).length == 0) {
+        throw 'App is missing SMTP credentials ❌❌❌❌❌';
+      }
 
       this.logger.debug('SMTP Configs are ready for use! 🎯🎯🎯🎯🎯🎯🎯🎯🎯');
       this.event.emit(MailEvents.SET_SMTP, smtpCredentials);

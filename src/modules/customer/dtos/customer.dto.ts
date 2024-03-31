@@ -1,5 +1,6 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import Customer from '../customer.entity';
+import { Roles } from 'src/shared/enums/roles';
 
 export class CustomerDto extends Customer {
   @IsEmail()
@@ -18,7 +19,7 @@ export class CustomerDto extends Customer {
   @IsNotEmpty()
   password: string;
 
-  @IsString()
+  @IsEnum(Roles)
   @IsNotEmpty()
-  role: string;
+  role: Roles;
 }

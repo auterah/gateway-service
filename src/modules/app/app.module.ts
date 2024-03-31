@@ -8,9 +8,14 @@ import AppRequest from './entities/app_request.entity';
 import { AppRepository } from './repositories/app.repository';
 import { AppRequestService } from './app_request.service';
 import { AuthorizationModule } from '../authorization/authorization.module';
+import { CustomerModule } from '../customer/customer.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([App, AppRequest]), AuthorizationModule],
+  imports: [
+    TypeOrmModule.forFeature([App, AppRequest]),
+    AuthorizationModule,
+    CustomerModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

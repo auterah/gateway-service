@@ -35,6 +35,9 @@ export default class App {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   cost: number;
 
+  @Column({ default: 0 })
+  sentScore: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
