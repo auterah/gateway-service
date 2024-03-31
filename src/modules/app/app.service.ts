@@ -92,7 +92,7 @@ export class AppService {
   findXApp(findOpts: FindOneOptions<App>): Promise<App> {
     return this.appRepo.findXApp({
       ...findOpts,
-      relations: ['scopes'],
+      relations: findOpts.relations || ['scopes'],
     });
   }
 

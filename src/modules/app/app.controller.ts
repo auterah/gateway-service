@@ -42,6 +42,7 @@ export class AppController {
     }
     return this.appService.findXApp({
       where: { publicKey },
+      relations: ['customer'],
     });
   }
 

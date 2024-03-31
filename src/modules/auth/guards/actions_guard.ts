@@ -78,6 +78,13 @@ export class ActionsGuard implements CanActivate {
         status: EAppRequestStatus.SUCCESS,
       };
 
+      if (!app.customer.verified) {
+        throw new HttpException(
+          'Access denied. Verify your business email address to proceed',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
       if (!request.url.includes('scopes')) {
         //
         const permitted = app.scopes.find((e) => e.target == request.url);
