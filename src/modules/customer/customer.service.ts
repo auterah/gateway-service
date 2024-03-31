@@ -1,24 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { calculate_pagination_data } from 'src/shared/utils/pagination';
-import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationData } from 'src/shared/types/pagination';
-import { EvemitterService } from 'src/shared/evemitter/evemitter.service';
 import Customer from './customer.entity';
 import { CustomerDto } from './dtos/customer.dto';
-import {
-  FindManyOptions,
-  FindOneOptions,
-  Repository,
-} from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RoleService } from '../authorization/role/role.service';
 import { CustomerRepository } from './customer.repository';
+import { FindOneOptions, FindManyOptions } from 'typeorm';
 
 @Injectable()
 export class CustomerService {
   constructor(
-    private customerEvents: EvemitterService<Customer>,
     private readonly customerRepo: CustomerRepository,
     private readonly roleService: RoleService,
     private event: EventEmitter2,

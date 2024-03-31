@@ -1,18 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { calculate_pagination_data } from 'src/shared/utils/pagination';
-import { PaginationData } from 'src/shared/types/pagination';
-import { EvemitterService } from 'src/shared/evemitter/evemitter.service';
 import App from './entities/app.entity';
 import { AppDto } from './dtos/newapp.dto';
-import { CryptoUtil } from 'src/shared/utils/crypto';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { StringUtils } from 'src/global/utils/string';
-import Customer from 'src/modules/customer/customer.entity';
 import { AppRepository } from './repositories/app.repository';
 import { AppScopeDto } from './dtos/app_scope.dto';
 import { PermissionService } from '../authorization/permission/permission.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AppEvents } from 'src/shared/events/app.events';
+import { StringUtils } from 'src/shared/utils/string';
 
 @Injectable()
 export class AppService {

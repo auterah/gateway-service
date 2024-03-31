@@ -4,7 +4,6 @@ import { GlobalModule } from './global/global.module';
 import { EmailModule } from './modules/email/email.module';
 import { AppModule as AppModule__ } from './modules/app/app.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { EvemitterModule } from './shared/evemitter/evemitter.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AuthService } from './modules/auth/auth.service';
 import { CustomerModule } from './modules/customer/customer.module';
@@ -29,7 +28,6 @@ import { BootController } from './bootstrap.controller';
     }),
     GlobalModule,
     DatabaseModule,
-    EvemitterModule,
     EventEmitterModule.forRoot({
       global: true,
     }),

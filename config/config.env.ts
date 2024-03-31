@@ -1,6 +1,5 @@
 import {
   IsBoolean,
-  IsEnum,
   IsIn,
   IsNumber,
   IsOptional,
@@ -10,7 +9,7 @@ import {
 import { config } from 'dotenv';
 import { plainToClass } from 'class-transformer';
 import { Logger } from '@nestjs/common';
-import { EmailUtils } from 'src/global/utils/email.utils';
+import { EmailUtils } from 'src/shared/utils/email.utils';
 
 const logger = new Logger('EnvConfig');
 const NODE_ENVS = ['development', 'production', 'staging', 'test'] as const;

@@ -1,14 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import { calculate_pagination_data } from 'src/shared/utils/pagination';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationData } from 'src/shared/types/pagination';
-import { EvemitterService } from 'src/shared/evemitter/evemitter.service';
 import Customer from './customer.entity';
 import { CustomerDto } from './dtos/customer.dto';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CustomerEvents } from 'src/shared/events/customer.events';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RoleService } from '../authorization/role/role.service';
 import { Roles } from 'src/shared/enums/roles';
 
@@ -16,7 +13,6 @@ import { Roles } from 'src/shared/enums/roles';
 export class CustomerRepository {
   constructor(
     private event: EventEmitter2,
-    private customerEvents: EvemitterService<Customer>,
     @InjectRepository(Customer)
     private readonly customerRepo: Repository<Customer>,
     private readonly roleService: RoleService,

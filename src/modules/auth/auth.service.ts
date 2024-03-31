@@ -1,17 +1,10 @@
 import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import { sign } from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
-// import { UsersService } from '../user.service';
-// import { CryptoEncrypt } from 'src/shared/encrypt';
-// import { ConfigService } from 'config/config.service';
-// import User from '../entities/user.entity';
 import { configs } from 'config/config.env';
 import { AdminJwtPayload, JwtPayload } from './jwt/jwt-payload.model';
-import App from 'src/modules/app/entities/app.entity';
-import { SignTokenDto } from 'src/modules/app/dtos/sign_token.dto';
 import { CustomerService } from 'src/modules/customer/customer.service';
 import { CustomerDto } from 'src/modules/customer/dtos/customer.dto';
-import { EvemitterService } from 'src/shared/evemitter/evemitter.service';
 import { CustomerEvents } from 'src/shared/events/customer.events';
 import Customer from 'src/modules/customer/customer.entity';
 import { GenTokenDto } from './dtos/generate_token.dto';
@@ -34,7 +27,6 @@ export class AuthService {
   constructor(
     private readonly customerService: CustomerService,
     private readonly adminService: AdminService,
-    private customerEvents: EvemitterService<Customer>,
     private authEvents: EventEmitter2,
   ) {
     this.jwtPrivateKey = configs.JWT_SECRET;
@@ -78,17 +70,13 @@ export class AuthService {
   async registerCustomer(newCustomer: CustomerDto) {
     const customer = await this.customerService.addCustomer(newCustomer);
 
-    // Emit Customer
-    this.customerEvents.emitEvent<Customer>({
-      ev: CustomerEvents.CREATED,
-      payload: customer,
-    });
-
+    // Emit New Customer
+    this.authEvents.emit(CustomerEvents.CREATED, customer);
     return customer;
   }
 
   async generateAccessToken(genTokenDto: GenTokenDto) {
-    const { apps, ...customer } = await this.customerService.findOneByEmail(
+    const customer = await this.customerService.findOneByEmail(
       genTokenDto.email,
     );
 
@@ -107,6 +95,7 @@ export class AuthService {
       );
     }
 
+    delete customer.apps;
     const accessToken = this.encryptCustomerToken(customer);
     return { ...customer, tokens: { accessToken } };
   }

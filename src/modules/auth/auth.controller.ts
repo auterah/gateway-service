@@ -9,15 +9,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { EmailUtils } from 'src/global/utils/email.utils';
 import { CustomerDto } from 'src/modules/customer/dtos/customer.dto';
-import { GenTokenDto } from './dtos/generate_token.dto';
 import { OtpSignInDto } from './dtos/otp_signin.dto';
 import { VerifyOtpDto } from './dtos/veriy_otp.dto';
 import { ActionsGuard } from './guards/actions_guard';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
 import Customer from '../customer/customer.entity';
 import { SignAdminToken } from './dtos/sign_admin_token.dto';
+import { EmailUtils } from 'src/shared/utils/email.utils';
 
 @Controller('auth')
 export class AuthController {
