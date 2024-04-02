@@ -37,7 +37,7 @@ jobs:
             # upload new HTACCESS
             echo "${{secrets.HTACCESS}}" > .htaccess && \
             # install npm packages
-            # npm install && npm run build
+            npm install
             # remove git folders
             rm -rf .git && \
             rm -rf .github && \
