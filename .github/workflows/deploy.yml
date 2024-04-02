@@ -34,8 +34,10 @@ jobs:
             cd ${{ secrets.APP_PATH }} && \
             # upload new ENV
             echo "${{secrets.ENV}}" > .env && \
+            # upload new HTACCESS
+            echo "${{secrets.HTACCESS}}" > .htaccess && \
             # install npm packages
-            npm install && npm run build && npm run migration:run && npm run start:staging
+            npm install && npm run build && npm run start:staging
             # remove git folders
             rm -rf .git && \
             rm -rf .github && \
