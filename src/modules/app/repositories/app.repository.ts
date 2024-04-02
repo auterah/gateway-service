@@ -16,7 +16,9 @@ export class AppRepository {
 
   // Create App
   async create(newApp: AppDto): Promise<App> {
-    const customer = await this.customerRepo.create({ email: newApp?.email });
+    const customer = await this.customerRepo.findOrCreate({
+      email: newApp?.email,
+    });
 
     const app = this.appEntity.create({
       customer,

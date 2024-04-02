@@ -8,7 +8,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AuthService } from './modules/auth/auth.service';
 import { CustomerModule } from './modules/customer/customer.module';
 import { DatabaseModule } from './database/database.module';
-import { SettingModule } from './modules/Setting/setting.module';
+import { SettingModule } from './modules/setting/setting.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { SeedingModule } from './database/seeding/seeding.module';
 import { BootService } from './bootstrap.service';

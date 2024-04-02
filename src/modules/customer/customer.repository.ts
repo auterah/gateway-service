@@ -35,6 +35,14 @@ export class CustomerRepository {
     return customer;
   }
 
+  async findOrCreate(customerDto: Partial<CustomerDto>): Promise<Customer> {
+    const customer = await this.findOneByEmail(customerDto.email);
+    if (customer) {
+      return customer;
+    }
+    return this.create(customerDto);
+  }
+
   // Find Customer
   findOne(findOpts: FindOneOptions<Customer>): Promise<Customer> {
     return this.customerRepo.findOne(findOpts);
