@@ -43,8 +43,6 @@ export class Bootstrap {
     app.useGlobalPipes(new ValidationPipe());
 
     await app.listen(PORT, () => {
-        console.log('configs');
-        console.log('configs');
         this.logger.log(`${this.serverName} is up on port ${this.serverPort}`);
       }
     );
