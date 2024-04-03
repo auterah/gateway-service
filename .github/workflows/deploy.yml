@@ -35,7 +35,7 @@ jobs:
             # upload new ENV
             echo "${{secrets.ENV}}" > .env && \
             # install npm packages
-            npm install
+            npm install && npm run build && npm run start:staging
             # remove git folders
             rm -rf .git && \
             rm -rf .github && \
