@@ -19,6 +19,7 @@ import * as bcrypt from 'bcrypt';
 import App from 'src/modules/app/entities/app.entity';
 import { CryptoUtil } from 'src/shared/utils/crypto';
 import { defaultApp } from '../mocks/default_app';
+import Customer from 'src/modules/customer/customer.entity';
 
 @Injectable()
 export class SeedingService {
@@ -40,6 +41,7 @@ export class SeedingService {
         queryRunner.manager.getRepository(Permission);
       const adminRepository = queryRunner.manager.getRepository(Admin);
       const appRepository = queryRunner.manager.getRepository(App);
+      const customerRepository = queryRunner.manager.getRepository(Customer);
 
       const apps = await appRepository.find();
       await appRepository.remove(apps);
@@ -71,10 +73,14 @@ export class SeedingService {
       // -- End of Seeding permissions
 
       // -- Seed default app
+      const newCustomer = customerRepository.create({
+        email: defaultAdmin.email,
+      });
+      const customer = await customerRepository.save(newCustomer);
       const newApp = appRepository.create({
         ...defaultApp,
         scopes: newPerms,
-        customer: { email: defaultAdmin.email },
+        customer,
       });
       const app = await appRepository.save(newApp);
       this.seederEvents.emit(BootEvents.CREATED_ADMIN_APP, app);
@@ -87,11 +93,11 @@ export class SeedingService {
       await adminRepository.save(superAdmin);
       // send otp
       this.seederEvents.emit(MailEvents.PUSH_MAIL, {
-        html: `Welcome! Here are the app credentials: <b>
-          otp: ${defaultAdmin.otp.toString()} <br>
-          password: ${defaultAdmin.password} </b>
-          name: ${app.name}
-          publicKey: ${app.publicKey}
+        html: `Welcome! Here is your app credentials: <br>
+          <b>otp:</b> ${defaultAdmin.otp.toString()} <br>
+          <b>password:</b> ${defaultAdmin.password} <br>
+          <b>name:</b> ${app.name} <br>
+          <b>publicKey:</b> ${app.publicKey} <br>
           `,
         subject: 'Your app is setup 🏁',
         email: defaultAdmin.email,
