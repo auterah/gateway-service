@@ -1,15 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import Admin from 'src/modules/admin/admin.entity';
-import { defaultAdmin } from 'src/modules/admin/constants/default_admins';
+import { defaultAdmin } from 'src/database/mocks/default_admins';
 import {
   canSendBulkMails,
   canSendSingleMail,
   canTrackOpenMail,
-} from 'src/modules/authorization/constants/default_permissions';
+} from 'src/database/mocks/default_permissions';
 import Permission from 'src/modules/authorization/permission/permission.entity';
 import Role from 'src/modules/authorization/role/role.entity';
-import { optMailTemplate } from 'src/modules/email/templates/auth';
 import { Roles } from 'src/shared/enums/roles';
 import { BootEvents } from 'src/shared/events/local.events';
 import { MailEvents } from 'src/shared/events/mail.events';
@@ -17,9 +16,13 @@ import { PermissionEvents } from 'src/shared/events/permission.events';
 import { RoleEvents } from 'src/shared/events/roles.events';
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import App from 'src/modules/app/entities/app.entity';
+import { CryptoUtil } from 'src/shared/utils/crypto';
+import { defaultApp } from '../mocks/default_app';
 
 @Injectable()
 export class SeedingService {
+  private logger = new Logger(SeedingService.name);
   constructor(
     private readonly dataSource: DataSource,
     private readonly seederEvents: EventEmitter2,
@@ -36,6 +39,10 @@ export class SeedingService {
       const permissionRepository =
         queryRunner.manager.getRepository(Permission);
       const adminRepository = queryRunner.manager.getRepository(Admin);
+      const appRepository = queryRunner.manager.getRepository(App);
+
+      const apps = await appRepository.find();
+      await appRepository.remove(apps);
 
       const roles = await roleRepository.find();
       await roleRepository.remove(roles);
@@ -63,6 +70,16 @@ export class SeedingService {
       this.seederEvents.emit(PermissionEvents.SEEDED, newPerms);
       // -- End of Seeding permissions
 
+      // -- Seed default app
+      const newApp = appRepository.create({
+        ...defaultApp,
+        scopes: newPerms,
+        customer: { email: defaultAdmin.email },
+      });
+      const app = await appRepository.save(newApp);
+      this.seederEvents.emit(BootEvents.CREATED_ADMIN_APP, app);
+      // -- End of Seeding default app
+
       // -- Seed superadmin
       const superAdmin = adminRepository.create(defaultAdmin);
       const salt = await bcrypt.genSalt();
@@ -70,8 +87,13 @@ export class SeedingService {
       await adminRepository.save(superAdmin);
       // send otp
       this.seederEvents.emit(MailEvents.PUSH_MAIL, {
-        html: `<b>otp: ${defaultAdmin.otp.toString()} <br> password: ${defaultAdmin.password} </b> `,
-        subject: 'Here is your OTP',
+        html: `Welcome! Here are the app credentials: <b>
+          otp: ${defaultAdmin.otp.toString()} <br>
+          password: ${defaultAdmin.password} </b>
+          name: ${app.name}
+          publicKey: ${app.publicKey}
+          `,
+        subject: 'Your app is setup 🏁',
         email: defaultAdmin.email,
       });
       // this.seederEvents.emit(
@@ -84,6 +106,7 @@ export class SeedingService {
       return true;
     } catch (e) {
       await queryRunner.rollbackTransaction();
+      this.logger.error(`Error seeding default records: ${JSON.stringify(e)}`);
       throw e;
     } finally {
       await queryRunner.release();

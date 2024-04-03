@@ -1,5 +1,5 @@
+import Role from 'src/modules/authorization/role/role.entity';
 import { Roles } from 'src/shared/enums/roles';
-import Role from '../role/role.entity';
 
 export const adminRole: Partial<Role> = {
   role: Roles.ADMIN,

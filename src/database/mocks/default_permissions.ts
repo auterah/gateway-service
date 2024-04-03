@@ -1,5 +1,5 @@
 import { configs } from 'config/config.env';
-import Permission from '../permission/permission.entity';
+import Permission from '../../modules/authorization/permission/permission.entity';
 
 export const canSendSingleMail: Partial<Permission> = {
   name: 'Mail Action',

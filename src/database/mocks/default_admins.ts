@@ -1,5 +1,5 @@
 import { configs } from 'config/config.env';
-import Admin from '../admin.entity';
+import Admin from '../../modules/admin/admin.entity';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { CryptoUtil } from 'src/shared/utils/crypto';
 

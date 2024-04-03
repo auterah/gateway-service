@@ -78,9 +78,6 @@ class EnvConfig {
   Q_LOOP_QUEUE_HOST: string;
 
   @IsString()
-  Q_LOOP_PUBLIC_KEY: string;
-
-  @IsString()
   SUPER_ADMIN_EMAIL: string;
 
   static getDefaultObject(): EnvConfig {
@@ -112,7 +109,6 @@ class EnvConfig {
       process.env.REDIS_CONNECTION_URL || 'redis://127.0.0.1:16379';
     obj.Q_LOOP_QUEUE_HOST =
       process.env.Q_LOOP_QUEUE_HOST || 'http://localhost:8001/api/v1';
-    obj.Q_LOOP_PUBLIC_KEY = process.env.Q_LOOP_PUBLIC_KEY;
     obj.SUPER_ADMIN_EMAIL = process.env.SUPER_ADMIN_EMAIL;
 
     return obj;
