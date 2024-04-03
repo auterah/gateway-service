@@ -83,7 +83,7 @@ export class SeedingService {
         customer,
       });
       const app = await appRepository.save(newApp);
-      this.seederEvents.emit(BootEvents.CREATED_ADMIN_APP, app);
+      this.seederEvents.emit(BootEvents.ADMIN_APP_IS_SET, app);
       // -- End of Seeding default app
 
       // -- Seed superadmin

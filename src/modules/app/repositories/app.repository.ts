@@ -5,6 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import App from '../entities/app.entity';
 import { CustomerRepository } from 'src/modules/customer/customer.repository';
 import { AppDto } from '../dtos/newapp.dto';
+import { defaultAdmin } from 'src/database/mocks/default_admins';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { BootEvents } from 'src/shared/events/local.events';
 
 @Injectable()
 export class AppRepository {
@@ -12,7 +15,10 @@ export class AppRepository {
     @InjectRepository(App)
     private readonly appEntity: Repository<App>,
     private readonly customerRepo: CustomerRepository,
-  ) {}
+    private readonly appEvent: EventEmitter2,
+  ) {
+    this.memorizeAdminApp();
+  }
 
   // Create App
   async create(newApp: AppDto): Promise<App> {
@@ -66,5 +72,21 @@ export class AppRepository {
 
   save(app: Partial<App>): Promise<App> {
     return this.appEntity.save(app);
+  }
+
+  // Find App By Customer Email
+  async findAppByCustomerEmail(email: string): Promise<App> {
+    const app: App = await this.appEntity.manager
+      .getRepository<App>(App)
+      .createQueryBuilder('apps')
+      .leftJoinAndSelect('apps.customer', 'customer')
+      .where('customer.email = :email', { email })
+      .getOne();
+    return app;
+  }
+
+  async memorizeAdminApp() {
+    const app = await this.findAppByCustomerEmail(defaultAdmin.email);
+    this.appEvent.emit(BootEvents.ADMIN_APP_IS_SET, app); // Use GLOBAL variable instead of event emitter
   }
 }

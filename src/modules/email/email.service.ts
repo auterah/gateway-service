@@ -11,7 +11,7 @@ export class EmailService {
   private logger = new Logger(EmailService.name);
   private adminApp: App;
 
-  @OnEvent(BootEvents.CREATED_ADMIN_APP)
+  @OnEvent(BootEvents.ADMIN_APP_IS_SET)
   setupadminApp(adminApp: App) {
     this.adminApp = adminApp;
   }
