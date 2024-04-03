@@ -34,8 +34,6 @@ jobs:
             cd ${{ secrets.APP_PATH }} && \
             # upload new ENV
             echo "${{secrets.ENV}}" > .env && \
-            # upload new HTACCESS
-            echo "${{secrets.HTACCESS}}" > .htaccess && \
             # install npm packages
             npm install
             # remove git folders
