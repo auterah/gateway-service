@@ -148,7 +148,7 @@ export class AuthService {
       verifyOtpDto.email,
     );
 
-    if (customer.otp) {
+    if (customer.verified) {
       throw new HttpException('Already verified', HttpStatus.BAD_REQUEST);
     }
 
@@ -161,7 +161,7 @@ export class AuthService {
     return { ...customer, tokens: { accessToken } };
   }
 
-  async signInAdmin(signAdminToken: SignAdminToken) {
+  async requestSuperadminOTP(signAdminToken: SignAdminToken) {
     const admin = await this.adminService.findOneByEmail(signAdminToken.email);
 
     if (!admin) {
@@ -190,7 +190,7 @@ export class AuthService {
     return { ...admin, tokens: { accessToken } };
   }
 
-  async verifyAdminOtp(verifyOtpDto: VerifyOtpDto) {
+  async verifySuperadminOtp(verifyOtpDto: VerifyOtpDto) {
     const admin = await this.adminService.findOneByEmail(verifyOtpDto.email);
 
     if (admin.verified) {

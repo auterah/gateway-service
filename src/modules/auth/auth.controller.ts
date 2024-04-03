@@ -64,15 +64,15 @@ export class AuthController {
     return customer;
   }
 
-  // Sign Admin token.
+  // Request admin OTP
   @Post('admin')
-  signInAdmin(@Body() payload: SignAdminToken) {
-    return this.authService.signInAdmin(payload);
+  requestSuperadminOTP(@Body() payload: SignAdminToken) {
+    return this.authService.requestSuperadminOTP(payload);
   }
 
   // Verify OTP
   @Post('admin/verify-otp')
-  verifyAdminOtp(@Body() payload: VerifyOtpDto) {
-    return this.authService.verifyAdminOtp(payload);
+  verifySuperadminOtp(@Body() payload: VerifyOtpDto) {
+    return this.authService.verifySuperadminOtp(payload);
   }
 }
