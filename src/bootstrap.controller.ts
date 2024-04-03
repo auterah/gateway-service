@@ -16,8 +16,8 @@ export class BootController {
     return 'Setup in progress... 🚩';
   }
 
-  // @Get('status')
-  // getHealthTalk(): string {
-  //   return this.bootService.exeHealthTalk();
-  // }
+  @Get('status')
+  getHealthTalk(): string {
+    return this.bootService.exeHealthTalk();
+  }
 }
