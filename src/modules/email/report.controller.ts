@@ -7,11 +7,11 @@ import App from '../app/entities/app.entity';
 import { ActionsGuard } from '../auth/guards/actions_guard';
 
 @Controller('reports')
+@UseGuards(ActionsGuard)
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
   @Get()
-  @UseGuards(ActionsGuard)
   getReportsByApp(
     @Query() queries: FindDataRequestDto,
     @GetCurrentApp() app: App,
@@ -20,7 +20,6 @@ export class ReportController {
   }
 
   @Get('id/:id')
-  @UseGuards(ActionsGuard)
   getSingleReportsByApp(
     @Query() queries: FindDataRequestDto,
     @Param('id') id: string,
@@ -28,4 +27,7 @@ export class ReportController {
   ) {
     return this.reportService.findSingleRecordByAppId(app.id);
   }
+
+  @Get('all')
+  getReportsByAdmin(@Query() queries: FindDataRequestDto) {}
 }
