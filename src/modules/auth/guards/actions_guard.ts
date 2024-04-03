@@ -87,7 +87,9 @@ export class ActionsGuard implements CanActivate {
 
       if (!request.url.includes('scopes')) {
         //
-        const permitted = app.scopes.find((e) => e.target == request.url);
+        const permitted = app.scopes.find((e) =>
+          request.url.includes(e.target),
+        );
 
         if (!permitted) {
           throw new HttpException(

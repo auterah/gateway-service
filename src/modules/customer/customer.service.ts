@@ -67,6 +67,11 @@ export class CustomerService {
     return update;
   }
 
+  // Update Customer By email
+  updateOneByEmail(email: string, updates: Partial<Customer>): Promise<any> {
+    return this.customerRepo.updateOneByEmail(email, updates);
+  }
+
   async save(customer: Customer): Promise<Customer> {
     return this.customerRepo.save(customer);
   }

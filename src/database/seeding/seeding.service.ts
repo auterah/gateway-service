@@ -2,11 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import Admin from 'src/modules/admin/admin.entity';
 import { defaultAdmin } from 'src/database/mocks/default_admins';
-import {
-  canSendBulkMails,
-  canSendSingleMail,
-  canTrackOpenMail,
-} from 'src/database/mocks/default_permissions';
 import Permission from 'src/modules/authorization/permission/permission.entity';
 import Role from 'src/modules/authorization/role/role.entity';
 import { Roles } from 'src/shared/enums/roles';
@@ -17,9 +12,9 @@ import { RoleEvents } from 'src/shared/events/roles.events';
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import App from 'src/modules/app/entities/app.entity';
-import { CryptoUtil } from 'src/shared/utils/crypto';
 import { defaultApp } from '../mocks/default_app';
 import Customer from 'src/modules/customer/customer.entity';
+import { defaultPermissions } from '../mocks/default_permissions';
 
 @Injectable()
 export class SeedingService {
@@ -64,15 +59,16 @@ export class SeedingService {
       // -- End of Seeding roles
 
       // -- Seed permissions
-      const perm1 = permissionRepository.create(canSendSingleMail);
-      const perm2 = permissionRepository.create(canSendBulkMails);
-      const perm3 = permissionRepository.create(canTrackOpenMail);
-
-      const newPerms = await permissionRepository.save([perm1, perm2, perm3]);
+      const _permissions = [];
+      for (const perm of defaultPermissions) {
+        const permission = permissionRepository.create(perm);
+        _permissions.push(permission);
+      }
+      const newPerms = await permissionRepository.save(_permissions);
       this.seederEvents.emit(PermissionEvents.SEEDED, newPerms);
       // -- End of Seeding permissions
 
-      // -- Seed default app
+      // -- Seed Admin app
       const newCustomer = customerRepository.create({
         email: defaultAdmin.email,
       });
@@ -84,7 +80,7 @@ export class SeedingService {
       });
       const app = await appRepository.save(newApp);
       this.seederEvents.emit(BootEvents.ADMIN_APP_IS_SET, app);
-      // -- End of Seeding default app
+      // -- End of Seeding Admin app
 
       // -- Seed superadmin
       const superAdmin = adminRepository.create(defaultAdmin);

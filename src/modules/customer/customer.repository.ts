@@ -79,6 +79,11 @@ export class CustomerRepository {
     return this.customerRepo.update({ id }, updates);
   }
 
+  // Update Customer By email
+  updateOneByEmail(email: string, updates: Partial<Customer>): Promise<any> {
+    return this.customerRepo.update({ email }, updates);
+  }
+
   async save(customer: Customer): Promise<Customer> {
     return this.customerRepo.save(customer);
   }

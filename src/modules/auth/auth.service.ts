@@ -202,6 +202,9 @@ export class AuthService {
     }
 
     admin.verified = true;
+    await this.customerService.updateOneByEmail(admin.email, {
+      verified: true,
+    });
     await this.adminService.update(admin.id, admin);
   }
 }
