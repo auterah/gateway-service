@@ -13,7 +13,7 @@ export interface ResultSetMeta {
 
 export interface PaginationData {
   records?: [];
-  meta: {
+  pagination: {
     totalItems: number;
     totalPages: number;
     currentPage: number;

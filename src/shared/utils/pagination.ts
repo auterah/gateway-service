@@ -31,7 +31,7 @@ export const calculate_pagination_data = (
 
   return {
     records,
-    meta: {
+    pagination: {
       totalItems,
       totalPages,
       currentPage,
