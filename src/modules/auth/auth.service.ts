@@ -148,10 +148,6 @@ export class AuthService {
       verifyOtpDto.email,
     );
 
-    if (customer.verified) {
-      throw new HttpException('Already verified', HttpStatus.BAD_REQUEST);
-    }
-
     if (!customer || (customer && customer.otp != verifyOtpDto.otp)) {
       throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
     }

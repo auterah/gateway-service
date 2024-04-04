@@ -47,8 +47,9 @@ export class AuthController {
 
   // Request customer OTP
   @Post('2')
-  requestCustomerOTP(@Body() payload: OtpSignInDto) {
-    return this.authService.requestCustomerOTP(payload);
+  async requestCustomerOTP(@Body() payload: OtpSignInDto) {
+    await this.authService.requestCustomerOTP(payload);
+    return `Kindly check your mailbox for the OTP`;
   }
 
   // Verify Customer OTP
