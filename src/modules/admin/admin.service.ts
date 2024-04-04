@@ -1,19 +1,25 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { RoleService } from '../authorization/role/role.service';
 import { AdminRepository } from './admin.repository';
 import { AdminDto } from './dtos/admin.dto';
 import Admin from './admin.entity';
 import { PaginationData } from 'src/shared/types/pagination';
+import { SettingService } from '../Setting/setting.service';
+import { SmtpDto } from './dtos/smtp.dto';
+import Setting from '../Setting/setting.entity';
+import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { AdminEvents } from 'src/shared/events/admin.events';
 
 @Injectable()
 export class AdminService {
   constructor(
     private readonly adminRepository: AdminRepository,
     private readonly roleService: RoleService,
+    private readonly settingService: SettingService,
+    private readonly adminEvents: EventEmitter2,
   ) {}
 
   // Add New Admin
@@ -59,5 +65,34 @@ export class AdminService {
   async update(id: string, updates: Partial<Admin>): Promise<any> {
     const update = await this.adminRepository.update(id, updates);
     return update;
+  }
+
+  async addSMTPConfigs(smtpDto: SmtpDto): Promise<void> {
+    const smtps: Partial<Setting>[] = [];
+
+    for (const key in smtpDto) {
+      if (Object.prototype.hasOwnProperty.call(smtpDto, key)) {
+        const value = smtpDto[key];
+        smtps.push({
+          value,
+          name: `SMTP ${key.toUpperCase()}`,
+          type: 'smtp',
+          skey: `smtp_${key}`,
+          length: 'short',
+        });
+      }
+    }
+    const records = await this.settingService.addMany(smtps);
+    if (records.length) {
+      this.adminEvents.emit(AdminEvents.SMTP_SET);
+    }
+  }
+
+  // Fetch All Configs
+  findAllConfigRecords(findOpts: FindDataRequestDto): Promise<PaginationData> {
+    return this.settingService.findAllRecords({
+      skip: Number(findOpts.skip || '0'),
+      take: Number(findOpts.take || '10'),
+    });
   }
 }

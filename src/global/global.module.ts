@@ -7,6 +7,5 @@ import { AuthorizationModule } from 'src/modules/authorization/authorization.mod
   providers: [ConfigService],
   exports: [ConfigService, AuthorizationModule],
   imports: [AuthorizationModule],
-  controllers: [],
 })
 export class GlobalModule {}

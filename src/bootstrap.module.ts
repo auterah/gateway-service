@@ -13,6 +13,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { SeedingModule } from './database/seeding/seeding.module';
 import { BootService } from './bootstrap.service';
 import { BootController } from './bootstrap.controller';
+import { SeedingService } from './database/seeding/seeding.service';
 
 @Module({
   imports: [
@@ -40,6 +41,6 @@ import { BootController } from './bootstrap.controller';
     SeedingModule,
   ],
   controllers: [BootController],
-  providers: [BootService, AuthService],
+  providers: [BootService, AuthService, SeedingService],
 })
 export class AppModule {}

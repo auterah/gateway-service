@@ -1,21 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import Setting from './setting.entity';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { calculate_pagination_data } from 'src/shared/utils/pagination';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { PaginationData } from 'src/shared/types/pagination';
 import { MailEvents } from 'src/shared/events/mail.events';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { SettingRepository } from './setting.repository';
+import { AdminEvents } from 'src/shared/events/admin.events';
 
 @Injectable()
 export class SettingService {
   private logger = new Logger(SettingService.name);
   constructor(
-    @InjectRepository(Setting)
-    private readonly settingRepo: Repository<Setting>,
+    private readonly settingRepo: SettingRepository,
     private event: EventEmitter2,
   ) {
     // this.retrieveMailCredentials();
+  }
+
+  // Add new setting
+  addSetting(newSet: Partial<Setting>): Promise<Setting> {
+    return this.settingRepo.create(newSet);
+  }
+
+  async addMany(newSettings: Partial<Setting>[]): Promise<Setting[]> {
+    return this.settingRepo.createMany(newSettings);
   }
 
   // Find Setting By Skey
@@ -32,17 +40,10 @@ export class SettingService {
   async findAllRecords(
     findOpts: FindManyOptions<Setting>,
   ): Promise<PaginationData> {
-    const take = Number(findOpts.take || '10');
-    const skip = Number(findOpts.skip || '0');
-
-    const apps = await this.settingRepo.findAndCount({
-      ...findOpts,
-      take,
-      skip,
-    });
-    return calculate_pagination_data(apps, skip, take);
+    return this.settingRepo.findAllRecords(findOpts);
   }
 
+  @OnEvent(AdminEvents.SMTP_SET)
   async retrieveMailCredentials() {
     this.logger.debug('Setting up SMTP configs...');
 
@@ -69,7 +70,9 @@ export class SettingService {
       this.logger.debug('SMTP Configs are ready for use! 🎯🎯🎯🎯🎯🎯🎯🎯🎯');
       this.event.emit(MailEvents.SET_SMTP, smtpCredentials);
     } catch (e) {
-      this.logger.error(`getSettingsVarsError: ${JSON.stringify(e)}`);
+      this.logger.error(
+        `${this.retrieveMailCredentials.name}: ${JSON.stringify(e)}`,
+      );
     }
   }
 }

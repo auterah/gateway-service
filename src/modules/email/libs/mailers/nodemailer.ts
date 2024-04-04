@@ -40,10 +40,17 @@ export class Nodemailer implements IEmailService {
     this.logger = new Logger(Nodemailer.name);
     this.templateEngine = new HBSProvider();
     global.DATA_BASE_STATUS = false;
+    this.connection()
   }
 
   @OnEvent(MailEvents.SET_SMTP)
-  async connection(configs?: ISMTPConfigs): Promise<void> {
+  async connection(_configs?: ISMTPConfigs): Promise<void> {
+    const configs: any = {}
+
+    configs.host = 'smtp.gmail.com';
+    configs.port = '587';
+    configs.username = 'farmassite@gmail.com';
+    configs.password = 'cwxpwmbfnxbihnnv';
     this.sender = `<${configs.username}>`;
     this.smtpDomain = EmailUtils.getSmtpDomain(configs.host);
 
