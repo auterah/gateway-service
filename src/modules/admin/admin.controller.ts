@@ -26,4 +26,9 @@ export class AdminController {
   getConfigs(@Query() queries: FindDataRequestDto) {
     return this.adminService.findAllConfigRecords(queries);
   }
+
+  @Get('test')
+  testAdmin() {
+    return 'Testing admin'
+  }
 }
