@@ -104,7 +104,8 @@ export class SeedingService {
       this.seederEvents.emit(MailEvents.PUSH_MAIL, mail);
       const mailer = await this.mailer.sendMail({
         to: mail.email,
-        ...mail
+        from: '<noreply@crossriverpay.com>',
+        ...mail,
       });
 
       // this.seederEvents.emit(

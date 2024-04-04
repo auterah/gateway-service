@@ -22,7 +22,7 @@ export class EmailService {
   @OnEvent(MailEvents.PUSH_MAIL)
   async sendMail(data) {
     try {
-      const mailer = await this.mailer.sendMail(data);
+      // const mailer = await this.mailer.sendMail(data);
 
       // await HttpRequestHandler.fetch({
       //   url: `${configs.Q_LOOP_QUEUE_HOST}/emails/send`,
