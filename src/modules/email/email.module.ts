@@ -6,10 +6,18 @@ import { MailTnxRepository } from './repositories/mail_tnx.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import MailTransaction from './entities/mail_transaction.entity';
 import Email from './entities/email.entity';
+import { EmailProcessorFactory } from './factory';
+import { Nodemailer } from './libs/mailers/nodemailer';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MailTransaction, Email])],
-  providers: [EmailService, ReportService, MailTnxRepository],
+  providers: [
+    EmailService,
+    ReportService,
+    MailTnxRepository,
+    EmailProcessorFactory,
+    Nodemailer,
+  ],
   controllers: [ReportController],
 })
 export class EmailModule {}
