@@ -40,17 +40,10 @@ export class Nodemailer implements IEmailService {
     this.logger = new Logger(Nodemailer.name);
     this.templateEngine = new HBSProvider();
     global.DATA_BASE_STATUS = false;
-    this.connection()
   }
 
   @OnEvent(MailEvents.SET_SMTP)
-  async connection(_configs?: ISMTPConfigs): Promise<void> {
-    const configs: any = {}
-
-    configs.host = 'smtp.gmail.com';
-    configs.port = '587';
-    configs.username = 'farmassite@gmail.com';
-    configs.password = 'cwxpwmbfnxbihnnv';
+  async connection(configs?: ISMTPConfigs): Promise<void> {
     this.sender = `<${configs.username}>`;
     this.smtpDomain = EmailUtils.getSmtpDomain(configs.host);
 
@@ -114,57 +107,27 @@ export class Nodemailer implements IEmailService {
   }
 
   @OnEvent(MailEvents.SEND_MAIL)
-  sendMail(mail: MailOptions): Promise<SendMailResponse> {
-    return new Promise(async (resolve, reject) => {
-      let html;
+  async sendMail(inputs: MailOptions): Promise<void> {
+    const logger = this.logger;
 
-      if (!this.transporter) {
-        return reject({
-          status: 'FAILED',
-          message: `Error connecting to (${this.smtpDomain}) email provider`,
-          ...mail,
-        });
+    if (!this.transporter) {
+      throw new Error('Error connecting to email provider');
+    }
+
+    const html = await this.templateEngine.compileTextToHBS(
+      inputs.html,
+      inputs.data,
+    );
+
+    Object.assign(inputs, { html });
+
+    this.transporter.sendMail(inputs, function (e, info) {
+      // todo: Handle exceptions
+      if (e) {
+        logger.error(e);
+      } else {
+        logger.log(`🚚✨ Email sent successfully =====> ${inputs.to}`);
       }
-
-      if (!(await EmailUtils.validateEmail(mail.to))) {
-        return reject({
-          status: 'FAILED',
-          message: 'Invalid email address',
-          ...mail,
-        });
-      }
-
-      try {
-        html = await this.templateEngine.compileTextToHBS(mail.html, mail.data);
-      } catch (e) {
-        return reject({
-          status: 'FAILED',
-          message: `${this.templateEngine.name} error: ${JSON.stringify(e)}`,
-          ...mail,
-        });
-      }
-
-      mail.html = html;
-      // mail.from = `${mail.from} <${this.sender}>`;
-      mail.from = `${mail.from} <noreply@crossriverpay.com>`;
-      this.transporter.sendMail(mail, (e, info) => {
-        if (e) {
-          this.logger.error(e);
-          return reject({
-            status: 'FAILED',
-            message: e,
-            ...mail,
-          });
-        } else {
-          this.logger.debug(`MessageID: ${info?.messageId}`);
-          this.logger.log(`🚚✨ Email sent successfully =====> ${mail.to}`);
-          return resolve({
-            messageId: info?.messageId,
-            status: 'SENT',
-            ...mail,
-          });
-        }
-      });
     });
   }
 }

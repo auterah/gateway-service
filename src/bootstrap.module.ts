@@ -8,12 +8,12 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AuthService } from './modules/auth/auth.service';
 import { CustomerModule } from './modules/customer/customer.module';
 import { DatabaseModule } from './database/database.module';
-import { SettingModule } from './modules/setting/setting.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { SeedingModule } from './database/seeding/seeding.module';
 import { BootService } from './bootstrap.service';
 import { BootController } from './bootstrap.controller';
 import { SeedingService } from './database/seeding/seeding.service';
+import { SettingModule } from './modules/setting/setting.module';
 
 @Module({
   imports: [

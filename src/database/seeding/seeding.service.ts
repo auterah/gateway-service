@@ -15,7 +15,6 @@ import App from 'src/modules/app/entities/app.entity';
 import { defaultApp } from '../mocks/default_app';
 import Customer from 'src/modules/customer/customer.entity';
 import { defaultPermissions } from '../mocks/default_permissions';
-import { Nodemailer } from 'src/modules/email/libs/mailers/nodemailer';
 
 @Injectable()
 export class SeedingService {
@@ -23,7 +22,6 @@ export class SeedingService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly seederEvents: EventEmitter2,
-    private mailer: Nodemailer,
   ) {}
 
   @OnEvent(BootEvents.SEED_DATABASE)
@@ -90,7 +88,7 @@ export class SeedingService {
       superAdmin.password = await bcrypt.hash(defaultAdmin.password, salt);
       await adminRepository.save(superAdmin);
       // send otp
-      const mail = {
+      this.seederEvents.emit(MailEvents.PUSH_MAIL, {
         html: `Welcome! Here is your app credentials: <br>
           <b>otp:</b> ${defaultAdmin.otp.toString()} <br>
           <b>password:</b> ${defaultAdmin.password} <br>
@@ -99,15 +97,7 @@ export class SeedingService {
           `,
         subject: 'Your app is setup 🏁',
         email: defaultAdmin.email,
-      }
-
-      this.seederEvents.emit(MailEvents.PUSH_MAIL, mail);
-      const mailer = await this.mailer.sendMail({
-        to: mail.email,
-        from: '<noreply@crossriverpay.com>',
-        ...mail,
       });
-
       // this.seederEvents.emit(
       //   MailEvents.PUSH_MAIL,
       //   optMailTemplate(defaultAdmin.otp.toString(), defaultAdmin.email),

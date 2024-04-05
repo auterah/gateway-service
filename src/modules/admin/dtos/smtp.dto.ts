@@ -15,5 +15,5 @@ export class SmtpDto {
 
   @IsString()
   @IsNotEmpty()
-  user: string;
+  username: string;
 }

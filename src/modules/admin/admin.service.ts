@@ -20,7 +20,9 @@ export class AdminService {
     private readonly roleService: RoleService,
     private readonly settingService: SettingService,
     private readonly adminEvents: EventEmitter2,
-  ) {}
+  ) {
+    this.settingService.memorizeSmtpConfigs();
+  }
 
   // Add New Admin
   async addAdmin(adminDto: AdminDto): Promise<Admin> {
@@ -82,7 +84,8 @@ export class AdminService {
         });
       }
     }
-    const records = await this.settingService.addMany(smtps);
+    await this.settingService.delete({ type: 'smtp' });
+    const records = await this.settingService.createMany(smtps);
     if (records.length) {
       this.adminEvents.emit(AdminEvents.SMTP_SET);
     }

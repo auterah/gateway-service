@@ -14,7 +14,7 @@ const app = new Bootstrap({
     'auth/admin',
     'app/init',
     'auth/admin/verify-otp',
-    'admins/:*',
+    'admins/(.*)',
   ],
   logger: {
     // Logger should be setup in a SINGLETON manner. It should be accessible to all services, controllers, modules.

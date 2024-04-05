@@ -7,12 +7,16 @@ import { BootEvents } from 'src/shared/events/local.events';
 import { EmailProcessorFactory } from './factory';
 import { EmailProcessors } from 'src/shared/enums';
 import { Nodemailer } from './libs/mailers/nodemailer';
+import { IEmailService } from './interfaces';
 
 @Injectable()
 export class EmailService {
   private logger = new Logger(EmailService.name);
   private adminApp: App;
-  constructor(private mailer: Nodemailer) {}
+  private mailer: IEmailService;
+  constructor(private factory: EmailProcessorFactory) {
+    this.mailer = this.factory.findOne(EmailProcessors.NODE_MAILER);
+  }
 
   @OnEvent(BootEvents.ADMIN_APP_IS_SET)
   setupadminApp(adminApp: App) {
@@ -22,7 +26,7 @@ export class EmailService {
   @OnEvent(MailEvents.PUSH_MAIL)
   async sendMail(data) {
     try {
-      // const mailer = await this.mailer.sendMail(data);
+      await this.mailer.sendMail(data);
 
       // await HttpRequestHandler.fetch({
       //   url: `${configs.Q_LOOP_QUEUE_HOST}/emails/send`,

@@ -1,29 +1,45 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import Setting from './setting.entity';
-import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { calculate_pagination_data } from 'src/shared/utils/pagination';
 import { PaginationData } from 'src/shared/types/pagination';
 import { MailEvents } from 'src/shared/events/mail.events';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { SettingRepository } from './setting.repository';
 import { AdminEvents } from 'src/shared/events/admin.events';
+
+type MailerCredentials = {
+  username: string;
+  host: string;
+  password: string;
+  port: string;
+};
 
 @Injectable()
 export class SettingService {
   private logger = new Logger(SettingService.name);
   constructor(
-    private readonly settingRepo: SettingRepository,
+    @InjectRepository(Setting)
+    private readonly settingRepo: Repository<Setting>,
     private event: EventEmitter2,
-  ) {
-    // this.retrieveMailCredentials();
-  }
+  ) {}
 
-  // Add new setting
-  addSetting(newSet: Partial<Setting>): Promise<Setting> {
-    return this.settingRepo.create(newSet);
-  }
+  // Create
+  // create(newSet: Partial<Setting>): Promise<Setting> {
+  //   const setting = this.settingRepo.create(newSet);
+  //   return this.settingRepo.save(setting);
+  // }
 
-  async addMany(newSettings: Partial<Setting>[]): Promise<Setting[]> {
-    return this.settingRepo.createMany(newSettings);
+  // Create many
+  createMany(newSettings: Partial<Setting>[]): Promise<Setting[]> {
+    const settings: Partial<Setting>[] = [];
+
+    for (const newSet of newSettings) {
+      const setting = this.settingRepo.create(newSet);
+      settings.push(setting);
+    }
+
+    return this.settingRepo.save(settings);
   }
 
   // Find Setting By Skey
@@ -40,11 +56,19 @@ export class SettingService {
   async findAllRecords(
     findOpts: FindManyOptions<Setting>,
   ): Promise<PaginationData> {
-    return this.settingRepo.findAllRecords(findOpts);
+    const take = Number(findOpts.take || '10');
+    const skip = Number(findOpts.skip || '0');
+
+    const apps = await this.settingRepo.findAndCount({
+      ...findOpts,
+      take,
+      skip,
+    });
+    return calculate_pagination_data(apps, skip, take);
   }
 
   @OnEvent(AdminEvents.SMTP_SET)
-  async retrieveMailCredentials() {
+  async memorizeSmtpConfigs() {
     this.logger.debug('Setting up SMTP configs...');
 
     try {
@@ -70,9 +94,13 @@ export class SettingService {
       this.logger.debug('SMTP Configs are ready for use! 🎯🎯🎯🎯🎯🎯🎯🎯🎯');
       this.event.emit(MailEvents.SET_SMTP, smtpCredentials);
     } catch (e) {
-      this.logger.error(
-        `${this.retrieveMailCredentials.name}: ${JSON.stringify(e)}`,
-      );
+      this.logger.error(e);
     }
   }
+
+  // Delete Settings
+  async delete(setting: Partial<Setting>): Promise<void> {
+    await this.settingRepo.delete(setting);
+  }
+
 }
