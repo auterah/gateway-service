@@ -27,15 +27,6 @@ export class EmailService {
   async sendMail(data) {
     try {
       await this.mailer.sendMail(data);
-
-      // await HttpRequestHandler.fetch({
-      //   url: `${configs.Q_LOOP_QUEUE_HOST}/emails/send`,
-      //   method: 'PATCH',
-      //   data,
-      //   headers: {
-      //     'x-api-key': this.adminApp.publicKey,
-      //   },
-      // });
     } catch (e) {
       this.logger.error(`Error sending mail:`, JSON.stringify(e));
     }
