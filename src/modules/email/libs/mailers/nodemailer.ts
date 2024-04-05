@@ -95,7 +95,10 @@ export class Nodemailer implements IEmailService {
           e
             ? {
                 status: false,
-                message: `Error connecting to ${__this.smtpDomain} service! ❌❌❌❌❌`,
+                message: JSON.stringify({
+                  message: `Error connecting to ${__this.smtpDomain} service! ❌❌❌❌❌`,
+                  reason: e?.response,
+                }),
               }
             : {
                 status: true,
