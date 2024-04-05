@@ -28,11 +28,19 @@ export default class App {
   @ManyToOne(() => Customer, (customer) => customer.apps)
   customer: Customer;
 
-  @ManyToMany(() => Permission, (perm) => perm.role, {
-    eager: true,
-    onDelete: 'CASCADE',
-  })
+  @ManyToMany(() => Permission, (perm) => perm.role, { eager: true })
   @JoinTable()
   scopes: Permission[];
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  cost: number;
+
+  @Column({ default: 0 })
+  sentScore: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

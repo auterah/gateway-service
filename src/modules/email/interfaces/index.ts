@@ -47,7 +47,7 @@ export type SendMailResponse = {
 export interface IEmailService {
   isConnected: boolean | null;
   connection(credentials: any): Promise<void>;
-  sendMail(inputs: MailOptions): Promise<SendMailResponse>;
+  sendMail(inputs: MailOptions): Promise<void>;
 }
 
 export type MQTTTopics = keyof typeof MQTT_TOPICS;

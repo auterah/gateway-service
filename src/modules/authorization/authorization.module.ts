@@ -10,10 +10,7 @@ import { PermissionRepository } from './permission/permission.repository';
 import { RoleRepository } from './role/role.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Role]),
-    TypeOrmModule.forFeature([Permission]),
-  ],
+  imports: [TypeOrmModule.forFeature([Role, Permission])],
   controllers: [RoleController, PermissionController],
   providers: [
     RoleService,

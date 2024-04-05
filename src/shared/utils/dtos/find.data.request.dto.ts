@@ -57,4 +57,8 @@ export class FindDataRequestDto {
 
   @IsOptional()
   year2?: string;
+
+  @IsOptional()
+  @IsString()
+  app_id: string;
 }

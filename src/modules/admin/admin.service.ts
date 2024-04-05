@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { DataSource, FindManyOptions, FindOneOptions } from 'typeorm';
 import { RoleService } from '../authorization/role/role.service';
 import { AdminRepository } from './admin.repository';
 import { AdminDto } from './dtos/admin.dto';
@@ -12,15 +12,21 @@ import Setting from '../setting/setting.entity';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AdminEvents } from 'src/shared/events/admin.events';
+import { BillingDto } from './dtos/billing.dto';
+import { AppService } from '../app/app.service';
+import App from '../app/entities/app.entity';
 
 @Injectable()
 export class AdminService {
   constructor(
+    private readonly adminEvents: EventEmitter2,
     private readonly adminRepository: AdminRepository,
     private readonly roleService: RoleService,
     private readonly settingService: SettingService,
-    private readonly adminEvents: EventEmitter2,
-  ) {}
+    private readonly dataSource: DataSource,
+  ) {
+    this.settingService.memorizeSmtpConfigs();
+  }
 
   // Add New Admin
   async addAdmin(adminDto: AdminDto): Promise<Admin> {
@@ -82,7 +88,8 @@ export class AdminService {
         });
       }
     }
-    const records = await this.settingService.addMany(smtps);
+    await this.settingService.delete({ type: 'smtp' });
+    const records = await this.settingService.createMany(smtps);
     if (records.length) {
       this.adminEvents.emit(AdminEvents.SMTP_SET);
     }
@@ -94,5 +101,70 @@ export class AdminService {
       skip: Number(findOpts.skip || '0'),
       take: Number(findOpts.take || '10'),
     });
+  }
+
+  // Set Billings
+  async setBilling(billingDto: BillingDto): Promise<Setting | Partial<App>> {
+    const cost = billingDto.cost.toString();
+    const _type = 'billing';
+    if (billingDto.appId) {
+      const queryRunner = this.dataSource.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      const appRepository = queryRunner.manager.getRepository(App);
+      appRepository.update({ id: billingDto.appId }, { cost: +cost });
+
+      await queryRunner.commitTransaction();
+      const { scopes, privateKey, publicKey, ...app } =
+        await appRepository.findOne({
+          where: { id: billingDto.appId },
+        });
+      return app;
+    }
+
+    const billing = await this.settingService.findOne({
+      where: { type: _type },
+    });
+
+    if (billing) {
+      billing.value = cost;
+      await this.settingService.updateOne({ id: billing.id }, billing);
+      return billing;
+    }
+    return this.settingService.create({
+      skey: 'mail_billing_cost',
+      value: cost,
+      name: 'Mail Billing Cost',
+      type: _type,
+      length: 'short',
+    });
+  }
+
+  // Fetch Billings
+  async getBillings(): Promise<Setting> {
+    return this.settingService.findByType('billing');
+  }
+
+  // Fetch App Billings
+  async getAppBillings(appId: string): Promise<Partial<App>> {
+    if (appId) {
+      const queryRunner = this.dataSource.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      const appRepository = queryRunner.manager.getRepository(App);
+
+      await queryRunner.commitTransaction();
+      const { scopes, privateKey, publicKey, ...app } =
+        await appRepository.findOne({
+          where: { id: appId },
+        });
+      return app;
+    }
+    throw new HttpException(
+      'App required. Specify app_id',
+      HttpStatus.BAD_REQUEST,
+    );
   }
 }
