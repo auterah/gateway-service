@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminRepository } from './admin.repository';
 import Admin from './admin.entity';
 import { AdminService } from './admin.service';
-import { SettingService } from '../setting/setting.service';
-import Setting from '../setting/setting.entity';
+import { SettingService } from '../Setting/setting.service';
+import Setting from '../Setting/setting.entity';
 import { AdminController } from './admin.controller';
 
 @Module({

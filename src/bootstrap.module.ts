@@ -13,7 +13,7 @@ import { SeedingModule } from './database/seeding/seeding.module';
 import { BootService } from './bootstrap.service';
 import { BootController } from './bootstrap.controller';
 import { SeedingService } from './database/seeding/seeding.service';
-import { SettingModule } from './modules/setting/setting.module';
+import { SettingModule } from './modules/Setting/setting.module';
 
 @Module({
   imports: [
