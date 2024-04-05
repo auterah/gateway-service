@@ -1,6 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { calculate_pagination_data } from 'src/shared/utils/pagination';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import App from '../entities/app.entity';
 import { CustomerRepository } from 'src/modules/customer/customer.repository';
@@ -88,5 +93,15 @@ export class AppRepository {
   async memorizeAdminApp() {
     const app = await this.findAppByCustomerEmail(defaultAdmin.email);
     this.appEvent.emit(BootEvents.ADMIN_APP_IS_SET, app); // Use GLOBAL variable instead of event emitter
+  }
+
+  // Update Single App
+  async updateOne(
+    where: FindOptionsWhere<App>,
+    updates: Partial<App>,
+    returnNew = false,
+  ): Promise<App | void> {
+    await this.appEntity.update(where, updates);
+    if (returnNew) return this.appEntity.findOne({ where: { id: where.id } });
   }
 }

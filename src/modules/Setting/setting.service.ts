@@ -1,7 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Setting from './setting.entity';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { calculate_pagination_data } from 'src/shared/utils/pagination';
 import { PaginationData } from 'src/shared/types/pagination';
 import { MailEvents } from 'src/shared/events/mail.events';
@@ -25,10 +30,10 @@ export class SettingService {
   ) {}
 
   // Create
-  // create(newSet: Partial<Setting>): Promise<Setting> {
-  //   const setting = this.settingRepo.create(newSet);
-  //   return this.settingRepo.save(setting);
-  // }
+  create(newSet: Partial<Setting>): Promise<Setting> {
+    const setting = this.settingRepo.create(newSet);
+    return this.settingRepo.save(setting);
+  }
 
   // Create many
   createMany(newSettings: Partial<Setting>[]): Promise<Setting[]> {
@@ -45,6 +50,11 @@ export class SettingService {
   // Find Setting By Skey
   async findByKey(skey: string): Promise<Setting> {
     return this.settingRepo.findOne({ where: { skey } });
+  }
+
+  // Find Setting By Type
+  async findByType(type: string): Promise<Setting> {
+    return this.settingRepo.findOne({ where: { type } });
   }
 
   // Find Single Setting
@@ -103,4 +113,13 @@ export class SettingService {
     await this.settingRepo.delete(setting);
   }
 
+  // Update Setting
+  async updateOne(
+    where: FindOptionsWhere<Setting>,
+    updates: Partial<Setting>,
+    returnNew = false,
+  ): Promise<Setting | void> {
+    await this.settingRepo.update(where, updates);
+    if (returnNew) this.settingRepo.findOne({ where: { id: where.id } });
+  }
 }

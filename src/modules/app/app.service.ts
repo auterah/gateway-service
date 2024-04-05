@@ -1,7 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import App from './entities/app.entity';
 import { AppDto } from './dtos/newapp.dto';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { AppRepository } from './repositories/app.repository';
 import { AppScopeDto } from './dtos/app_scope.dto';
 import { PermissionService } from '../authorization/permission/permission.service';
@@ -100,5 +105,13 @@ export class AppService {
     const permissions = await this.permService.findByIds(scopeDto.scopes, true);
     app.scopes.push(...permissions);
     return this.appRepo.save(app);
+  }
+
+  updateOne(
+    where: FindOptionsWhere<App>,
+    updates: Partial<App>,
+    returnNew = false,
+  ) {
+    return this.appRepo.updateOne(where, updates, returnNew);
   }
 }
