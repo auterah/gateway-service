@@ -104,7 +104,10 @@ export class AppService {
   async addScope(scopeDto: AppScopeDto, app: App) {
     const permissions = await this.permService.findByIds(scopeDto.scopes, true);
     app.scopes.push(...permissions);
-    return this.appRepo.save(app);
+    const result = await this.appRepo.save(app);
+
+    delete result.customer.apps;
+    return result;
   }
 
   updateOne(

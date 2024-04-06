@@ -23,6 +23,7 @@ import { AppScopeDto } from './dtos/app_scope.dto';
 import App from './entities/app.entity';
 import { GetCurrentApp } from 'src/shared/decorators/get_current_app';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
+import { AdminGuard } from '../auth/guards/admin_guard';
 
 @Controller('apps')
 export class AppController {
@@ -53,6 +54,7 @@ export class AppController {
   }
 
   @Get()
+  @UseGuards(AdminGuard)
   getApps(@Query() queries: FindDataRequestDto) {
     const take = Number(queries.take || '10');
     const skip = Number(queries.skip || '0');
@@ -74,6 +76,7 @@ export class AppController {
 
   @Put('scopes')
   @UseGuards(ActionsGuard)
+  @UseGuards(AdminGuard)
   addScope(@Body() scopeDto: AppScopeDto, @GetCurrentApp() app: App) {
     return this.appService.addScope(scopeDto, app);
   }
