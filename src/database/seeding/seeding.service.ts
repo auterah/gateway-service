@@ -71,6 +71,7 @@ export class SeedingService {
       // -- Seed Admin app
       const newCustomer = customerRepository.create({
         email: defaultAdmin.email,
+        role: defaultAdmin.role,
       });
       const customer = await customerRepository.save(newCustomer);
       const newApp = appRepository.create({
