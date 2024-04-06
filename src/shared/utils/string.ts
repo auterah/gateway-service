@@ -1,4 +1,30 @@
 export class StringUtils {
+  private static words = [
+    'apple',
+    'banana',
+    'cherry',
+    'date',
+    'elderberry',
+    'fig',
+    'grape',
+    'kiwi',
+    'lemon',
+    'mango',
+    'nectarine',
+    'orange',
+    'pineapple',
+    'quince',
+    'raspberry',
+    'strawberry',
+    'tangerine',
+    'ugli',
+    'victoria',
+    'watermelon',
+    'xigua',
+    'yellow',
+    'zucchini',
+  ];
+
   static capitalizeWords(str: string) {
     return str.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase());
   }
@@ -19,5 +45,14 @@ export class StringUtils {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+  }
+
+  static generateRandomWord() {
+    const randomIndex = Math.floor(Math.random() * StringUtils.words.length);
+    return (
+      StringUtils.words[randomIndex] +
+      '_' +
+      StringUtils.generateRandomAlphabets(4)
+    );
   }
 }
