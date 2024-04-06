@@ -15,6 +15,13 @@ export class ReportService {
     });
   }
 
+  findAllTransactionRecords(findOpts: FindDataRequestDto) {
+    return this.txnRepo.findAllRecords({
+      skip: Number(findOpts.skip || '0'),
+      take: Number(findOpts.take || '10'),
+    });
+  }
+
   findSingleRecordByAppId(appId: string, tnxId: string) {
     return this.txnRepo.findSingleRecordByAppId(appId, tnxId);
   }

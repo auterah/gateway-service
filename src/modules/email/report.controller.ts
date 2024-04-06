@@ -1,17 +1,17 @@
 import { Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { EmailService } from './email.service';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { ReportService } from './report.service';
 import { GetCurrentApp } from 'src/shared/decorators/get_current_app';
 import App from '../app/entities/app.entity';
 import { ActionsGuard } from '../auth/guards/actions_guard';
+import { AdminGuard } from '../auth/guards/admin_guard';
 
 @Controller('reports')
-@UseGuards(ActionsGuard)
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
   @Get()
+  @UseGuards(ActionsGuard)
   getReportsByApp(
     @Query() queries: FindDataRequestDto,
     @GetCurrentApp() app: App,
@@ -20,6 +20,7 @@ export class ReportController {
   }
 
   @Get('id/:id')
+  @UseGuards(ActionsGuard)
   getSingleReportsByApp(
     @Query() queries: FindDataRequestDto,
     @Param('id') tnxId: string,
@@ -29,5 +30,11 @@ export class ReportController {
   }
 
   @Get('all')
-  getReportsByAdmin(@Query() queries: FindDataRequestDto) {}
+  @UseGuards(AdminGuard)
+  getReportsByAdmin(@Query() queries: FindDataRequestDto) {
+    if (queries.app_id) {
+      return this.reportService.findRecordsByAppId(queries.app_id, queries);
+    }
+    return this.reportService.findAllTransactionRecords(queries);
+  }
 }

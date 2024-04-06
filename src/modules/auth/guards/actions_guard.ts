@@ -40,13 +40,6 @@ export class ActionsGuard implements CanActivate {
     ) {
       const customer = await this.verifyCustomer(request);
       request.currentCustomer = customer;
-    } else if (
-      request.headers['authorization'] &&
-      request.headers['authorization'].includes('Bearer ') &&
-      request.headers['authorization'].includes('Admin')
-    ) {
-      console.log('for admin'); // TODO: VerifyAdmin
-
     } else {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
     }

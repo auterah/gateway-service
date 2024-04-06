@@ -8,16 +8,17 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { SmtpDto } from './dtos/smtp.dto';
 import { AdminService } from './admin.service';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { BillingDto } from './dtos/billing.dto';
-import { GetCurrentApp } from 'src/shared/decorators/get_current_app';
-import App from '../app/entities/app.entity';
+import { AdminGuard } from '../auth/guards/admin_guard';
 
 @Controller('admins')
+@UseGuards(AdminGuard)
 export class AdminController {
   constructor(
     private readonly adminService: AdminService,

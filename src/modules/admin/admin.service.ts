@@ -13,7 +13,6 @@ import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto'
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AdminEvents } from 'src/shared/events/admin.events';
 import { BillingDto } from './dtos/billing.dto';
-import { AppService } from '../app/app.service';
 import App from '../app/entities/app.entity';
 
 @Injectable()
@@ -113,14 +112,21 @@ export class AdminService {
       await queryRunner.startTransaction();
 
       const appRepository = queryRunner.manager.getRepository(App);
+      const found = await appRepository.findOne({
+        where: { id: billingDto.appId },
+      });
+
+      if (!found) {
+        throw new HttpException('Invalid app', HttpStatus.EXPECTATION_FAILED);
+      }
       appRepository.update({ id: billingDto.appId }, { cost: +cost });
 
       await queryRunner.commitTransaction();
-      const { scopes, privateKey, publicKey, ...app } =
-        await appRepository.findOne({
-          where: { id: billingDto.appId },
-        });
-      return app;
+
+      delete found.scopes;
+      delete found.privateKey;
+      delete found.publicKey;
+      return found;
     }
 
     const billing = await this.settingService.findOne({
@@ -155,15 +161,22 @@ export class AdminService {
 
       const appRepository = queryRunner.manager.getRepository(App);
 
+      const found = await appRepository.findOne({
+        where: { id: appId },
+      });
+
       await queryRunner.commitTransaction();
-      const { scopes, privateKey, publicKey, ...app } =
-        await appRepository.findOne({
-          where: { id: appId },
-        });
-      return app;
+
+      if (found) {
+        delete found.scopes;
+        delete found.privateKey;
+        delete found.publicKey;
+        return found;
+      }
+      return null;
     }
     throw new HttpException(
-      'App required. Specify app_id',
+      'App required. Specify app_id=?',
       HttpStatus.BAD_REQUEST,
     );
   }

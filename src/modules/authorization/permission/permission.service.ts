@@ -1,11 +1,13 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import Permission from './permission.entity';
 import { OnEvent } from '@nestjs/event-emitter';
 import { RoleEvents } from 'src/shared/events/roles.events';
 import { PermissionDto } from '../dtos/permission.dto';
 import { PermissionRepository } from './permission.repository';
+import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
+import { PaginationData } from 'src/shared/types/pagination';
 
 @Injectable()
 export class PermissionService {
@@ -35,6 +37,13 @@ export class PermissionService {
   // Find Permission By Action
   findOneByAction(action: string): Promise<Permission> {
     return this.permRepo.findOneByAction(action);
+  }
+
+  // Find All Permission Records
+  findAllRecords(
+    findOpts: FindManyOptions<Permission>,
+  ): Promise<PaginationData> {
+    return this.permRepo.findAllRecords(findOpts);
   }
 
   // Find Permission By Id
