@@ -87,6 +87,8 @@ export class SeedingService {
       const salt = await bcrypt.genSalt();
       superAdmin.password = await bcrypt.hash(defaultAdmin.password, salt);
       await adminRepository.save(superAdmin);
+      console.log({defaultAdmin, superAdmin });
+      
       // send otp
       this.seederEvents.emit(MailEvents.PUSH_MAIL, {
         html: `Welcome! Here is your app credentials: <br>
