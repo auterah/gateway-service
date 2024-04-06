@@ -5,8 +5,10 @@ import { GetCurrentApp } from 'src/shared/decorators/get_current_app';
 import App from '../app/entities/app.entity';
 import { ActionsGuard } from '../auth/guards/actions_guard';
 import { AdminGuard } from '../auth/guards/admin_guard';
+import { VerifyDefaultConfigs } from 'src/guards/default_configs_guard';
 
 @Controller('reports')
+@UseGuards(VerifyDefaultConfigs)
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 

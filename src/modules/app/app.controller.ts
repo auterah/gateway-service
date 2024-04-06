@@ -24,8 +24,10 @@ import App from './entities/app.entity';
 import { GetCurrentApp } from 'src/shared/decorators/get_current_app';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
 import { AdminGuard } from '../auth/guards/admin_guard';
+import { VerifyDefaultConfigs } from 'src/guards/default_configs_guard';
 
 @Controller('apps')
+@UseGuards(VerifyDefaultConfigs)
 export class AppController {
   constructor(
     private appService: AppService,

@@ -25,6 +25,7 @@ export class AdminService {
     private readonly dataSource: DataSource,
   ) {
     this.settingService.memorizeSmtpConfigs();
+    this.settingService.memorizeDefaultBilling();
   }
 
   // Add New Admin

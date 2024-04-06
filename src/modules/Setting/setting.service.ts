@@ -12,6 +12,7 @@ import { PaginationData } from 'src/shared/types/pagination';
 import { MailEvents } from 'src/shared/events/mail.events';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { AdminEvents } from 'src/shared/events/admin.events';
+import { GDefaultBilling } from 'src/global/globals';
 
 type MailerCredentials = {
   username: string;
@@ -77,6 +78,21 @@ export class SettingService {
     return calculate_pagination_data(apps, skip, take);
   }
 
+  // Delete Settings
+  async delete(setting: Partial<Setting>): Promise<void> {
+    await this.settingRepo.delete(setting);
+  }
+
+  // Update Setting
+  async updateOne(
+    where: FindOptionsWhere<Setting>,
+    updates: Partial<Setting>,
+    returnNew = false,
+  ): Promise<Setting | void> {
+    await this.settingRepo.update(where, updates);
+    if (returnNew) this.settingRepo.findOne({ where: { id: where.id } });
+  }
+
   @OnEvent(AdminEvents.SMTP_SET)
   async memorizeSmtpConfigs() {
     this.logger.debug('Setting up SMTP configs...');
@@ -101,25 +117,27 @@ export class SettingService {
         throw 'App is missing SMTP credentials ❌❌❌❌❌';
       }
 
-      this.logger.debug('SMTP Configs are ready for use! 🎯🎯🎯🎯🎯🎯🎯🎯🎯');
+      this.logger.log('SMTP Configs are ready for use! 🎯🎯🎯🎯🎯🎯🎯🎯🎯');
       this.event.emit(MailEvents.SET_SMTP, smtpCredentials);
     } catch (e) {
       this.logger.error(e);
     }
   }
 
-  // Delete Settings
-  async delete(setting: Partial<Setting>): Promise<void> {
-    await this.settingRepo.delete(setting);
-  }
+  async memorizeDefaultBilling() {
+    try {
+      const billing = await this.findByType('billing');
 
-  // Update Setting
-  async updateOne(
-    where: FindOptionsWhere<Setting>,
-    updates: Partial<Setting>,
-    returnNew = false,
-  ): Promise<Setting | void> {
-    await this.settingRepo.update(where, updates);
-    if (returnNew) this.settingRepo.findOne({ where: { id: where.id } });
+      if (!billing) {
+        this.logger.warn('App is missing default billing cost ❌❌❌❌❌');
+        return;
+      }
+
+      GDefaultBilling.set(+billing.value); // Globalize default billing
+
+      this.logger.log('Default email billing cost is set! 🤑🤑🤑🤑🤑');
+    } catch (e) {
+      this.logger.error(e);
+    }
   }
 }
