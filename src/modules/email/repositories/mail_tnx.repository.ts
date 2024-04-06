@@ -54,9 +54,12 @@ export class MailTnxRepository {
   }
 
   // Find Single Tnxs by App
-  findSingleRecordByAppId(appId: string): Promise<MailTransaction> {
+  findSingleRecordByAppId(
+    appId: string,
+    tnxId: string,
+  ): Promise<MailTransaction> {
     return this.mailTnxEntity.findOne({
-      where: { appId },
+      where: { appId, id: tnxId },
     });
   }
 }

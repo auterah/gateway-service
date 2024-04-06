@@ -15,7 +15,7 @@ export class ReportService {
     });
   }
 
-  findSingleRecordByAppId(appId: string) {
-    return this.txnRepo.findSingleRecordByAppId(appId);
+  findSingleRecordByAppId(appId: string, tnxId: string) {
+    return this.txnRepo.findSingleRecordByAppId(appId, tnxId);
   }
 }

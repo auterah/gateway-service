@@ -22,10 +22,10 @@ export class ReportController {
   @Get('id/:id')
   getSingleReportsByApp(
     @Query() queries: FindDataRequestDto,
-    @Param('id') id: string,
+    @Param('id') tnxId: string,
     @GetCurrentApp() app: App,
   ) {
-    return this.reportService.findSingleRecordByAppId(app.id);
+    return this.reportService.findSingleRecordByAppId(app.id, tnxId);
   }
 
   @Get('all')

@@ -152,6 +152,11 @@ export class AuthService {
       throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
     }
 
+    await this.customerService.updateOneByEmail(customer.email, {
+      verified: true,
+      otp: null,
+    });
+
     delete customer.apps;
     const accessToken = this.encryptCustomerToken(customer);
     return { ...customer, tokens: { accessToken } };
