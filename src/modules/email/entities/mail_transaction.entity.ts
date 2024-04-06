@@ -4,8 +4,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { EMailTransactionStatus } from '../enums/mail_transaction_status';
+import Email from './email.entity';
 
 @Entity('mail_transactions')
 export default class MailTransaction {
@@ -30,6 +32,18 @@ export default class MailTransaction {
 
   @Column({ nullable: true })
   message: string;
+
+  @Column({ default: false })
+  read: boolean;
+
+  @Column({ default: false })
+  bounced: boolean;
+
+  @ManyToOne(() => Email, (email) => email.transactions)
+  mail: Email;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  cost: number;
 
   @CreateDateColumn()
   createdAt: Date;
