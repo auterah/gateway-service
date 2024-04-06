@@ -96,7 +96,7 @@ export class SeedingService {
           <b>publicKey:</b> ${app.publicKey} <br>
           `,
         subject: 'Your app is setup 🏁',
-        email: defaultAdmin.email,
+        to: defaultAdmin.email,
       });
       // this.seederEvents.emit(
       //   MailEvents.PUSH_MAIL,
