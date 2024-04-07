@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import Setting from './setting.entity';
+import Setting from './entities/setting.entity';
 import {
   FindManyOptions,
   FindOneOptions,
@@ -13,6 +13,10 @@ import { MailEvents } from 'src/shared/events/mail.events';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { AdminEvents } from 'src/shared/events/admin.events';
 import { GDefaultBilling } from 'src/global/globals';
+import { FsService } from '../file/file.service';
+import { TargetRepository } from './repositories/target.repository';
+import { AvailableRoute } from 'src/shared/types/app_bootstrap';
+import Target from './entities/target.entity';
 
 type MailerCredentials = {
   username: string;
@@ -28,6 +32,7 @@ export class SettingService {
     @InjectRepository(Setting)
     private readonly settingRepo: Repository<Setting>,
     private event: EventEmitter2,
+    private targetRepo: TargetRepository,
   ) {}
 
   // Create
@@ -139,5 +144,21 @@ export class SettingService {
     } catch (e) {
       this.logger.error(e);
     }
+  }
+
+  async savePermissionTargets() {
+    const { totalItems } = await this.targetRepo.findAllRecords({});
+    const availableRoutes = await FsService.readFile('targets.json');
+
+    try {
+      const targets: AvailableRoute[] = JSON.parse(availableRoutes);
+      const routes = targets.map((e) => ({
+        target: e.route.path,
+      }));
+
+      if (totalItems == routes.length) return;
+
+      this.targetRepo.addManyTarget(routes as unknown as Partial<Target>[]);
+    } catch (error) {}
   }
 }

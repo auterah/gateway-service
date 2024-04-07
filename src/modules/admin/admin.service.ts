@@ -8,7 +8,7 @@ import Admin from './admin.entity';
 import { PaginationData } from 'src/shared/types/pagination';
 import { SettingService } from '../Setting/setting.service';
 import { SmtpDto } from './dtos/smtp.dto';
-import Setting from '../Setting/setting.entity';
+import Setting from '../Setting/entities/setting.entity';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AdminEvents } from 'src/shared/events/admin.events';
@@ -26,6 +26,7 @@ export class AdminService {
   ) {
     this.settingService.memorizeSmtpConfigs();
     this.settingService.memorizeDefaultBilling();
+    this.settingService.savePermissionTargets();
   }
 
   // Add New Admin
