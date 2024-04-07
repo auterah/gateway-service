@@ -10,10 +10,11 @@ import { SettingService } from '../Setting/setting.service';
 import { SmtpDto } from './dtos/smtp.dto';
 import Setting from '../Setting/entities/setting.entity';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { AdminEvents } from 'src/shared/events/admin.events';
 import { BillingDto } from './dtos/billing.dto';
 import App from '../app/entities/app.entity';
+import { SettingEvents } from 'src/shared/events/setting.events copy';
 
 @Injectable()
 export class AdminService {
@@ -74,6 +75,7 @@ export class AdminService {
     return update;
   }
 
+  @OnEvent(SettingEvents.ADD_SMTP_CONFIG)
   async addSMTPConfigs(smtpDto: SmtpDto): Promise<void> {
     const smtps: Partial<Setting>[] = [];
 

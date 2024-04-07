@@ -25,10 +25,10 @@ export class AdminController {
     private adminEvents: EventEmitter2,
   ) {}
 
-  @Post('smtp')
-  addSMTPConfigs(@Body() smtpDto: SmtpDto) {
-    return this.adminService.addSMTPConfigs(smtpDto);
-  }
+  // @Post('smtp')
+  // addSMTPConfigs(@Body() smtpDto: SmtpDto) {
+  //   return this.adminService.addSMTPConfigs(smtpDto);
+  // }
 
   @Get('configs')
   getConfigs(@Query() queries: FindDataRequestDto) {

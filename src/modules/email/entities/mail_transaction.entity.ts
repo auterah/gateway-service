@@ -34,7 +34,7 @@ export default class MailTransaction {
   message: string;
 
   @Column({ default: false })
-  read: boolean;
+  opened: boolean;
 
   @Column({ default: false })
   bounced: boolean;

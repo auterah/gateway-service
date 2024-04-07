@@ -67,6 +67,12 @@
   },
   {
     "route": {
+      "path": "/add-smtp",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
       "path": "/api/v1/*",
       "method": "acl"
     }
@@ -133,6 +139,12 @@
   },
   {
     "route": {
+      "path": "/add-smtp",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
       "path": "/app/init",
       "method": "post"
     }
@@ -141,6 +153,12 @@
     "route": {
       "path": "/api/v1/status",
       "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/add-smtp",
+      "method": "post"
     }
   },
   {
@@ -278,12 +296,6 @@
   {
     "route": {
       "path": "/auth/admin/verify-otp",
-      "method": "post"
-    }
-  },
-  {
-    "route": {
-      "path": "/admins/smtp",
       "method": "post"
     }
   },

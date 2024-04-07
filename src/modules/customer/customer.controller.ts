@@ -6,16 +6,19 @@ import {
   Param,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { Request } from 'express';
+import { AdminGuard } from '../auth/guards/admin_guard';
 
 @Controller('customers')
 export class CustomerController {
   constructor(private customerService: CustomerService) {}
 
   @Get()
+  @UseGuards(AdminGuard)
   getCustomers(@Query() queries: FindDataRequestDto) {
     const take = Number(queries.take || '10');
     const skip = Number(queries.skip || '0');

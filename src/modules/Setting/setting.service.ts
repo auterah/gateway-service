@@ -45,6 +45,7 @@ export class SettingService {
       settings.push(setting);
     }
 
+    this.logger.debug(`Saved ${settings.length} settings`);
     return this.settingRepo.save(settings);
   }
 
