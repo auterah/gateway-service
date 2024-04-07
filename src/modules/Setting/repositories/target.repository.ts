@@ -28,7 +28,7 @@ export class TargetRepository {
       targets.push(newTarget);
     }
 
-    this.logger.debug(`Saved "${targets.length}" targets`);
+    this.logger.verbose(`Saved "${targets.length}" targets`);
     return this.targetRepo.save(targets);
   }
 

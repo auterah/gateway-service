@@ -17,13 +17,8 @@ import { FsService } from '../file/file.service';
 import { TargetRepository } from './repositories/target.repository';
 import { AvailableRoute } from 'src/shared/types/app_bootstrap';
 import Target from './entities/target.entity';
+import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 
-type MailerCredentials = {
-  username: string;
-  host: string;
-  password: string;
-  port: string;
-};
 
 @Injectable()
 export class SettingService {
@@ -159,6 +154,15 @@ export class SettingService {
       if (totalItems == routes.length) return;
 
       this.targetRepo.addManyTarget(routes as unknown as Partial<Target>[]);
-    } catch (error) {}
+    } catch (e) {
+      this.logger.error(
+        `Error saving permission targets: ${JSON.stringify(e)}`,
+      );
+    }
+  }
+
+  // Find All Target Records
+  async findAllTargetRecords(queries: FindDataRequestDto): Promise<any> {
+    return this.targetRepo.findAllRecords({});
   }
 }

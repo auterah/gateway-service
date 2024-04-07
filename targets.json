@@ -310,5 +310,11 @@
       "path": "/admins/billings/:app_id",
       "method": "get"
     }
+  },
+  {
+    "route": {
+      "path": "/api/v1/targets",
+      "method": "get"
+    }
   }
 ]
