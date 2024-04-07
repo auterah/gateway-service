@@ -7,7 +7,7 @@ import { AdminDto } from './dtos/admin.dto';
 import Admin from './admin.entity';
 import { PaginationData } from 'src/shared/types/pagination';
 import { SettingService } from '../Setting/setting.service';
-import { SmtpDto } from './dtos/smtp.dto';
+import { SmtpDto } from '../../dtos/smtp.dto';
 import Setting from '../Setting/entities/setting.entity';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';

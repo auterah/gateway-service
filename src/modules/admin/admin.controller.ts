@@ -10,7 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { SmtpDto } from './dtos/smtp.dto';
+import { SmtpDto } from '../../dtos/smtp.dto';
 import { AdminService } from './admin.service';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
