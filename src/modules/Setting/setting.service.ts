@@ -91,7 +91,7 @@ export class SettingService {
     returnNew = false,
   ): Promise<Setting | void> {
     await this.settingRepo.update(where, updates);
-    if (returnNew) this.settingRepo.findOne({ where: { id: where.id } });
+    if (returnNew) return this.settingRepo.findOne({ where });
   }
 
   @OnEvent(AdminEvents.SMTP_SET)
