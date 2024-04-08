@@ -152,8 +152,9 @@ export class AuthService {
       throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
     }
 
+    customer.verified = true;
     await this.customerService.updateOneByEmail(customer.email, {
-      verified: true,
+      verified: customer.verified,
       otp: null,
     });
 
