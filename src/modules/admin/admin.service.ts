@@ -123,7 +123,8 @@ export class AdminService {
       if (!found) {
         throw new HttpException('Invalid app', HttpStatus.EXPECTATION_FAILED);
       }
-      appRepository.update({ id: billingDto.appId }, { cost: +cost });
+      found.cost = +cost;
+      appRepository.update({ id: billingDto.appId }, { cost: found.cost });
 
       await queryRunner.commitTransaction();
 
