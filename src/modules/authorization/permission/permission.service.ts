@@ -19,10 +19,19 @@ export class PermissionService {
 
   @OnEvent(RoleEvents.CREATED)
   async createPermission(permDto: PermissionDto): Promise<Permission> {
-    const exist = await this.findOneByAction(permDto.action);
-    if (exist) {
+    const found = await this.permRepo.findOneByActionOrTarget(
+      permDto.action,
+      permDto.target,
+    );
+    if (found) {
       throw new HttpException(
-        'A action / permission already exist',
+        `${
+          found.action == permDto.action && found.target == permDto.target
+            ? 'Action & target'
+            : found.action == permDto.action
+              ? 'Action'
+              : 'Target'
+        } already exist`,
         HttpStatus.BAD_REQUEST,
       );
     }

@@ -30,6 +30,15 @@ export class PermissionRepository {
     });
   }
 
+  // Find Permission By Action OR Target
+  findOneByActionOrTarget(action: string, target: string): Promise<Permission> {
+    return this.permRepo
+      .createQueryBuilder('permissions')
+      .where('action =:action', { action })
+      .orWhere('target =:target', { target })
+      .getOne();
+  }
+
   // Find Permission By Id
   findOneById(
     id: string,
