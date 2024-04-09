@@ -102,12 +102,22 @@ export class AppService {
   }
 
   async addScope(scopeDto: AppScopeDto, app: App) {
-    const permissions = await this.permService.findByIds(scopeDto.scopes, true);
-    app.scopes.push(...permissions);
-    const result = await this.appRepo.save(app);
+    const list = [];
 
+    const permissions = await this.permService.findByIds(scopeDto.scopes, true);
+    list.push(...permissions, ...app.scopes);
+    app.scopes = [...new Map(list.map((item) => [item['id'], item])).values()];
+
+    const result = await this.appRepo.save(app);
     delete result.customer.apps;
     return result;
+  }
+
+  async removeScope(scopeDto: AppScopeDto, app: App) {
+    const permissions = await this.permService.findByIds(scopeDto.scopes, true);
+    app.scopes = app.scopes.filter((e, i) => e.id != scopeDto.scopes[i]);
+    await this.appRepo.save(app);
+    return `Found & deleted ${permissions.length} scope(s)`;
   }
 
   updateOne(

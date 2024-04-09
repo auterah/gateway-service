@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -34,7 +35,7 @@ export class AppController {
     private appReqService: AppRequestService,
   ) {}
 
-  @Get('x-app/:public_key') // For in app use only!
+  @Get('x-app/pub/:public_key') // For in app use only!
   getXAppByPublickey(
     @Param('public_key') publicKey: string,
     @Req() { headers }: Request,
@@ -45,6 +46,21 @@ export class AppController {
     }
     return this.appService.findXApp({
       where: { publicKey },
+      relations: ['customer'],
+    });
+  }
+
+  @Get('x-app/puk/:private_key') // For in app use only!
+  getXAppByPrivatekey(
+    @Param('private_key') privateKey: string,
+    @Req() { headers }: Request,
+  ) {
+    const authorization = headers.authorization;
+    if (authorization !== '%x-app/:app%') {
+      throw new HttpException('Access denied!', HttpStatus.UNAUTHORIZED);
+    }
+    return this.appService.findXApp({
+      where: { privateKey },
       relations: ['customer'],
     });
   }
@@ -81,6 +97,13 @@ export class AppController {
   @UseGuards(AdminGuard)
   addScope(@Body() scopeDto: AppScopeDto, @GetCurrentApp() app: App) {
     return this.appService.addScope(scopeDto, app);
+  }
+
+  @Delete('scopes')
+  @UseGuards(ActionsGuard)
+  @UseGuards(AdminGuard)
+  removeScope(@Body() scopeDto: AppScopeDto, @GetCurrentApp() app: App) {
+    return this.appService.removeScope(scopeDto, app);
   }
 
   @Get('/id/:app_id')

@@ -79,6 +79,10 @@ export class AppRepository {
     return this.appEntity.save(app);
   }
 
+  remove(app: App): Promise<App> {
+    return this.appEntity.remove(app);
+  }
+
   // Find App By Customer Email
   async findAppByCustomerEmail(email: string): Promise<App> {
     const app: App = await this.appEntity.manager

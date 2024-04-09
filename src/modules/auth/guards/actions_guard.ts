@@ -49,6 +49,7 @@ export class ActionsGuard implements CanActivate {
   private async verifyAppKey(request: CurrentApp) {
     const xAppURL = `${request.protocol}://${request.get('Host')}/${configs.API_VERSION}/apps/x-app`;
     const appPublicKey = request.headers['x-api-key'];
+    const key = request.url.includes('scopes') ? 'puk' : 'pub';
 
     if (appPublicKey == '' || appPublicKey?.length == 0) {
       throw new HttpException(
@@ -58,7 +59,7 @@ export class ActionsGuard implements CanActivate {
     }
 
     try {
-      const { data } = await axios.get(`${xAppURL}/${appPublicKey}`, {
+      const { data } = await axios.get(`${xAppURL}/${key}/${appPublicKey}`, {
         headers: {
           Authorization: '%x-app/:app%',
         },
