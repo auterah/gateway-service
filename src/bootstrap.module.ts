@@ -15,6 +15,7 @@ import { BootController } from './bootstrap.controller';
 import { SeedingService } from './database/seeding/seeding.service';
 import { SettingModule } from './modules/Setting/setting.module';
 import { FileModule } from './modules/file/file.module';
+import { BillingModule } from './modules/billing/billing.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { FileModule } from './modules/file/file.module';
     AdminModule,
     SeedingModule,
     FileModule,
+    BillingModule,
   ],
   controllers: [BootController],
   providers: [BootService, AuthService, SeedingService],
