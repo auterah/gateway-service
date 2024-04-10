@@ -19,7 +19,6 @@ import { AvailableRoute } from 'src/shared/types/app_bootstrap';
 import Target from './entities/target.entity';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 
-
 @Injectable()
 export class SettingService {
   private logger = new Logger(SettingService.name);
@@ -143,7 +142,7 @@ export class SettingService {
   }
 
   async savePermissionTargets() {
-    const { totalItems } = await this.targetRepo.findAllRecords({});
+    const { records } = await this.targetRepo.findAllRecords({});
     const availableRoutes = await FsService.readFile('targets.json');
 
     try {
@@ -152,9 +151,12 @@ export class SettingService {
         target: e.route.path,
       }));
 
-      if (totalItems == routes.length) return;
-
-      this.targetRepo.addManyTarget(routes as unknown as Partial<Target>[]);
+      if (
+        routes.length > records.length ||
+        !(routes.length && !records.length)
+      ) {
+        this.targetRepo.addManyTarget(routes as unknown as Partial<Target>[]);
+      }
     } catch (e) {
       this.logger.error(
         `Error saving permission targets: ${JSON.stringify(e)}`,

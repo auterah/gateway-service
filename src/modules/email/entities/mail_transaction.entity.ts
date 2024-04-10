@@ -39,6 +39,9 @@ export default class MailTransaction {
   @Column({ default: false })
   bounced: boolean;
 
+  @Column({ default: 0 })
+  clicks: number;
+
   @ManyToOne(() => Email, (email) => email.transactions)
   mail: Email;
 
