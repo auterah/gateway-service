@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PaginationData } from 'src/shared/types/pagination';
 import MailTransaction from './entities/mail_transaction.entity';
+import { EMailTransactionStatus } from '../email/enums/mail_transaction_status';
 
 @Injectable()
 export class MailTnxRepository {
@@ -26,12 +27,12 @@ export class MailTnxRepository {
     const take = Number(findOpts.take || '10');
     const skip = Number(findOpts.skip || '0');
 
-    const apps = await this.mailTnxEntity.findAndCount({
+    const records = await this.mailTnxEntity.findAndCount({
       ...findOpts,
       take,
       skip,
     });
-    return calculate_pagination_data(apps, skip, take);
+    return calculate_pagination_data(records, skip, take);
   }
 
   // Find All Tnxs by App
@@ -42,7 +43,7 @@ export class MailTnxRepository {
     const take = Number(findOpts.take || '10');
     const skip = Number(findOpts.skip || '0');
 
-    const tnxs = await this.mailTnxEntity.findAndCount({
+    const records = await this.mailTnxEntity.findAndCount({
       where: {
         appId,
       },
@@ -50,7 +51,7 @@ export class MailTnxRepository {
       take,
       skip,
     });
-    return calculate_pagination_data(tnxs, skip, take);
+    return calculate_pagination_data(records, skip, take);
   }
 
   // Find Single Tnxs by App
@@ -61,5 +62,39 @@ export class MailTnxRepository {
     return this.mailTnxEntity.findOne({
       where: { appId, id: tnxId },
     });
+  }
+
+  // Find Overview by App
+  async fetchOverviewByAppId(
+    appId: string,
+    findOpts: FindManyOptions<MailTransaction>,
+  ) {
+    const overview = {
+      clicks: 0,
+      opened: 0,
+      sent: 0,
+      failed: 0,
+      bounced: 0,
+    };
+
+    findOpts.where = { appId, ...findOpts.where };
+
+    const records = await this.mailTnxEntity.find(findOpts);
+    records.forEach((rec) => {
+      if (rec.status == EMailTransactionStatus.SENT) {
+        overview.sent += 1;
+      }
+      if (rec.status == EMailTransactionStatus.FAILED) {
+        overview.failed += 1;
+      }
+      if (rec.opened) {
+        overview.opened += 1;
+      }
+      if (rec.bounced) {
+        overview.bounced += 1;
+      }
+    });
+
+    return overview;
   }
 }

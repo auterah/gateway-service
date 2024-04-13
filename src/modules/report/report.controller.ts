@@ -31,6 +31,13 @@ export class ReportController {
     return this.reportService.findSingleRecordByAppId(app.id, tnxId);
   }
 
+  @Get('overview')
+  @UseGuards(ActionsGuard)
+  getOverview(@Query() queries: FindDataRequestDto, @GetCurrentApp() app: App) {
+    return this.reportService.fetchOverviewByAppId(app.id, queries);
+  }
+
+  // -- SuperAdmin Reports
   @Get('all')
   @UseGuards(AdminGuard)
   getReportsByAdmin(@Query() queries: FindDataRequestDto) {
@@ -39,4 +46,6 @@ export class ReportController {
     }
     return this.reportService.findAllTransactionRecords(queries);
   }
+
+  // -- End SuperAdmin Reports
 }

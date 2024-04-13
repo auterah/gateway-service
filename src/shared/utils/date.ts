@@ -1,9 +1,27 @@
 import * as moment from 'moment';
 
-export type Format = 'YYYY-MM-DD' | 'Do MMMM YYYY';
+export type Format = 'YYYY-MM-DD' | 'Do MMMM YYYY' | 'YYYY' | 'LL';
 
+export type DateTimeFormat =
+  | 'year'
+  | 'years'
+  | 'quarter'
+  | 'quarters'
+  | 'month'
+  | 'months'
+  | 'week'
+  | 'weeks'
+  | 'day'
+  | 'days'
+  | 'hour'
+  | 'hours'
+  | 'minute'
+  | 'minutes'
+  | 'second'
+  | 'seconds';
+
+type DateTimeValue = 'long' | 'numeric' | '2-digit' | 'short' | 'narrow';
 export class DateUtils {
-
   static get currentYear(): number {
     return new Date().getFullYear();
   }
@@ -55,5 +73,9 @@ export class DateUtils {
     }
 
     throw new Error('Invalid date');
+  }
+
+  static isValidDate(dateString: string, format: Format) {
+    return moment(dateString, format, true).isValid();
   }
 }

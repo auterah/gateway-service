@@ -6,7 +6,7 @@ export class FindDataRequestDto {
   search: string;
 
   @IsOptional()
-  searchParam: string;
+  search_param: string;
 
   @IsOptional()
   year: string;
@@ -44,7 +44,7 @@ export class FindDataRequestDto {
 
   @IsOptional()
   @IsString()
-  searchBy: string;
+  search_by: string;
 
   @IsOptional()
   usepaginate?: 'false' | 'true' = 'true';
@@ -61,4 +61,12 @@ export class FindDataRequestDto {
   @IsOptional()
   @IsString()
   app_id: string;
+
+  @IsOptional()
+  @IsString()
+  start_date?: string;
+
+  @IsOptional()
+  @IsString()
+  end_date?: string;
 }

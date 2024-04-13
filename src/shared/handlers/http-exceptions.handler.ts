@@ -8,7 +8,7 @@ type S = {
 type C = {
   source: S;
   error: Partial<Error> & { status: number };
-  report: string;
+  report?: string;
 };
 
 export class HttpExceptionsHandler {
@@ -30,7 +30,7 @@ export class HttpExceptionsHandler {
       source: { ...input.source },
       message: input.error?.message || '',
       reason: input.error?.message,
-      report: input.report,
+      report: input.report || `${input.source.operator} error:`,
     });
 
     if (
