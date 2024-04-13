@@ -17,7 +17,7 @@ import { VerifyOtpDto } from './dtos/veriy_otp.dto';
 import { SignAdminToken } from './dtos/sign_admin_token.dto';
 import { AdminService } from '../admin/admin.service';
 import Admin from '../admin/admin.entity';
-import { optMailTemplate } from '../email/templates/auth';
+import { customerOTPMailTemplate } from '../email/templates/opt';
 
 @Injectable()
 export class AuthService {
@@ -67,12 +67,8 @@ export class AuthService {
     );
   }
 
-  async registerCustomer(newCustomer: CustomerDto) {
-    const customer = await this.customerService.addCustomer(newCustomer);
-
-    // Emit New Customer
-    this.authEvents.emit(CustomerEvents.CREATED, customer);
-    return customer;
+  registerCustomer(newCustomer: CustomerDto): Promise<Customer> {
+    return this.customerService.addCustomer(newCustomer);
   }
 
   async generateAccessToken(genTokenDto: GenTokenDto) {
@@ -139,7 +135,7 @@ export class AuthService {
     // send otp
     this.authEvents.emit(
       MailEvents.PUSH_MAIL,
-      optMailTemplate(otp, customer.email),
+      customerOTPMailTemplate(otp, customer.email),
     );
   }
 

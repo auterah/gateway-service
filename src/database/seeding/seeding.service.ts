@@ -6,7 +6,6 @@ import Permission from 'src/modules/authorization/permission/permission.entity';
 import Role from 'src/modules/authorization/role/role.entity';
 import { Roles } from 'src/shared/enums/roles';
 import { BootEvents } from 'src/shared/events/local.events';
-import { MailEvents } from 'src/shared/events/mail.events';
 import { PermissionEvents } from 'src/shared/events/permission.events';
 import { RoleEvents } from 'src/shared/events/roles.events';
 import { DataSource } from 'typeorm';
@@ -15,6 +14,7 @@ import App from 'src/modules/app/entities/app.entity';
 import { defaultApp } from '../mocks/default_app';
 import Customer from 'src/modules/customer/customer.entity';
 import { defaultPermissions } from '../mocks/default_permissions';
+import { AdminEvents } from 'src/shared/events/admin.events';
 
 @Injectable()
 export class SeedingService {
@@ -89,20 +89,10 @@ export class SeedingService {
       superAdmin.password = await bcrypt.hash(defaultAdmin.password, salt);
       await adminRepository.save(superAdmin);
       // send otp
-      this.seederEvents.emit(MailEvents.PUSH_MAIL, {
-        html: `Welcome! Here is your app credentials: <br>
-          <b>otp:</b> ${defaultAdmin.otp.toString()} <br>
-          <b>password:</b> ${defaultAdmin.password} <br>
-          <b>name:</b> ${app.name} <br>
-          <b>publicKey:</b> ${app.publicKey} <br>
-          `,
-        subject: 'Your app is setup 🏁',
-        to: defaultAdmin.email,
+      this.seederEvents.emit(AdminEvents.SUPER_ADMIN_CREATED, {
+        admin: defaultAdmin,
+        app,
       });
-      // this.seederEvents.emit(
-      //   MailEvents.PUSH_MAIL,
-      //   optMailTemplate(defaultAdmin.otp.toString(), defaultAdmin.email),
-      // );
       // -- End of Seeding superadmin
 
       await queryRunner.commitTransaction();

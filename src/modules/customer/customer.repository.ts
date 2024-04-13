@@ -12,7 +12,7 @@ import { Roles } from 'src/shared/enums/roles';
 @Injectable()
 export class CustomerRepository {
   constructor(
-    private event: EventEmitter2,
+    private customerEvent: EventEmitter2,
     @InjectRepository(Customer)
     private readonly customerRepo: Repository<Customer>,
     private readonly roleService: RoleService,
@@ -31,7 +31,7 @@ export class CustomerRepository {
     }
     const newCustomer = this.customerRepo.create(customerDto);
     const customer = await this.customerRepo.save(newCustomer);
-    this.event.emit(CustomerEvents.CREATED, customer);
+    this.customerEvent.emit(CustomerEvents.CREATED, customer);
     return customer;
   }
 
