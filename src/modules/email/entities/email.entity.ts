@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import MailTransaction from './mail_transaction.entity';
+import MailTransaction from '../../report/entities/mail_transaction.entity';
 
 @Entity('emails')
 export default class Email {

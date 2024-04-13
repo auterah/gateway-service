@@ -16,6 +16,7 @@ import { SeedingService } from './database/seeding/seeding.service';
 import { SettingModule } from './modules/Setting/setting.module';
 import { FileModule } from './modules/file/file.module';
 import { BillingModule } from './modules/billing/billing.module';
+import { ReportModule } from './modules/report/report.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { BillingModule } from './modules/billing/billing.module';
     SeedingModule,
     FileModule,
     BillingModule,
+    ReportModule,
   ],
   controllers: [BootController],
   providers: [BootService, AuthService, SeedingService],

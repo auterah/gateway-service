@@ -6,8 +6,8 @@ import {
   UpdateDateColumn,
   ManyToOne,
 } from 'typeorm';
-import { EMailTransactionStatus } from '../enums/mail_transaction_status';
-import Email from './email.entity';
+import { EMailTransactionStatus } from '../../email/enums/mail_transaction_status';
+import Email from '../../email/entities/email.entity';
 
 @Entity('mail_transactions')
 export default class MailTransaction {

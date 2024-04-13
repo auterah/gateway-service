@@ -3,8 +3,8 @@ import { calculate_pagination_data } from 'src/shared/utils/pagination';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import MailTransaction from '../entities/mail_transaction.entity';
 import { PaginationData } from 'src/shared/types/pagination';
+import MailTransaction from './entities/mail_transaction.entity';
 
 @Injectable()
 export class MailTnxRepository {

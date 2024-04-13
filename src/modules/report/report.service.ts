@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MailTnxRepository } from './repositories/mail_tnx.repository';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
+import { MailTnxRepository } from './mail_tnx.repository';
 
 @Injectable()
 export class ReportService {
