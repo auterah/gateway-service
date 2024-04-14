@@ -1,6 +1,7 @@
 import App from 'src/modules/app/entities/app.entity';
 import { Roles } from 'src/shared/enums/roles';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import Billing from '../billing/entities/billing.entity';
 
 @Entity('customers')
 export default class Customer {
@@ -19,6 +20,9 @@ export default class Customer {
   @OneToMany(() => App, (app) => app.customer, { eager: true })
   // @JoinColumn({ name: 'customer_id', referencedColumnName: 'id' })
   apps: App[];
+
+  @OneToMany(() => Billing, (bill) => bill.customer)
+  billings: Billing[];
 
   @Column({ type: 'enum', default: Roles.ADMIN, enum: Roles })
   role: Roles;
