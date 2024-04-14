@@ -33,15 +33,14 @@ export class AuthService {
     this.aesEncrypt = new AesEncryption(configs.ENCRYPTION_PRIVATE_KEY);
   }
 
-  static generateOtp(length: number) {
+  static generateOtp(length) {
     const digits = '0123456789';
     let OTP = '';
 
     for (let i = 0; i < length; i++) {
       OTP += digits[Math.floor(Math.random() * 10)];
     }
-
-    return OTP;
+    return OTP.length != length ? AuthService.generateOtp(length) : OTP;
   }
 
   async getCustomerBySignedToken(token: string): Promise<Customer> {
