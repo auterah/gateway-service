@@ -38,6 +38,9 @@ export default class Billing {
   @CreateDateColumn({ comment: 'BillAt AKA end/charge date' })
   billAt: Date;
 
+  @Column({ default: false })
+  paid: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

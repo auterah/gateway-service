@@ -26,6 +26,15 @@ export class BillingRepository {
     return this.billingRepo.findOne(findOpts);
   }
 
+  // Find By BillId
+  findById(id: string): Promise<Billing> {
+    return this.billingRepo.findOne({
+      where: {
+        id,
+      },
+    });
+  }
+
   // Fetch All Billings
   async findAllRecords(
     findOpts: FindManyOptions<Billing>,
@@ -39,5 +48,10 @@ export class BillingRepository {
       skip,
     });
     return calculate_pagination_data(records, skip, take);
+  }
+
+  async changePaidStatus(billId: string, status: boolean): Promise<Billing> {
+    return (await this.billingRepo.update({ id: billId }, { paid: status }))
+      .raw[0];
   }
 }
