@@ -11,13 +11,19 @@ import Customer from '../customer/customer.entity';
 import { CustomerEvents } from 'src/shared/events/customer.events';
 import { AdminEvents } from 'src/shared/events/admin.events';
 import Admin from '../admin/admin.entity';
+import { SmtpRepository } from './repositories/smtp.repository';
+import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
+import { SmtpDto } from 'src/dtos/smtp.dto';
 
 @Injectable()
 export class EmailService {
   private logger = new Logger(EmailService.name);
   private adminApp: App;
   private mailer: IEmailService;
-  constructor(private factory: EmailProcessorFactory) {
+  constructor(
+    private factory: EmailProcessorFactory,
+    private smtpRepo: SmtpRepository,
+  ) {
     this.mailer = this.factory.findOne(EmailProcessors.NODE_MAILER);
   }
 
@@ -77,5 +83,31 @@ export class EmailService {
         JSON.stringify(e),
       );
     }
+  }
+
+  findSmtpByAppId(appId: string) {
+    return this.smtpRepo.findOne({
+      where: { appId },
+    });
+  }
+
+  async addSMTP(app: App, newSmtp: SmtpDto) {
+    const _app = await this.smtpRepo.addSMTP(app, {
+      user: newSmtp.username,
+      host: newSmtp.host,
+      password: newSmtp.password,
+      port: newSmtp.port,
+      appId: app.id,
+      app,
+    });
+    delete _app.app;
+    return _app;
+  }
+
+  fetchAllSmtp(findOpts: FindDataRequestDto) {
+    return this.smtpRepo.findAllRecords({
+      skip: Number(findOpts.skip || '0'),
+      take: Number(findOpts.take || '10'),
+    });
   }
 }

@@ -123,7 +123,7 @@ export class AppService {
     const permissions = await this.permService.findByIds(scopeDto.scopes, true);
     app.scopes = app.scopes.filter((e, i) => e.id != scopeDto.scopes[i]);
     await this.appRepo.save(app);
-    return `Found & deleted ${permissions.length} scope(s)`;
+    return `Found & removed ${permissions.length} scope(s)`;
   }
 
   updateOne(

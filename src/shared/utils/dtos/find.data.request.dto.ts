@@ -69,4 +69,8 @@ export class FindDataRequestDto {
   @IsOptional()
   @IsString()
   end_date?: string;
+
+  @IsOptional()
+  @IsString()
+  id?: string;
 }

@@ -14,8 +14,6 @@ import {
 } from '@nestjs/common';
 import { AppDto } from './dtos/newapp.dto';
 import { AppService } from './app.service';
-import { GetSignCustomer } from 'src/modules/auth/decorators/get_sign_customer.decorator';
-import Customer from 'src/modules/customer/customer.entity';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { ActionsGuard } from 'src/modules/auth/guards/actions_guard';
 import { Request } from 'express';
@@ -26,6 +24,8 @@ import { GetCurrentApp } from 'src/shared/decorators/get_current_app';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
 import { AdminGuard } from '../auth/guards/admin_guard';
 import { VerifyDefaultConfigs } from 'src/guards/default_configs_guard';
+import { EmailService } from '../email/email.service';
+import { SmtpDto } from 'src/dtos/smtp.dto';
 
 @Controller('apps')
 @UseGuards(VerifyDefaultConfigs)
@@ -33,6 +33,7 @@ export class AppController {
   constructor(
     private appService: AppService,
     private appReqService: AppRequestService,
+    private emailService: EmailService,
   ) {}
 
   @Get('x-app/pub/:public_key') // For in app use only!
@@ -121,5 +122,26 @@ export class AppController {
       return apps.find((app) => app.id == id);
     }
     return apps;
+  }
+
+  @Post('smtps')
+  @UseGuards(ActionsGuard)
+  addAppSmtp(@Body() newSmtp: SmtpDto, @GetCurrentApp() app: App) {
+    return this.emailService.addSMTP(app, newSmtp);
+  }
+
+  @Get('smtps')
+  @UseGuards(ActionsGuard)
+  getAppSmtp(@GetCurrentApp('id') appId: string) {
+    return this.emailService.findSmtpByAppId(appId);
+  }
+
+  @Get('smtps/all')
+  @UseGuards(AdminGuard)
+  getAlSmtp(@Query() queries: FindDataRequestDto) {
+    if (queries.id) {
+      return this.emailService.findSmtpByAppId(queries.id);
+    }
+    return this.emailService.fetchAllSmtp(queries);
   }
 }

@@ -22,6 +22,8 @@ import Customer from 'src/modules/customer/customer.entity';
 export class ActionsGuard implements CanActivate {
   private logger = new Logger(ActionsGuard.name);
 
+  private scopeRoutesToIgnore = ['scopes', 'apps/smtps'];
+
   private aesEncrypt: AesEncryption;
   constructor(private actionGuardEvent: EventEmitter2) {
     this.aesEncrypt = new AesEncryption(configs.ENCRYPTION_PRIVATE_KEY);
@@ -86,7 +88,11 @@ export class ActionsGuard implements CanActivate {
         );
       }
 
-      if (!request.url.includes('scopes')) {
+      const allowed = this.scopeRoutesToIgnore.find((route) =>
+        request.url.includes(route),
+      );
+
+      if (!allowed) {
         //
         const permitted = app.scopes.find((e) =>
           request.url.includes(e.target),

@@ -4,6 +4,8 @@ import * as _ from 'lodash';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { SmtpProviders } from 'src/shared/enums';
 import { HBSProvider } from '../providers/handlebar.provider';
+import * as Email from 'email-templates';
+
 import {
   IEmailService,
   ISMTPConfigs,
@@ -112,25 +114,38 @@ export class Nodemailer implements IEmailService {
   @OnEvent(MailEvents.SEND_MAIL)
   async sendMail(inputs: MailOptions): Promise<void> {
     const logger = this.logger;
-
     if (!this.transporter) {
       throw new Error('Error connecting to email provider');
     }
 
-    const html = await this.templateEngine.compileTextToHBS(
+    const email = new Email({
+      preview: false,
+      message: {
+        from: this.sender,
+      },
+      send: true,
+      transport: this.transporter,
+    });
+
+    inputs.html = await this.templateEngine.compileTextToHBS(
       inputs.html,
       inputs.data,
     );
 
-    Object.assign(inputs, { html });
-
-    this.transporter.sendMail(inputs, function (e, info) {
-      // todo: Handle exceptions
-      if (e) {
-        logger.error(e);
-      } else {
+    email
+      .send({
+        message: {
+          to: inputs.to,
+          subject: inputs.subject,
+          html: inputs.html,
+          text: inputs.subText || inputs.subject,
+        },
+      })
+      .then((info) => {
         logger.log(`🚚✨ Email sent successfully =====> ${inputs.to}`);
-      }
-    });
+      })
+      .catch((e) => {
+        logger.error(e);
+      });
   }
 }
