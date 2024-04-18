@@ -30,6 +30,9 @@ export default class Permission {
   @ManyToMany(() => App, (app) => app.scopes)
   app: App;
 
+  @Column({ default: false })
+  default: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

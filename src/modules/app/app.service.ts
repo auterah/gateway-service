@@ -13,6 +13,7 @@ import { PermissionService } from '../authorization/permission/permission.servic
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AppEvents } from 'src/shared/events/app.events';
 import { StringUtils } from 'src/shared/utils/string';
+import { defaultPermissions } from 'src/database/mocks/default_permissions';
 
 @Injectable()
 export class AppService {
@@ -60,6 +61,11 @@ export class AppService {
       throw new HttpException('Name already exist', HttpStatus.BAD_REQUEST);
     }
 
+    const defaultPermissions = await this.permService.findAllRecords({
+      where: { default: true },
+    });
+
+    newApp.scopes = defaultPermissions.records;
     newApp.privateKey = AppService.generatePrivateKey();
     newApp.publicKey = AppService.generatePublicKey();
 
