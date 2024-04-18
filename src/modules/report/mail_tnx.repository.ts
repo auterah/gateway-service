@@ -64,11 +64,8 @@ export class MailTnxRepository {
     });
   }
 
-  // Find Overview by App
-  async fetchOverviewByAppId(
-    appId: string,
-    findOpts: FindManyOptions<MailTransaction>,
-  ) {
+  // Fetch overview
+  async fetchOverview(findOpts: FindManyOptions<MailTransaction>) {
     const overview = {
       clicks: 0,
       opened: 0,
@@ -76,8 +73,6 @@ export class MailTnxRepository {
       failed: 0,
       bounced: 0,
     };
-
-    findOpts.where = { appId, ...findOpts.where };
 
     const records = await this.mailTnxEntity.find(findOpts);
     records.forEach((rec) => {
