@@ -131,13 +131,17 @@ if (errors.length > 0) {
 }
 
 const verifyEmailFields = async () => {
-  if (!(await EmailUtils.validateEmail(configs.SUPER_ADMIN_EMAIL))) {
-    Logger.error(
-      `Invalid Superadmin email ===> "${configs.SUPER_ADMIN_EMAIL}"`,
-    );
-    throw new Error(
-      `Invalid Superadmin email ===> "${configs.SUPER_ADMIN_EMAIL}"`,
-    );
+  try {
+    if (!(await EmailUtils.validateEmail(configs.SUPER_ADMIN_EMAIL))) {
+      Logger.error(
+        `Invalid Superadmin email ===> "${configs.SUPER_ADMIN_EMAIL}"`,
+      );
+      throw new Error(
+        `Invalid Superadmin email ===> "${configs.SUPER_ADMIN_EMAIL}"`,
+      );
+    }
+  } catch (e) {
+    logger.error(e);
   }
 };
 verifyEmailFields();

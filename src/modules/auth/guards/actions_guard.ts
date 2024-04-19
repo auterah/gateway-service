@@ -22,7 +22,7 @@ import Customer from 'src/modules/customer/customer.entity';
 export class ActionsGuard implements CanActivate {
   private logger = new Logger(ActionsGuard.name);
 
-  private scopeRoutesToIgnore = ['scopes', 'apps/smtps'];
+  private routesToIgnore = ['scopes', 'apps/smtps'];
 
   private aesEncrypt: AesEncryption;
   constructor(private actionGuardEvent: EventEmitter2) {
@@ -69,7 +69,10 @@ export class ActionsGuard implements CanActivate {
 
       // If app is null
       if (!data?.data) {
-        throw new HttpException('Invalid public key', HttpStatus.UNAUTHORIZED);
+        throw new HttpException(
+          `Invalid ${key == 'puk' ? 'private' : 'public'} key`,
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
       const app: App = data?.data;
@@ -88,7 +91,7 @@ export class ActionsGuard implements CanActivate {
         );
       }
 
-      const allowed = this.scopeRoutesToIgnore.find((route) =>
+      const allowed = this.routesToIgnore.find((route) =>
         request.url.includes(route),
       );
 

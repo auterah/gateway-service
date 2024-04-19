@@ -41,8 +41,8 @@ export class Bootstrap {
     app.use(json({ limit: '400000mb' }));
 
     app.enableCors({
-      allowedHeaders: '*',
-      origin: '*',
+      allowedHeaders: '*', 
+      origin: '*', // Todo: Make sure to block unrecognized requester.
     });
     app.useGlobalPipes(new ValidationPipe());
 
