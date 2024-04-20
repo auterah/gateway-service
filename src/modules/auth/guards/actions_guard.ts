@@ -136,10 +136,6 @@ export class ActionsGuard implements CanActivate {
     const token = authorization.split('Bearer')[1].trim();
     const decryptedToken = this.aesEncrypt.decrypt(token);
 
-    // const customer = new JwtService({
-    //   secret: configs.JWT_SECRET,
-    // }).decode(token);
-
     if (!decryptedToken) {
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
     }

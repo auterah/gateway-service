@@ -12,6 +12,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { BootEvents } from './shared/events/local.events';
 import { AvailableRoute } from './shared/types/app_bootstrap';
 import { FsService } from './modules/file/file.service';
+import { AllExceptionsFilter } from './shared/filters/exception_filter';
 
 export class Bootstrap {
   protected serverName: string;
@@ -34,6 +35,8 @@ export class Bootstrap {
     const PORT = configs.SERVER_PORT;
     app.useGlobalInterceptors(new LoggingInterceptor());
     app.useGlobalInterceptors(new TransformInterceptor());
+    app.useGlobalFilters(new AllExceptionsFilter());
+
     app.setGlobalPrefix(configs.API_VERSION, {
       exclude: this.routesToExclude,
     });

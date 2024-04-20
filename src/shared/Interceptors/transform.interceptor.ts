@@ -20,8 +20,36 @@ export class TransformInterceptor<T>
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<Response<T>> {
-    return next
-      .handle()
-      .pipe(map((data) => ({ data, status: 'success', message: '' })));
+    return next.handle().pipe(
+      map((data) => {
+        const respObject = context.switchToHttp().getResponse();
+        const response = {
+          statusCode: respObject?.statusCode,
+          status: 'Success',
+          message: '',
+          time: new Date().toISOString(),
+          data,
+        };
+
+        if ('pagination' in data) {
+          Object.assign(response, { meta: data.pagination });
+          response.message = response.message || 'Records fetched successfully';
+          delete data.pagination;
+        }
+
+        if (typeof response.data == 'string') {
+          response.message = response.data;
+          response.data = null;
+        }
+
+        return {
+          ...response,
+          request: {
+            method: respObject?.req?.method,
+            path: respObject?.req?.originalUrl,
+          },
+        };
+      }),
+    );
   }
 }
