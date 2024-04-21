@@ -6,7 +6,9 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   BeforeInsert,
+  ManyToOne,
 } from 'typeorm';
+import Customer from '../customer/customer.entity';
 
 @Entity('clients')
 export default class Client {
@@ -28,6 +30,12 @@ export default class Client {
       this.tags = []; // Set default value
     }
   }
+
+  @Column({ name: 'customer_id' })
+  customerId: string;
+
+  @ManyToOne(() => Customer, (customer) => customer.clients)
+  customer: Customer;
 
   @Column({ default: false, type: 'boolean' })
   verified: boolean;

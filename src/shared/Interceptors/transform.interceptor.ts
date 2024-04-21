@@ -13,6 +13,11 @@ export interface Response<T> {
   data: T;
 }
 
+enum HttpMethod {
+  DELETE = 'DELETE',
+  PUT = 'PUT',
+}
+
 @Injectable()
 export class TransformInterceptor<T>
   implements NestInterceptor<T, Response<T>>
@@ -24,7 +29,7 @@ export class TransformInterceptor<T>
     return next.handle().pipe(
       map((data) => {
         const response = context.switchToHttp().getResponse();
-        // const request = context.switchToHttp().getRequest<Request>();
+        const request: Request = context.switchToHttp().getRequest<Request>();
 
         const respData = {
           statusCode: response?.statusCode,
@@ -47,6 +52,18 @@ export class TransformInterceptor<T>
 
         if (data && respData.statusCode == HttpStatus.CREATED) {
           respData.message = `Record(s) created successfully`;
+        }
+
+        if (data && respData.statusCode == HttpStatus.OK) {
+          respData.message = 'Record(s) fetched successfully';
+        }
+
+        if (request.method == HttpMethod.DELETE) {
+          respData.message = 'Record(s) deleted successfully';
+        }
+
+        if (request.method == HttpMethod.PUT) {
+          respData.message = 'Record(s) updated successfully';
         }
 
         return {

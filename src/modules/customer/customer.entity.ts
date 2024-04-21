@@ -2,6 +2,7 @@ import App from 'src/modules/app/entities/app.entity';
 import { Roles } from 'src/shared/enums/roles';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import Billing from '../billing/entities/billing.entity';
+import Client from '../customer_client/client.entity';
 
 @Entity('customers')
 export default class Customer {
@@ -23,6 +24,9 @@ export default class Customer {
 
   @OneToMany(() => Billing, (bill) => bill.customer)
   billings: Billing[];
+
+  @OneToMany(() => Client, (client) => client.customer)
+  clients: Client[];
 
   @Column({ type: 'enum', default: Roles.ADMIN, enum: Roles })
   role: Roles;

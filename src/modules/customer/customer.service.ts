@@ -51,6 +51,13 @@ export class CustomerService {
     });
   }
 
+  // Find Cutomer By Id
+  findOneById(id: string): Promise<Customer> {
+    return this.findOne({
+      where: { id },
+    });
+  }
+
   // Find Unknown(X) Customer By Email
   findXCustomer(findOpts: FindOneOptions<Customer>): Promise<Customer> {
     return this.findOne(findOpts);

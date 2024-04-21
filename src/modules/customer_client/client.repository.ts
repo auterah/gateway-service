@@ -64,8 +64,43 @@ export class ClientRepository {
   }
 
   // Update Client By Id
-  updateOneById(id: string, updates: Partial<Client>): Promise<any> {
-    return this.clientRepo.update({ id }, updates);
+  async updateOneById(
+    customerId: string,
+    id: string,
+    updates: Partial<Client>,
+    _return = false,
+  ): Promise<void | Client> {
+
+    if (updates.email) {
+      const client = await this.clientRepo.findOne({
+        where: { email: updates.email },
+      });
+
+      if (client) {
+        throw new HttpException(
+          'Sorry! Email is unavailable',
+          HttpStatus.EXPECTATION_FAILED,
+        );
+      }
+    }
+
+    const findOpt = { id, customerId };
+    if (!_return) {
+      await this.clientRepo.update(findOpt, updates);
+      return;
+    }
+    await this.clientRepo.update(findOpt, updates);
+    return this.findOne({ where: findOpt });
+  }
+
+  // Remove Client By Id
+  async deleteOneById(customerId: string, id: string): Promise<boolean> {
+    const client = await this.findOne({ where: { id, customerId } });
+    if (!client) {
+      throw new HttpException('Invalid client', HttpStatus.EXPECTATION_FAILED);
+    }
+    await this.clientRepo.remove(client);
+    return true;
   }
 
   get repo(): Repository<Client> {

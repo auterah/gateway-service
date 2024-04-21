@@ -415,31 +415,49 @@
   },
   {
     "route": {
-      "path": "/api/v1/reports/statistics",
-      "method": "get"
-    }
-  },
-  {
-    "route": {
       "path": "/api/v1/reports/all",
       "method": "get"
     }
   },
   {
     "route": {
-      "path": "/api/v1/consumers",
+      "path": "/api/v1/clients",
       "method": "post"
     }
   },
   {
     "route": {
-      "path": "/api/v1/consumers/bulk",
+      "path": "/api/v1/clients/bulk",
       "method": "post"
     }
   },
   {
     "route": {
-      "path": "/api/v1/consumers",
+      "path": "/api/v1/clients",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/id/:id",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/id/:id",
+      "method": "delete"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/id/:id",
+      "method": "put"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/all",
       "method": "get"
     }
   }
