@@ -2,6 +2,7 @@
 import {
   CallHandler,
   ExecutionContext,
+  HttpStatus,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
@@ -22,9 +23,11 @@ export class TransformInterceptor<T>
   ): Observable<Response<T>> {
     return next.handle().pipe(
       map((data) => {
-        const respObject = context.switchToHttp().getResponse();
-        const response = {
-          statusCode: respObject?.statusCode,
+        const response = context.switchToHttp().getResponse();
+        // const request = context.switchToHttp().getRequest<Request>();
+
+        const respData = {
+          statusCode: response?.statusCode,
           status: 'Success',
           message: '',
           time: new Date().toISOString(),
@@ -32,21 +35,25 @@ export class TransformInterceptor<T>
         };
 
         if (data && data?.pagination) {
-          Object.assign(response, { meta: data.pagination });
-          response.message = response.message || 'Records fetched successfully';
+          Object.assign(respData, { meta: data.pagination });
+          respData.message = respData.message || 'Records fetched successfully';
           delete data.pagination;
         }
 
         if (data && typeof data == 'string') {
-          response.message = response.data;
-          response.data = null;
+          respData.message = respData.data;
+          respData.data = null;
+        }
+
+        if (data && respData.statusCode == HttpStatus.CREATED) {
+          respData.message = `Record(s) created successfully`;
         }
 
         return {
-          ...response,
+          ...respData,
           request: {
-            method: respObject?.req?.method,
-            path: respObject?.req?.originalUrl,
+            method: response?.req?.method,
+            path: response?.req?.originalUrl,
           },
         };
       }),

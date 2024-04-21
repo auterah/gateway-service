@@ -6,10 +6,10 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import Consumer from '../consumer.entity';
+import Client from '../client.entity';
 import { Type } from 'class-transformer';
 
-export class ConsumerDto extends Consumer {
+export class ClientDto extends Client {
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -25,10 +25,10 @@ export class ConsumerDto extends Consumer {
   tags: string[];
 }
 
-export class BulkConsumerDto {
+export class BulkClientDto {
   @ValidateNested({ each: true })
   @ArrayNotEmpty()
-  @Type(() => ConsumerDto)
+  @Type(() => ClientDto)
   @ArrayNotEmpty()
-  consumers: ConsumerDto[];
+  clients: ClientDto[];
 }

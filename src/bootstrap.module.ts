@@ -17,7 +17,7 @@ import { SettingModule } from './modules/Setting/setting.module';
 import { FileModule } from './modules/file/file.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { ReportModule } from './modules/report/report.module';
-import { ConsumerModule } from './modules/consumer/consumer.module';
+import { ClientModule } from './modules/customer_client/client.module';
 
 @Module({
   imports: [
@@ -46,7 +46,7 @@ import { ConsumerModule } from './modules/consumer/consumer.module';
     FileModule,
     BillingModule,
     ReportModule,
-    ConsumerModule,
+    ClientModule,
   ],
   controllers: [BootController],
   providers: [BootService, AuthService, SeedingService],
