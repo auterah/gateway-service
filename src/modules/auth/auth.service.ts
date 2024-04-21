@@ -10,7 +10,6 @@ import Customer from 'src/modules/customer/customer.entity';
 import { GenTokenDto } from './dtos/generate_token.dto';
 import { AesEncryption } from 'src/shared/utils/encryption';
 import { OtpSignInDto } from './dtos/otp_signin.dto';
-import { AppService } from '../app/app.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { MailEvents } from 'src/shared/events/mail.events';
 import { VerifyOtpDto } from './dtos/veriy_otp.dto';
@@ -127,7 +126,7 @@ export class AuthService {
       throw new HttpException('Invalid email address.', HttpStatus.BAD_REQUEST);
     }
 
-    const otp = AppService.generateOtp(6);
+    const otp = AuthService.generateOtp(6);
     customer.otp = parseInt(otp);
     this.customerService.save(customer);
 
