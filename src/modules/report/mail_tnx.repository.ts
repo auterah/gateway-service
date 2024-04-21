@@ -6,7 +6,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PaginationData } from 'src/shared/types/pagination';
 import MailTransaction from './entities/mail_transaction.entity';
 import { EMailTransactionStatus } from '../email/enums/mail_transaction_status';
-
+import { format } from 'date-fns';
 @Injectable()
 export class MailTnxRepository {
   constructor(
@@ -91,5 +91,40 @@ export class MailTnxRepository {
     });
 
     return overview;
+  }
+
+  async fetchStatistics(findOpts) {
+    const months = [
+      'Jan', 'Feb', 'March', 'April', 'May', 'June',
+      'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec',
+    ];
+
+    const { appId } = findOpts.where;
+
+    const monthlyStatistics = await Promise.all(
+      months.map(async (month) => {
+        const startDate = new Date(2024, months.indexOf(month), 1);
+        const endDate = new Date(2024, months.indexOf(month) + 1, 0);
+    
+        const statistics = await this.mailTnxEntity
+          .createQueryBuilder('mail_transactions')
+          .select('SUM(CASE WHEN mail_transactions.status = :sent THEN 1 ELSE 0 END)', 'sent')
+          .addSelect('SUM(CASE WHEN mail_transactions.status = :failed THEN 1 ELSE 0 END)', 'failed')
+          .addSelect('SUM(mail_transactions.clicks)', 'clicks')
+          .addSelect('SUM(mail_transactions.opened)', 'opened')
+          .addSelect('SUM(mail_transactions.bounced)', 'bounced')
+          .where('mail_transactions.createdAt >= :startDate', { startDate: format(startDate, 'yyyy-MM-dd') })
+          .andWhere('mail_transactions.createdAt <= :endDate', { endDate: format(endDate, 'yyyy-MM-dd') })
+          .andWhere('mail_transactions.appId = :appId', { appId })
+          .setParameter('sent', 'sent')
+          .setParameter('failed', 'failed')
+          .getRawOne();
+    
+        return { month, statistics };
+      }),
+    );
+    
+
+    return monthlyStatistics;
   }
 }

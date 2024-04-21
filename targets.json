@@ -1,0 +1,446 @@
+[
+  {
+    "route": {
+      "path": "/api/v1/*",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/register",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/customer-x-token",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/2",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/2/verify-otp",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/me",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/admin",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/app/init",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/admin/verify-otp",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/admins/(.*)",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/add-smtp",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/billings/(.*)",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/*",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/register",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/customer-x-token",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/2",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/2/verify-otp",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/me",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/admin",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/app/init",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/admin/verify-otp",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/admins/(.*)",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/add-smtp",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/billings/(.*)",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/app/init",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/status",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/add-smtp",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/roles",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/roles",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/permissions",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/permissions",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/apps/x-app/pub/:public_key",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/apps/x-app/puk/:private_key",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/apps",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/apps",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/apps/requests",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/apps/scopes",
+      "method": "put"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/apps/scopes",
+      "method": "delete"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/apps/id/:app_id",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/apps/me",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/apps/smtps",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/apps/smtps",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/apps/smtps/all",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/customers",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/customers/x-customer/:email",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/register",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/auth/customer-x-token/:token",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/2",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/2/verify-otp",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/me",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/admin",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/auth/admin/verify-otp",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/admins/configs",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/admins/billings",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/admins/billings",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/admins/billings/:app_id",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/targets",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/billings/plans",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/billings/plans",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/billings/plans/name/:name",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/billings/plans/type/:type",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/billings/commercials",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/billings/commercials/many",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/billings/commercials",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/reports",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/reports/id/:id",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/reports/overview",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/reports/statistics",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/reports/all",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/consumers",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/consumers/bulk",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/consumers",
+      "method": "get"
+    }
+  }
+]

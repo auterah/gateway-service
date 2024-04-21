@@ -37,6 +37,12 @@ export class ReportController {
     return this.reportService.fetchOverviewByAppId(app.id, queries);
   }
 
+  @Get('statistics')
+  @UseGuards(ActionsGuard)
+  getStatistics(@Query() queries: FindDataRequestDto, @GetCurrentApp() app: App) {
+    return this.reportService.fetchStatisticsByAppId(app.id, queries);
+  }
+
   // -- SuperAdmin Reports
   @Get('all')
   @UseGuards(AdminGuard)
