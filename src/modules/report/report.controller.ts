@@ -10,7 +10,7 @@ import { VerifyDefaultConfigs } from 'src/guards/default_configs_guard';
 @Controller('reports')
 @UseGuards(VerifyDefaultConfigs)
 export class ReportController {
-  constructor(private readonly reportService: ReportService) {}
+  constructor(private readonly reportService?: ReportService) {}
 
   @Get()
   @UseGuards(ActionsGuard)
@@ -52,6 +52,5 @@ export class ReportController {
     }
     return this.reportService.findAllTransactionRecords(queries);
   }
-
   // -- End SuperAdmin Reports
 }

@@ -25,6 +25,6 @@ import { EmailModule } from '../email/email.module';
     AppRequestService,
     AppRequestRepository,
   ],
-  exports: [AppService],
+  exports: [AppService, AppRequestService],
 })
 export class AppModule {}

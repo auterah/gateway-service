@@ -17,7 +17,6 @@ import { AppService } from './app.service';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { ActionsGuard } from 'src/modules/auth/guards/actions_guard';
 import { Request } from 'express';
-import { AppRequestService } from './app_request.service';
 import { AppScopeDto } from './dtos/app_scope.dto';
 import App from './entities/app.entity';
 import { GetCurrentApp } from 'src/shared/decorators/get_current_app';
@@ -32,7 +31,6 @@ import { SmtpDto } from 'src/dtos/smtp.dto';
 export class AppController {
   constructor(
     private appService: AppService,
-    private appReqService: AppRequestService,
     private emailService: EmailService,
   ) {}
 
@@ -82,16 +80,6 @@ export class AppController {
       skip,
     });
   }
-
-  // --- App request section
-  @Get('requests')
-  getAllRequests(@Query() queries: FindDataRequestDto) {
-    const take = Number(queries.take || '10');
-    const skip = Number(queries.skip || '0');
-    return this.appReqService.selectAllRecords({ take, skip });
-  }
-
-  // --- End App request section
 
   @Put('scopes')
   @UseGuards(ActionsGuard)

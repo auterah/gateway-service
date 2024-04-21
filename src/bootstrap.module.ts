@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { LoggerModule } from 'nestjs-pino';
 import { GlobalModule } from './global/global.module';
 import { EmailModule } from './modules/email/email.module';
-import { AppModule as AppModule__ } from './modules/app/app.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AuthService } from './modules/auth/auth.service';
@@ -38,7 +37,6 @@ import { ClientModule } from './modules/customer_client/client.module';
     }),
     CustomerModule,
     EmailModule,
-    AppModule__,
     AuthModule,
     SettingModule,
     AdminModule,

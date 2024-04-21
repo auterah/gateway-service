@@ -13,7 +13,6 @@ import { PermissionService } from '../authorization/permission/permission.servic
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AppEvents } from 'src/shared/events/app.events';
 import { StringUtils } from 'src/shared/utils/string';
-import { defaultPermissions } from 'src/database/mocks/default_permissions';
 
 @Injectable()
 export class AppService {
@@ -41,17 +40,6 @@ export class AppService {
       Date.now() +
       '=='
     );
-  }
-
-  static generateOtp(length: number) {
-    const digits = '0123456789';
-    let OTP = '';
-
-    for (let i = 0; i < length; i++) {
-      OTP += digits[Math.floor(Math.random() * 10)];
-    }
-
-    return OTP;
   }
 
   // Add New App
