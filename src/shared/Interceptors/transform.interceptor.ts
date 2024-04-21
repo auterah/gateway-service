@@ -31,13 +31,13 @@ export class TransformInterceptor<T>
           data,
         };
 
-        if ('pagination' in data) {
+        if (data && data?.pagination) {
           Object.assign(response, { meta: data.pagination });
           response.message = response.message || 'Records fetched successfully';
           delete data.pagination;
         }
 
-        if (typeof response.data == 'string') {
+        if (data && typeof data == 'string') {
           response.message = response.data;
           response.data = null;
         }
