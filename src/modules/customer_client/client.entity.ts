@@ -8,8 +8,8 @@ import {
   BeforeInsert,
 } from 'typeorm';
 
-@Entity('consumers')
-export default class Consumer {
+@Entity('clients')
+export default class Client {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
