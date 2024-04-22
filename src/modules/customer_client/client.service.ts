@@ -6,6 +6,7 @@ import { BulkClientDto, ClientDto } from './dtos/client.dto';
 import { PaginationData } from 'src/shared/types/pagination';
 import { ClientUtils } from './utils/client';
 import { CustomerService } from '../customer/customer.service';
+import Customer from '../customer/customer.entity';
 
 @Injectable()
 export class ClientService {
@@ -15,9 +16,7 @@ export class ClientService {
   ) {}
 
   // Add New Client
-  async addClient(customerId: string, clientDto: ClientDto): Promise<Client> {
-    const customer = await this.customerService.findOneById(customerId);
-
+  async addClient(customer: Customer, clientDto: ClientDto): Promise<Client> {
     const exist = await this.findOneByEmail(clientDto.email);
     if (exist) {
       throw new HttpException(
@@ -25,22 +24,22 @@ export class ClientService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    clientDto.customer = customer;
     const client = await this.clientRepo.create(clientDto);
-    client.customer = customer;
-    client.customerId = customer.id;
+    delete client.customer;
     return client;
   }
 
   // Add Bulk Clients
   async addBulkClients(
     customerId: string,
-    { clients }: BulkClientDto,
+    clientDto: BulkClientDto,
   ): Promise<Client[]> {
     try {
       const customer = await this.customerService.findOneById(customerId);
 
       const newClients: Client[] = [];
-      const _clients = ClientUtils.removeDuplicatesByEmail(clients);
+      const _clients = ClientUtils.removeDuplicatesByEmail(clientDto.clients);
 
       type E = { error: string; client: Client };
       const errors: E[] = [];
@@ -62,7 +61,11 @@ export class ClientService {
         throw new HttpException(errors, HttpStatus.EXPECTATION_FAILED);
       }
 
-      return this.repo.save(_clients);
+      const clients = await this.repo.save(_clients);
+      for (const client of clients) {
+        delete client.customer;
+      }
+      return clients;
     } catch (e) {
       throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
     }

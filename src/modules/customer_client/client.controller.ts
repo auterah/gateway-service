@@ -15,6 +15,7 @@ import { ActionsGuard } from '../auth/guards/actions_guard';
 import { BulkClientDto, ClientDto } from './dtos/client.dto';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
 import { AdminGuard } from '../auth/guards/admin_guard';
+import Customer from '../customer/customer.entity';
 
 @Controller('clients')
 export class ClientController {
@@ -24,9 +25,9 @@ export class ClientController {
   @UseGuards(ActionsGuard)
   addClient(
     @Body() payload: ClientDto,
-    @GetCurrentCustomer('id') customerId: string,
+    @GetCurrentCustomer() customer: Customer,
   ) {
-    return this.clientService.addClient(customerId, payload);
+    return this.clientService.addClient(customer, payload);
   }
 
   @Post('bulk')

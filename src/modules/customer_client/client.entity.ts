@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import Customer from '../customer/customer.entity';
 
-@Entity('clients')
+@Entity('customer_clients')
 export default class Client {
   @PrimaryGeneratedColumn('uuid')
   id: string;
