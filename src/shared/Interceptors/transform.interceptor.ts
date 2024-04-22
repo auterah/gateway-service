@@ -45,11 +45,6 @@ export class TransformInterceptor<T>
           delete data.pagination;
         }
 
-        if (data && typeof data == 'string') {
-          respData.message = respData.data;
-          respData.data = null;
-        }
-
         if (data && respData.statusCode == HttpStatus.CREATED) {
           respData.message = `Record(s) created successfully`;
         }
@@ -64,6 +59,14 @@ export class TransformInterceptor<T>
 
         if (request.method == HttpMethod.PUT) {
           respData.message = 'Record(s) updated successfully';
+        }
+
+
+
+        // -------------------------------------
+        if (data && typeof data == 'string') {
+          respData.message = respData.data;
+          respData.data = null;
         }
 
         return {
