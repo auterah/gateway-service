@@ -3,12 +3,14 @@ import {
   IsArray,
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
 import Client from '../entities/client.entity';
 import { Type } from 'class-transformer';
-import ClientTag from '../../customer/entities/client_tag.entity';
+import { OmitType } from '@nestjs/mapped-types';
+import ClientTag from '../entities/client_tag.entity';
 
 export class ClientDto extends Client {
   @IsString()
@@ -19,7 +21,11 @@ export class ClientDto extends Client {
   @IsNotEmpty()
   email: string;
 
-  @IsNotEmpty()
+  @IsOptional()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNotEmpty({ each: true })
+  @IsString({ each: true })
   tags: ClientTag[];
 }
 

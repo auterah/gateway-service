@@ -7,6 +7,7 @@ import {
   DeleteDateColumn,
   ManyToOne,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import ClientTag from './client_tag.entity';
 import Customer from './customer.entity';
@@ -22,7 +23,7 @@ export default class Client {
   @Column({ unique: true })
   email: string;
 
-  @OneToMany(() => ClientTag, (tag) => tag)
+  @OneToMany(() => ClientTag, (tag) => tag.client, { eager: true })
   tags: ClientTag[];
 
   @Column({ name: 'customer_id' })

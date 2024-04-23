@@ -7,16 +7,18 @@ import { ClientUtils } from '../utils/client';
 import { CustomerService } from './customer.service';
 import Customer from '../entities/customer.entity';
 import { ClientDto, BulkClientDto } from '../dtos/client.dto';
+import { ClientTagService } from './client_tag.service';
 
 @Injectable()
 export class ClientService {
   constructor(
     private readonly clientRepo: ClientRepository,
     private readonly customerService: CustomerService,
+    private readonly tagService: ClientTagService,
   ) {}
 
   // Add New Client
-  async addClient(customer: Customer, clientDto: ClientDto): Promise<Client> {
+  async addClient(customer: Customer, clientDto: ClientDto) {
     const exist = await this.findOneByEmail(clientDto.email);
     if (exist) {
       throw new HttpException(
@@ -24,12 +26,29 @@ export class ClientService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    const tags = clientDto.tags as unknown as string[];
+    if (tags) {
+      const { errors, tags: _tags } = await this.tagService.findTagsByIds(
+        customer.id,
+        tags,
+        true,
+      );
+
+      if (errors.length) {
+        throw new HttpException(errors, HttpStatus.EXPECTATION_FAILED);
+      }
+      clientDto.tags = _tags;
+    }
+
     clientDto.customer = customer;
+    clientDto.customerId = customer.id;
+
     const client = await this.clientRepo.create(clientDto);
     delete client.customer;
     return client;
   }
 
+ 
   // Add Bulk Clients
   async addBulkClients(
     customerId: string,

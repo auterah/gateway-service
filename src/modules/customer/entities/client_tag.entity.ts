@@ -8,6 +8,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import Customer from 'src/modules/customer/entities/customer.entity';
+import Client from './client.entity';
 
 @Entity('client_tags')
 export default class ClientTag {
@@ -23,8 +24,8 @@ export default class ClientTag {
   @Column({ name: 'customer_id' })
   customerId: string;
 
-  // @ManyToOne(() => Customer, (customer) => customer.tags)
-  // clien: Customer;
+  @ManyToOne(() => Client, (client) => client.tags)
+  client: Client;
 
   @CreateDateColumn()
   createdAt: Date;

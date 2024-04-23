@@ -18,15 +18,6 @@ export class ClientRepository {
 
   // Add New Client
   async create(clientDto?: Partial<ClientDto>): Promise<Client> {
-    const client = await this.findOne({
-      where: { email: clientDto.email },
-    });
-    if (client) {
-      throw new HttpException(
-        'Sorry! Email is unavailable',
-        HttpStatus.NOT_ACCEPTABLE,
-      );
-    }
     const newClient = this.clientRepo.create(clientDto);
     const _client = await this.clientRepo.save(newClient);
     this.clientEvent.emit(ClientEvents.CREATED, _client);

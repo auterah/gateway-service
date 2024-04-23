@@ -6,6 +6,9 @@ import ClientTag from '../entities/client_tag.entity';
 import { BulkClientTagDto, ClientTagDto } from '../dtos/client_tag.dto';
 import { ClientTagUtils } from '../utils/client';
 import { CustomerService } from './customer.service';
+import { CryptoUtil } from 'src/shared/utils/crypto';
+
+type E = { error: string; tag: string };
 
 @Injectable()
 export class ClientTagService {
@@ -117,5 +120,39 @@ export class ClientTagService {
     updates: Partial<ClientTagDto>,
   ): Promise<void | ClientTag> {
     return this.tagRepo.updateOneById(customerId, id, updates, true);
+  }
+
+  // Fetch Tags By Ids
+  async findTagsByIds(
+    customerId: string,
+    tagsIdentifiers: string[],
+    vetRecords = false,
+  ): Promise<{ errors: E[]; tags: ClientTag[] }> {
+    const errors: E[] = [];
+    const tags: ClientTag[] = [];
+
+    try {
+      for (const identifier of tagsIdentifiers) {
+        const tag = await (CryptoUtil.isUUID(identifier)
+          ? this.findOneById(customerId, identifier)
+          : this.findOneByName(customerId, identifier));
+
+        if (vetRecords && !tag) {
+          errors.push({
+            error: 'Invaild Tag',
+            tag: identifier,
+          });
+        }
+
+        tags.push(tag);
+      }
+
+      return {
+        errors,
+        tags,
+      };
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
+    }
   }
 }
