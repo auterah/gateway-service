@@ -8,10 +8,10 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CustomerService } from './customer.service';
+import { CustomerService } from '../services/customer.service';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { Request } from 'express';
-import { AdminGuard } from '../auth/guards/admin_guard';
+import { AdminGuard } from '../../auth/guards/admin_guard';
 
 @Controller('customers')
 export class CustomerController {

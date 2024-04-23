@@ -7,7 +7,7 @@ import { BootEvents } from 'src/shared/events/local.events';
 import { EmailProcessorFactory } from './factory';
 import { EmailProcessors } from 'src/shared/enums';
 import { IEmailService, MailOptions } from './interfaces';
-import Customer from '../customer/customer.entity';
+import Customer from '../customer/entities/customer.entity';
 import { CustomerEvents } from 'src/shared/events/customer.events';
 import { AdminEvents } from 'src/shared/events/admin.events';
 import Admin from '../admin/admin.entity';

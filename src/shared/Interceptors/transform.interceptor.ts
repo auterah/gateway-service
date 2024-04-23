@@ -53,6 +53,14 @@ export class TransformInterceptor<T>
           respData.message = 'Record(s) fetched successfully';
         }
 
+        if (!data && respData.statusCode == HttpStatus.OK) {
+          respData.message = 'Record not found';
+        }
+
+        if (data && respData.statusCode == HttpStatus.OK) {
+          respData.message = 'Record(s) fetched successfully';
+        }
+
         if (request.method == HttpMethod.DELETE) {
           respData.message = 'Record(s) deleted successfully';
         }
@@ -60,7 +68,6 @@ export class TransformInterceptor<T>
         if (request.method == HttpMethod.PUT) {
           respData.message = 'Record(s) updated successfully';
         }
-
 
 
         // -------------------------------------

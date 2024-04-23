@@ -5,10 +5,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  BeforeInsert,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
-import Customer from '../customer/customer.entity';
+import ClientTag from './client_tag.entity';
+import Customer from './customer.entity';
 
 @Entity('customer_clients')
 export default class Client {
@@ -21,15 +22,8 @@ export default class Client {
   @Column({ unique: true })
   email: string;
 
-  @Column({ type: 'json' })
-  tags: string[];
-
-  @BeforeInsert()
-  setDefaultTags() {
-    if (!this.tags) {
-      this.tags = []; // Set default value
-    }
-  }
+  @OneToMany(() => ClientTag, (tag) => tag)
+  tags: ClientTag[];
 
   @Column({ name: 'customer_id' })
   customerId: string;

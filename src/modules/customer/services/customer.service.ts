@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import Customer from './customer.entity';
-import { CustomerDto } from './dtos/customer.dto';
+import Customer from '../entities/customer.entity';
+import { CustomerDto } from '../dtos/customer.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { RoleService } from '../authorization/role/role.service';
-import { CustomerRepository } from './customer.repository';
+import { RoleService } from '../../authorization/role/role.service';
+import { CustomerRepository } from '../repositories/customer.repository';
 import { FindOneOptions, FindManyOptions } from 'typeorm';
 
 @Injectable()
@@ -44,14 +44,14 @@ export class CustomerService {
     return this.customerRepo.findOne(findOpts);
   }
 
-  // Find Cutomer By Email
+  // Find Customer By Email
   findOneByEmail(email: string): Promise<Customer> {
     return this.findOne({
       where: { email },
     });
   }
 
-  // Find Cutomer By Id
+  // Find Customer By Id
   findOneById(id: string): Promise<Customer> {
     return this.findOne({
       where: { id },

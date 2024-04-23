@@ -16,7 +16,7 @@ import App from 'src/modules/app/entities/app.entity';
 import { EAppRequestStatus } from 'src/modules/app/enums/app_request_status';
 import { AppRequestEvents } from 'src/shared/events/app.events';
 import { CurrentApp, CurrentCustomer } from 'src/shared/types/request';
-import Customer from 'src/modules/customer/customer.entity';
+import Customer from 'src/modules/customer/entities/customer.entity';
 
 @Injectable()
 export class ActionsGuard implements CanActivate {

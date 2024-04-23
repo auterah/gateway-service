@@ -7,7 +7,7 @@ import {
   ManyToOne,
   ManyToMany,
 } from 'typeorm';
-import Customer from 'src/modules/customer/customer.entity';
+import Customer from 'src/modules/customer/entities/customer.entity';
 import { EPaymentMethods } from '../enums/payment_methods';
 
 @Entity('billings')

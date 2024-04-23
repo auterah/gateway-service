@@ -12,7 +12,7 @@ import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import App from 'src/modules/app/entities/app.entity';
 import { defaultApp } from '../mocks/default_app';
-import Customer from 'src/modules/customer/customer.entity';
+import Customer from 'src/modules/customer/entities/customer.entity';
 import { defaultPermissions } from '../mocks/default_permissions';
 import { AdminEvents } from 'src/shared/events/admin.events';
 

@@ -10,12 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
-import { ClientService } from './client.service';
-import { ActionsGuard } from '../auth/guards/actions_guard';
-import { BulkClientDto, ClientDto } from './dtos/client.dto';
+import { ActionsGuard } from '../../auth/guards/actions_guard';
+import { BulkClientDto, ClientDto } from '../dtos/client.dto';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
-import { AdminGuard } from '../auth/guards/admin_guard';
-import Customer from '../customer/customer.entity';
+import { AdminGuard } from '../../auth/guards/admin_guard';
+import Customer from '../entities/customer.entity';
+import { ClientService } from '../services/client.service';
 
 @Controller('clients')
 export class ClientController {

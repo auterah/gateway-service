@@ -1,12 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { calculate_pagination_data } from 'src/shared/utils/pagination';
 import { InjectRepository } from '@nestjs/typeorm';
-import Customer from './customer.entity';
-import { CustomerDto } from './dtos/customer.dto';
+import Customer from '../entities/customer.entity';
+import { CustomerDto } from '../dtos/customer.dto';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CustomerEvents } from 'src/shared/events/customer.events';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { RoleService } from '../authorization/role/role.service';
+import { RoleService } from '../../authorization/role/role.service';
 import { Roles } from 'src/shared/enums/roles';
 
 @Injectable()

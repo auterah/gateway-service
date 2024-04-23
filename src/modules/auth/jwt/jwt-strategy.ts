@@ -3,7 +3,7 @@ import { Strategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
 import { JwtPayload } from './jwt-payload.model';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AppService } from 'src/modules/app/app.service';
-import { CustomerService } from 'src/modules/customer/customer.service';
+import { CustomerService } from 'src/modules/customer/services/customer.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {

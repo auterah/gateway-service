@@ -6,8 +6,9 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import Client from '../client.entity';
+import Client from '../entities/client.entity';
 import { Type } from 'class-transformer';
+import ClientTag from '../../customer/entities/client_tag.entity';
 
 export class ClientDto extends Client {
   @IsString()
@@ -18,11 +19,8 @@ export class ClientDto extends Client {
   @IsNotEmpty()
   email: string;
 
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsNotEmpty({ each: true })
-  @IsString({ each: true })
-  tags: string[];
+  @IsNotEmpty()
+  tags: ClientTag[];
 }
 
 export class BulkClientDto {

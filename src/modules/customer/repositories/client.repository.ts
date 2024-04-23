@@ -3,10 +3,10 @@ import { calculate_pagination_data } from 'src/shared/utils/pagination';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import Client from './client.entity';
-import { ClientDto } from './dtos/client.dto';
+import Client from '../entities/client.entity';
 import { ClientEvents } from 'src/shared/events/client.events';
 import { PaginationData } from 'src/shared/types/pagination';
+import { ClientDto } from '../dtos/client.dto';
 
 @Injectable()
 export class ClientRepository {
@@ -70,7 +70,6 @@ export class ClientRepository {
     updates: Partial<Client>,
     _return = false,
   ): Promise<void | Client> {
-
     if (updates.email) {
       const client = await this.clientRepo.findOne({
         where: { email: updates.email },

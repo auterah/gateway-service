@@ -1,12 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FindOneOptions, FindManyOptions, Repository } from 'typeorm';
-import { ClientRepository } from './client.repository';
-import Client from './client.entity';
-import { BulkClientDto, ClientDto } from './dtos/client.dto';
+import { ClientRepository } from '../repositories/client.repository';
+import Client from '../entities/client.entity';
 import { PaginationData } from 'src/shared/types/pagination';
-import { ClientUtils } from './utils/client';
-import { CustomerService } from '../customer/customer.service';
-import Customer from '../customer/customer.entity';
+import { ClientUtils } from '../utils/client';
+import { CustomerService } from './customer.service';
+import Customer from '../entities/customer.entity';
+import { ClientDto, BulkClientDto } from '../dtos/client.dto';
 
 @Injectable()
 export class ClientService {

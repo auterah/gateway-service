@@ -14,13 +14,16 @@ import { OtpSignInDto } from './dtos/otp_signin.dto';
 import { VerifyOtpDto } from './dtos/veriy_otp.dto';
 import { ActionsGuard } from './guards/actions_guard';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
-import Customer from '../customer/customer.entity';
 import { SignAdminToken } from './dtos/sign_admin_token.dto';
 import { EmailUtils } from 'src/shared/utils/email.utils';
+import { CustomerService } from '../customer/services/customer.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private customerService: CustomerService,
+  ) {}
 
   // register customer
   @Post('register')
@@ -61,8 +64,11 @@ export class AuthController {
   // Get Customer Info.
   @Get('me')
   @UseGuards(ActionsGuard)
-  getCustomerInfo(@GetCurrentCustomer() customer: Customer) {
-    return customer;
+  getCustomerInfo(@GetCurrentCustomer('id') customerId: string) {
+    return this.customerService.findOne({
+      where: { id: customerId },
+      relations: ['tags'],
+    });
   }
 
   // Request admin OTP

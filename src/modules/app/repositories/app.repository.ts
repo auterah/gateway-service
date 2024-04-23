@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import App from '../entities/app.entity';
-import { CustomerRepository } from 'src/modules/customer/customer.repository';
+import { CustomerRepository } from 'src/modules/customer/repositories/customer.repository';
 import { AppDto } from '../dtos/newapp.dto';
 import { defaultAdmin } from 'src/database/mocks/default_admins';
 import { EventEmitter2 } from '@nestjs/event-emitter';

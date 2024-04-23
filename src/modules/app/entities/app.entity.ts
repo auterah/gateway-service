@@ -1,5 +1,5 @@
 import Permission from 'src/modules/authorization/permission/permission.entity';
-import Customer from 'src/modules/customer/customer.entity';
+import Customer from 'src/modules/customer/entities/customer.entity';
 import Smtp from 'src/modules/email/entities/smtp.entity';
 import {
   Entity,

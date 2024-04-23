@@ -1,8 +1,9 @@
 import App from 'src/modules/app/entities/app.entity';
 import { Roles } from 'src/shared/enums/roles';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import Billing from '../billing/entities/billing.entity';
-import Client from '../customer_client/client.entity';
+import Billing from '../../billing/entities/billing.entity';
+import ClientTag from './client_tag.entity';
+import Client from './client.entity';
 
 @Entity('customers')
 export default class Customer {
@@ -27,6 +28,9 @@ export default class Customer {
 
   @OneToMany(() => Client, (client) => client.customer)
   clients: Client[];
+
+  @OneToMany(() => ClientTag, (tag) => tag.customer)
+  tags: ClientTag[];
 
   @Column({ type: 'enum', default: Roles.ADMIN, enum: Roles })
   role: Roles;
