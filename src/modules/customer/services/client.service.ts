@@ -19,36 +19,39 @@ export class ClientService {
 
   // Add New Client
   async addClient(customer: Customer, clientDto: ClientDto) {
-    const exist = await this.findOneByEmail(clientDto.email);
-    if (exist) {
-      throw new HttpException(
-        'Sorry! Email is unavailable',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    const tags = clientDto.tags as unknown as string[];
-    if (tags) {
-      const { errors, tags: _tags } = await this.tagService.findTagsByIds(
-        customer.id,
-        tags,
-        true,
-      );
-
-      if (errors.length) {
-        throw new HttpException(errors, HttpStatus.EXPECTATION_FAILED);
+    try {
+      const exist = await this.findOneByEmail(clientDto.email);
+      if (exist) {
+        throw new HttpException(
+          'Sorry! Email is unavailable',
+          HttpStatus.BAD_REQUEST,
+        );
       }
-      clientDto.tags = _tags;
+      const tags = clientDto.tags as unknown as string[];
+      if (tags) {
+        const { errors, tags: _tags } = await this.tagService.findTagsByIds(
+          customer.id,
+          tags,
+          true,
+        );
+
+        if (errors.length) {
+          throw new HttpException(errors, HttpStatus.EXPECTATION_FAILED);
+        }
+        clientDto.tags = _tags;
+      }
+
+      clientDto.customer = customer;
+      clientDto.customerId = customer.id;
+
+      const client = await this.clientRepo.create(clientDto);
+      delete client.customer;
+      return client;
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
     }
-
-    clientDto.customer = customer;
-    clientDto.customerId = customer.id;
-
-    const client = await this.clientRepo.create(clientDto);
-    delete client.customer;
-    return client;
   }
 
- 
   // Add Bulk Clients
   async addBulkClients(
     customerId: string,
