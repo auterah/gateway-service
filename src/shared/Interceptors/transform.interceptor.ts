@@ -40,7 +40,10 @@ export class TransformInterceptor<T>
         };
 
         if (data && data?.pagination) {
-          Object.assign(respData, { meta: data.pagination });
+          Object.assign(respData, {
+            data: data?.records || data,
+            meta: data.pagination,
+          });
           respData.message = respData.message || 'Records fetched successfully';
           delete data.pagination;
         }
@@ -69,11 +72,15 @@ export class TransformInterceptor<T>
           respData.message = 'Record(s) updated successfully';
         }
 
-
         // -------------------------------------
         if (data && typeof data == 'string') {
           respData.message = respData.data;
           respData.data = null;
+        }
+
+        if (data && data?.serviceMessage) {
+          respData.message = data?.serviceMessage;
+          delete data?.serviceMessage;
         }
 
         return {

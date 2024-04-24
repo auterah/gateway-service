@@ -154,7 +154,11 @@ export class AuthService {
 
     delete customer.apps;
     const accessToken = this.encryptCustomerToken(customer);
-    return { ...customer, tokens: { accessToken } };
+    return {
+      ...customer,
+      tokens: { accessToken },
+      serviceMessage: 'Verification successful',
+    };
   }
 
   async requestSuperadminOTP(signAdminToken: SignAdminToken) {
