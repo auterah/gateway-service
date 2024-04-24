@@ -3,7 +3,7 @@ import { BootService } from './bootstrap.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SeedingService } from './database/seeding/seeding.service';
 import { SmtpDto } from './dtos/smtp.dto';
-import { SettingEvents } from './shared/events/setting.events copy';
+import { SettingEvents } from './shared/events/setting.events';
 
 @Controller()
 export class BootController {

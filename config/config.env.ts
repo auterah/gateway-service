@@ -80,6 +80,9 @@ class EnvConfig {
   @IsString()
   SUPER_ADMIN_EMAIL: string;
 
+  @IsString()
+  CUSTOMER_DEFAULT_PHOTO_URL: string;
+
   static getDefaultObject(): EnvConfig {
     const obj = new EnvConfig();
 
@@ -110,6 +113,7 @@ class EnvConfig {
     obj.Q_LOOP_QUEUE_HOST =
       process.env.Q_LOOP_QUEUE_HOST || 'http://localhost:8001/api/v1';
     obj.SUPER_ADMIN_EMAIL = process.env.SUPER_ADMIN_EMAIL;
+    obj.CUSTOMER_DEFAULT_PHOTO_URL = '';
 
     return obj;
   }

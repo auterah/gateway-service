@@ -14,7 +14,7 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { AdminEvents } from 'src/shared/events/admin.events';
 import { BillingDto } from './dtos/billing.dto';
 import App from '../app/entities/app.entity';
-import { SettingEvents } from 'src/shared/events/setting.events copy';
+import { SettingEvents } from 'src/shared/events/setting.events';
 
 @Injectable()
 export class AdminService {

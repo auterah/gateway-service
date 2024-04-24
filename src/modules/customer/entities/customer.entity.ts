@@ -1,9 +1,10 @@
 import App from 'src/modules/app/entities/app.entity';
 import { Roles } from 'src/shared/enums/roles';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne } from 'typeorm';
 import Billing from '../../billing/entities/billing.entity';
 import ClientTag from './client_tag.entity';
 import Client from './client.entity';
+import CustomerSettings from './customer_settings.entity';
 
 @Entity('customers')
 export default class Customer {
@@ -31,6 +32,9 @@ export default class Customer {
 
   @OneToMany(() => ClientTag, (tag) => tag.customer)
   tags: ClientTag[];
+
+  @OneToOne(() => CustomerSettings, (settings) => settings.customer)
+  settings: CustomerSettings;
 
   @Column({ type: 'enum', default: Roles.ADMIN, enum: Roles })
   role: Roles;
