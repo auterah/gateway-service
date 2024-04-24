@@ -51,9 +51,9 @@ export class BillingController {
     return this.billingThresholdService.addThreshold(payload);
   }
 
-  @Post('commercials/many')
-  addManyBillingThresholds(@Body() payload: ManyBillingThresholdDto) {
-    return this.billingThresholdService.addManyThreshold(payload);
+  @Post('commercials/bulk')
+  addBulkBillingThresholds(@Body() payload: ManyBillingThresholdDto) {
+    return this.billingThresholdService.addBulkThresholds(payload);
   }
 
   @Get('commercials')

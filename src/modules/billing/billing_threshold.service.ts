@@ -65,7 +65,7 @@ export class BillingThresholdService {
     }
   }
 
-  async addManyThreshold(
+  async addBulkThresholds(
     inThreshs: ManyBillingThresholdDto,
   ): Promise<BillingThreshold[]> {
     try {
