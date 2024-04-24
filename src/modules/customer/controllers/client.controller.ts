@@ -34,9 +34,9 @@ export class ClientController {
   @UseGuards(ActionsGuard)
   addBulkClient(
     @Body() payload: BulkClientDto,
-    @GetCurrentCustomer('id') customerId: string,
+    @GetCurrentCustomer() customer: Customer,
   ) {
-    return this.clientService.addBulkClients(customerId, payload);
+    return this.clientService.addBulkClients(customer, payload);
   }
 
   @Get()

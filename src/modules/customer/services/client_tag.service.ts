@@ -144,7 +144,9 @@ export class ClientTagService {
           });
         }
 
-        tags.push(tag);
+        if (tag) {
+          tags.push(tag);
+        }
       }
 
       return {
