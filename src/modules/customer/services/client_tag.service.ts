@@ -7,6 +7,8 @@ import { BulkClientTagDto, ClientTagDto } from '../dtos/client_tag.dto';
 import { ClientTagUtils } from '../utils/client';
 import { CustomerService } from './customer.service';
 import { CryptoUtil } from 'src/shared/utils/crypto';
+import { ClientService } from './client.service';
+import Client from '../entities/client.entity';
 
 type E = { error: string; tag: string };
 

@@ -16,7 +16,7 @@ type E = { error: string; client: Client };
 export class ClientService {
   constructor(
     private readonly clientRepo: ClientRepository,
-    private readonly customerService: CustomerService,
+    // private readonly customerService: CustomerService,
     private readonly tagService: ClientTagService,
   ) {}
 
@@ -187,11 +187,54 @@ export class ClientService {
     customerId: string,
     clientId: string,
     updates: Partial<ClientDto>,
+    _return = false,
   ): Promise<void | Client> {
-    return this.clientRepo.updateOneById(customerId, clientId, updates, true);
+    return this.clientRepo.updateOneById(
+      customerId,
+      clientId,
+      updates,
+      _return,
+    );
   }
 
   get repo(): Repository<Client> {
     return this.clientRepo.repo;
+  }
+
+  // Assign Tag
+  async assignTag(
+    customerId: string,
+    clientId: string,
+    tags: string[],
+  ): Promise<Client> {
+    try {
+      const client = await this.findClientById(customerId, clientId);
+      if (!client) {
+        throw new HttpException(
+          'Invalid Client',
+          HttpStatus.EXPECTATION_FAILED,
+        );
+      }
+      const foundTags = await this.tagService.findTagsByIds(
+        customerId,
+        tags,
+        true,
+      );
+      if (foundTags.errors.length) {
+        throw new HttpException(
+          foundTags.errors,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+      }
+      const newTags = [...client.tags, ...foundTags.tags].filter(
+        (item, index, self) =>
+          index === self.findIndex((t) => t.id === item.id),
+      );
+      client.tags = newTags;
+      await this.repo.save(client);
+      return client;
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
+    }
   }
 }

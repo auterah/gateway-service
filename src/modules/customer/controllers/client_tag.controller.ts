@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -15,10 +16,15 @@ import { ClientTagService } from '../services/client_tag.service';
 import Customer from '../entities/customer.entity';
 import { BulkClientTagDto, ClientTagDto } from '../dtos/client_tag.dto';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
+import { ClientDto } from '../dtos/client.dto';
+import { ClientService } from '../services/client.service';
 
 @Controller('clients/tags')
 export class ClientTagController {
-  constructor(private tagService: ClientTagService) {}
+  constructor(
+    private tagService: ClientTagService,
+    private clientService: ClientService,
+  ) {}
 
   @Post()
   @UseGuards(ActionsGuard)
@@ -89,5 +95,16 @@ export class ClientTagController {
     @GetCurrentCustomer('id') customerId: string,
   ) {
     return this.tagService.updateClientTag(customerId, id, payload);
+  }
+
+  @Patch('assign/:clientId')
+  @UseGuards(ActionsGuard)
+  assignClientATag(
+    @Param('clientId') clientId: string,
+    @Body() { tags }: Pick<ClientDto, 'tags'>,
+    @GetCurrentCustomer('id') customerId: string,
+  ) {
+    const _tags = tags as unknown as string[];
+    return this.clientService.assignTag(customerId, clientId, _tags);
   }
 }

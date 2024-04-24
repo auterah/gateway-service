@@ -77,7 +77,7 @@ export class ClientController {
     @Body() payload: Partial<ClientDto>,
     @GetCurrentCustomer('id') customerId: string,
   ) {
-    return this.clientService.updateClient(customerId, clientId, payload);
+    return this.clientService.updateClient(customerId, clientId, payload, true);
   }
 
   @Get('all')
