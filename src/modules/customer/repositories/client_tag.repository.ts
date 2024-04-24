@@ -25,7 +25,7 @@ export class ClientTagRepository {
   // Add New Tag
   async create(tagDto: Partial<ClientTagDto>): Promise<ClientTag> {
     const exist = await this.findOne({
-      where: { name: tagDto.name },
+      where: { name: tagDto.name, customerId: tagDto.customerId },
     });
     if (exist) {
       throw new HttpException('Tag already exist', HttpStatus.NOT_ACCEPTABLE);
