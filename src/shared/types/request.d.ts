@@ -5,4 +5,7 @@ import Customer from 'src/modules/customer/entities/customer.entity';
 
 export type CurrentApp = Request & { currentApp: App };
 export type CurrentCustomer = Request & { currentCustomer: Customer };
-export type CurrentAdmin = Request & { admin: Admin };
+export type CurrentAdmin = Request & {
+  admin: Admin;
+  currentCustomer: Customer;
+};

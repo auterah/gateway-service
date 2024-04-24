@@ -18,6 +18,7 @@ import { BulkClientTagDto, ClientTagDto } from '../dtos/client_tag.dto';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { ClientDto } from '../dtos/client.dto';
 import { ClientService } from '../services/client.service';
+import { AdminGuard } from 'src/modules/auth/guards/admin_guard';
 
 @Controller('clients/tags')
 export class ClientTagController {
@@ -106,5 +107,17 @@ export class ClientTagController {
   ) {
     const _tags = tags as unknown as string[];
     return this.clientService.assignTag(customerId, clientId, _tags);
+  }
+
+  @Get('all')
+  @UseGuards(AdminGuard)
+  getTagsByAdmin(
+    @GetCurrentCustomer() adminCustomer: Customer,
+    @Query() queries: FindDataRequestDto,
+  ) {
+    return this.tagService.findTagsByAdmin({
+      take: Number(queries.take || '10'),
+      skip: Number(queries.skip || '0'),
+    });
   }
 }

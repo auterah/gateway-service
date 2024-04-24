@@ -12,6 +12,8 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CurrentAdmin } from 'src/shared/types/request';
 import Admin from 'src/modules/admin/admin.entity';
 import { Roles } from 'src/shared/enums/roles';
+import axios from 'axios';
+import Customer from 'src/modules/customer/entities/customer.entity';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -31,6 +33,9 @@ export class AdminGuard implements CanActivate {
     ) {
       const admin = await this.verifyAdmin(request);
       request.admin = admin;
+
+      const customer = await this.getAdminCustomer(request, admin);
+      request.currentCustomer = customer;
     } else {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
     }
@@ -74,5 +79,46 @@ export class AdminGuard implements CanActivate {
       throw new HttpException('Access denied.', HttpStatus.UNAUTHORIZED);
     }
     return admin;
+  }
+
+  private async getAdminCustomer(
+    request: CurrentAdmin,
+    admin: Admin,
+  ): Promise<Customer> {
+    const xCustomerURL = `${request.protocol}://${request.get('Host')}/${configs.API_VERSION}/customers/x-customer`;
+
+    try {
+      const { data } = await axios.get(`${xCustomerURL}/${admin.email}`, {
+        headers: {
+          Authorization: '%x-customer/:email%',
+        },
+      });
+
+      const customer: Customer = data?.data;
+
+      // If customer is null
+      if (!customer) {
+        throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+      }
+
+      if (customer.email !== admin.email) {
+        throw new HttpException('Invalid Admin', HttpStatus.UNAUTHORIZED);
+      }
+
+      if (customer.role !== admin.role) {
+        throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+      }
+
+      this.logger.verbose(
+        `customer: ${customer.businessName}`,
+        JSON.stringify(customer),
+      );
+      return customer;
+    } catch (e: any) {
+      throw new HttpException(
+        e?.message || 'Something went wrong',
+        e?.status || HttpStatus.EXPECTATION_FAILED,
+      );
+    }
   }
 }

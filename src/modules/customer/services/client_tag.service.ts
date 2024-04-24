@@ -7,8 +7,6 @@ import { BulkClientTagDto, ClientTagDto } from '../dtos/client_tag.dto';
 import { ClientTagUtils } from '../utils/client';
 import { CustomerService } from './customer.service';
 import { CryptoUtil } from 'src/shared/utils/crypto';
-import { ClientService } from './client.service';
-import Client from '../entities/client.entity';
 
 type E = { error: string; tag: string };
 
@@ -158,5 +156,12 @@ export class ClientTagService {
     } catch (e) {
       throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
     }
+  }
+
+  // Find All Tag By Admin
+  findTagsByAdmin(
+    findOpts: FindManyOptions<ClientTag>,
+  ): Promise<PaginationData> {
+    return this.tagRepo.findAllRecords(findOpts);
   }
 }
