@@ -88,4 +88,13 @@ export class ClientController {
       skip: Number(queries.skip || '0'),
     });
   }
+
+  @Get('statistics')
+  @UseGuards(ActionsGuard)
+  getStatistics(
+    @Query() queries: FindDataRequestDto,
+    @GetCurrentCustomer('id') customerId: string,
+  ) {
+    return this.clientService.fetchClientStatistics(customerId, queries);
+  }
 }

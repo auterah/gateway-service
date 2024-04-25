@@ -9,6 +9,9 @@ import Customer from '../entities/customer.entity';
 import { ClientDto, BulkClientDto } from '../dtos/client.dto';
 import { ClientTagService } from './client_tag.service';
 import { CryptoUtil } from 'src/shared/utils/crypto';
+import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
+import { DateUtils } from 'src/shared/utils/date';
+import { StatsResponse } from 'src/shared/types/response';
 
 type E = { error: string; client: Client };
 
@@ -236,5 +239,25 @@ export class ClientService {
     } catch (e) {
       throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
     }
+  }
+
+  // Fetch Client Stats
+  fetchClientStatistics(
+    customerId: string,
+    findOpts: FindDataRequestDto,
+  ): Promise<StatsResponse> {
+    const isDateRange = findOpts.start_date && findOpts.end_date;
+    const startDate =
+      isDateRange && DateUtils.parseHyphenatedDate(findOpts.start_date);
+    const endDate =
+      isDateRange && DateUtils.parseHyphenatedDate(findOpts.end_date);
+
+    const isInvalidDates = startDate || endDate;
+
+    if (isDateRange && !isInvalidDates) {
+      throw new HttpException('Invalid date', HttpStatus.BAD_REQUEST);
+    }
+
+    return this.clientRepo.countClientsRecords(customerId, findOpts);
   }
 }

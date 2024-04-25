@@ -7,6 +7,9 @@ import Client from '../entities/client.entity';
 import { ClientEvents } from 'src/shared/events/client.events';
 import { PaginationData } from 'src/shared/types/pagination';
 import { ClientDto } from '../dtos/client.dto';
+import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
+import { StatsResponse } from 'src/shared/types/response';
+import { format } from 'date-fns';
 
 @Injectable()
 export class ClientRepository {
@@ -91,6 +94,28 @@ export class ClientRepository {
     }
     await this.clientRepo.remove(client);
     return true;
+  }
+
+  async countClientsRecords(customerId: string, findOpts: FindDataRequestDto) {
+    const query = this.clientRepo
+      .createQueryBuilder('customer_clients')
+      .select('COUNT(*)', 'count')
+      .where('customer_id = :customerId', { customerId });
+
+    if (findOpts.start_date && findOpts.end_date) {
+      query
+        .andWhere('client_tags.createdAt >= :startDate', {
+          startDate: format(findOpts.start_date, 'yyyy-MM-dd'),
+        })
+        .andWhere('client_tags.createdAt <= :endDate', {
+          endDate: format(findOpts.end_date, 'yyyy-MM-dd'),
+        });
+    }
+
+    const statistics = await query.getRawOne();
+    return {
+      totalCount: Number(statistics?.count || '0'),
+    };
   }
 
   get repo(): Repository<Client> {
