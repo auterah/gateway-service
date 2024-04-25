@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { FindOneOptions, FindManyOptions, Repository } from 'typeorm';
+import { FindOneOptions, FindManyOptions, Repository, Between } from 'typeorm';
 import { PaginationData } from 'src/shared/types/pagination';
 import { ClientTagRepository } from '../repositories/client_tag.repository';
 import ClientTag from '../entities/client_tag.entity';
@@ -7,6 +7,10 @@ import { BulkClientTagDto, ClientTagDto } from '../dtos/client_tag.dto';
 import { ClientTagUtils } from '../utils/client';
 import { CustomerService } from './customer.service';
 import { CryptoUtil } from 'src/shared/utils/crypto';
+import { StatsResponse } from 'src/shared/types/response';
+import Customer from '../entities/customer.entity';
+import { DateUtils } from 'src/shared/utils/date';
+import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 
 type E = { error: string; tag: string };
 
@@ -163,5 +167,25 @@ export class ClientTagService {
     findOpts: FindManyOptions<ClientTag>,
   ): Promise<PaginationData> {
     return this.tagRepo.findAllRecords(findOpts);
+  }
+
+  // Fetch Tag Stats
+  fetchTagsStats(
+    customer: Customer,
+    findOpts: FindDataRequestDto,
+  ): Promise<StatsResponse> {
+    const isDateRange = findOpts.start_date && findOpts.end_date;
+    const startDate =
+      isDateRange && DateUtils.parseHyphenatedDate(findOpts.start_date);
+    const endDate =
+      isDateRange && DateUtils.parseHyphenatedDate(findOpts.end_date);
+
+    const isInvalidDates = startDate || endDate;
+
+    if (isDateRange && !isInvalidDates) {
+      throw new HttpException('Invalid date', HttpStatus.BAD_REQUEST);
+    }
+
+    return this.tagRepo.countTagsRecords(customer.id, findOpts);
   }
 }

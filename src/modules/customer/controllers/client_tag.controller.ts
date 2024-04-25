@@ -120,4 +120,13 @@ export class ClientTagController {
       skip: Number(queries.skip || '0'),
     });
   }
+
+  @Get('statistics')
+  @UseGuards(ActionsGuard)
+  getTagsStats(
+    @GetCurrentCustomer() customer: Customer,
+    @Query() queries: FindDataRequestDto,
+  ) {
+    return this.tagService.fetchTagsStats(customer, queries);
+  }
 }

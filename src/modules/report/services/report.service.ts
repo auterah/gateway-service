@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
-import { MailTnxRepository } from './mail_tnx.repository';
+import { MailTnxRepository } from '../repositories/mail_tnx.repository';
 import { Between, FindManyOptions } from 'typeorm';
 import { DateUtils } from 'src/shared/utils/date';
 import { HttpExceptionsHandler } from 'src/shared/handlers/http-exceptions.handler';
-import MailTransaction from './entities/mail_transaction.entity';
+import MailTransaction from '../entities/mail_transaction.entity';
 
 @Injectable()
 export class ReportService {

@@ -1,11 +1,11 @@
 import { Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
-import { ReportService } from './report.service';
 import { GetCurrentApp } from 'src/shared/decorators/get_current_app';
-import App from '../app/entities/app.entity';
-import { ActionsGuard } from '../auth/guards/actions_guard';
-import { AdminGuard } from '../auth/guards/admin_guard';
 import { VerifyDefaultConfigs } from 'src/guards/default_configs_guard';
+import App from 'src/modules/app/entities/app.entity';
+import { ActionsGuard } from 'src/modules/auth/guards/actions_guard';
+import { AdminGuard } from 'src/modules/auth/guards/admin_guard';
+import { ReportService } from '../services/report.service';
 
 @Controller('reports')
 @UseGuards(VerifyDefaultConfigs)
@@ -39,7 +39,10 @@ export class ReportController {
 
   @Get('statistics')
   @UseGuards(ActionsGuard)
-  getStatistics(@Query() queries: FindDataRequestDto, @GetCurrentApp() app: App) {
+  getStatistics(
+    @Query() queries: FindDataRequestDto,
+    @GetCurrentApp() app: App,
+  ) {
     return this.reportService.fetchStatisticsByAppId(app.id, queries);
   }
 
