@@ -19,7 +19,7 @@ export class CustomerAddressRepository {
   async create(inAddress?: Partial<CustomerAddress>) {
     const newAddress = this.addressEntity.create(inAddress);
     const address = await this.addressEntity.save(newAddress);
-    this.addressEvent.emit(CustomerEvents.CREATED_ADDRESS, address);
+    this.addressEvent.emit(CustomerEvents.ADDRESS_CREATED, address);
     return address;
   }
 

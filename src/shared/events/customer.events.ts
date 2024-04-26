@@ -1,4 +1,5 @@
 export enum CustomerEvents {
   CREATED = 'Customer.Created',
-  CREATED_ADDRESS = 'Customer.Address',
+  ADDRESS_CREATED = 'Address.Created',
+  ADDED_SETTINGS = 'Added.Settings',
 }

@@ -15,19 +15,14 @@ import { CustomerService } from '../services/customer.service';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { Request } from 'express';
 import { AdminGuard } from '../../auth/guards/admin_guard';
-import { CustomerSettingsService } from '../services/customer_settings.service';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
-import { CustomerSettingDto } from '../dtos/customer_settings.dto';
 import Customer from '../entities/customer.entity';
 import { CustomerEncryptionDto } from '../dtos/customer_encryption.dto';
 import { ActionsGuard } from 'src/modules/auth/guards/actions_guard';
 
 @Controller('customers')
 export class CustomerController {
-  constructor(
-    private customerService: CustomerService,
-    private customerSettingsService: CustomerSettingsService,
-  ) {}
+  constructor(private customerService: CustomerService) {}
 
   @Get()
   @UseGuards(AdminGuard)
@@ -49,30 +44,6 @@ export class CustomerController {
     return this.customerService.findXCustomer({
       where: { email },
     });
-  }
-
-  @Get('settings')
-  @UseGuards(AdminGuard)
-  getCustomerSettings(
-    @Query() queries: FindDataRequestDto,
-    @GetCurrentCustomer('id') customerId: string,
-  ) {
-    return this.customerSettingsService.findAllRecords(customerId, {
-      take: Number(queries.take || '10'),
-      skip: Number(queries.skip || '0'),
-    });
-  }
-
-  @Put('settings')
-  @UseGuards(AdminGuard)
-  updateCustomerSettings(
-    @Body() updates: CustomerSettingDto,
-    @GetCurrentCustomer() customer: Customer,
-  ) {
-    return this.customerSettingsService.updateCustomerSetting(
-      customer,
-      updates,
-    );
   }
 
   @Patch('encryption_key')

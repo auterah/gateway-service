@@ -6,7 +6,6 @@ import { CustomerEvents } from 'src/shared/events/customer.events';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import CustomerSettings from '../entities/customer_settings.entity';
 import { PaginationData } from 'src/shared/types/pagination';
-import { SettingEvents } from 'src/shared/events/setting.events';
 
 @Injectable()
 export class CustomerSettingsRepository {
@@ -17,11 +16,10 @@ export class CustomerSettingsRepository {
   ) {}
 
   // Add Setting
-  @OnEvent(CustomerEvents.CREATED)
-  async create(inSetting?: Partial<CustomerSettings>) {
+  async create(inSetting: Partial<CustomerSettings>) {
     const newSetting = this.customerSettEntity.create(inSetting);
     const settings = await this.customerSettEntity.save(newSetting);
-    this.customerSettEvent.emit(SettingEvents.ADDED_CUSTOMER_SETTING, settings);
+    this.customerSettEvent.emit(CustomerEvents.ADDED_SETTINGS, settings);
     return settings;
   }
 

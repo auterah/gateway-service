@@ -21,6 +21,7 @@ import { CustomerAddressRepository } from './repositories/customer_address.repos
 import { CustomerAddressService } from './services/customer_address.service';
 import { CustomerAddressController } from './controllers/customer_address.controller';
 import { RegionModule } from '../region/region.module';
+import { CustomerSettingsController } from './controllers/customer_settings.controller';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { RegionModule } from '../region/region.module';
     ClientTagController,
     ClientController,
     CustomerAddressController,
+    CustomerSettingsController,
   ],
   providers: [
     CustomerService,
