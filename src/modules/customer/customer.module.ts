@@ -16,13 +16,30 @@ import { ClientTagRepository } from './repositories/client_tag.repository';
 import CustomerSettings from './entities/customer_settings.entity';
 import { CustomerSettingsRepository } from './repositories/customer_settings.repository';
 import { CustomerSettingsService } from './services/customer_settings.service';
+import CustomerAddress from './entities/customer_address.entity';
+import { CustomerAddressRepository } from './repositories/customer_address.repository';
+import { CustomerAddressService } from './services/customer_address.service';
+import { CustomerAddressController } from './controllers/customer_address.controller';
+import { RegionModule } from '../region/region.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Customer, Client, ClientTag, CustomerSettings]),
+    TypeOrmModule.forFeature([
+      Customer,
+      Client,
+      ClientTag,
+      CustomerSettings,
+      CustomerAddress,
+    ]),
     AuthorizationModule,
+    RegionModule,
   ],
-  controllers: [CustomerController, ClientTagController, ClientController],
+  controllers: [
+    CustomerController,
+    ClientTagController,
+    ClientController,
+    CustomerAddressController,
+  ],
   providers: [
     CustomerService,
     ClientService,
@@ -32,7 +49,9 @@ import { CustomerSettingsService } from './services/customer_settings.service';
     ClientTagRepository,
     CustomerSettingsService,
     CustomerSettingsRepository,
+    CustomerAddressRepository,
+    CustomerAddressService,
   ],
-  exports: [CustomerService, CustomerRepository],
+  exports: [CustomerService, CustomerRepository, CustomerAddressRepository],
 })
 export class CustomerModule {}

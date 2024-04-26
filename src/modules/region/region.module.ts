@@ -22,5 +22,6 @@ import { RegionFactory } from './factories/region.factory';
     RestcountriesService,
   ],
   controllers: [CurrencyController, RegionController],
+  exports: [RegionRepository],
 })
 export class RegionModule {}

@@ -42,6 +42,13 @@ export class RegionRepository {
     return this.regionEntity.findOne(findOpts);
   }
 
+  // FindOne Region By Id
+  findOneById(id: string): Promise<Region> {
+    return this.regionEntity.findOne({
+      where: { id },
+    });
+  }
+
   // Fetch All Currencies
   async findAllRecords(
     findOpts: FindManyOptions<Region>,

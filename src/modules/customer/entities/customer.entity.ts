@@ -15,6 +15,7 @@ import Billing from '../../billing/entities/billing.entity';
 import ClientTag from './client_tag.entity';
 import Client from './client.entity';
 import CustomerSettings from './customer_settings.entity';
+import CustomerAddress from './customer_address.entity';
 
 @Entity('customers')
 export default class Customer {
@@ -45,6 +46,11 @@ export default class Customer {
 
   @OneToOne(() => CustomerSettings, (settings) => settings.customer)
   settings: CustomerSettings;
+
+  @OneToMany(() => CustomerAddress, (address) => address.customer, {
+    eager: true,
+  })
+  addresses: CustomerAddress[];
 
   @Column({ type: 'enum', default: Roles.ADMIN, enum: Roles })
   role: Roles;

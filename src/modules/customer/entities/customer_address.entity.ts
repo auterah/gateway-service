@@ -2,13 +2,11 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  OneToMany,
   CreateDateColumn,
   DeleteDateColumn,
   UpdateDateColumn,
-  OneToOne,
-  JoinColumn,
   VersionColumn,
+  ManyToOne,
 } from 'typeorm';
 import Customer from './customer.entity';
 
@@ -29,21 +27,24 @@ export default class CustomerAddress {
   @Column({ name: 'postal_code', nullable: true })
   postalCode: string;
 
-  // @OneToOne(() => Customer, (customer) => customer.settings)
-  // customer: Customer;
+  @ManyToOne(() => Customer, (customer) => customer.addresses)
+  customer: Customer;
 
-  // @Column({ name: 'customer_id' })
-  // customerId: string;
+  @Column({ name: 'customer_id' })
+  customerId: string;
+
+  @Column({ name: 'region_id', nullable: true })
+  regionId: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  readonly createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  readonly updatedAt: Date;
 
   @DeleteDateColumn()
-  deleteAt: Date;
+  readonly deleteAt: Date;
 
   @VersionColumn()
-  version: number;
+  readonly version: number;
 }
