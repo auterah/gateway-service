@@ -1,6 +1,16 @@
 import App from 'src/modules/app/entities/app.entity';
 import { Roles } from 'src/shared/enums/roles';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  OneToOne,
+  CreateDateColumn,
+  DeleteDateColumn,
+  UpdateDateColumn,
+  VersionColumn,
+} from 'typeorm';
 import Billing from '../../billing/entities/billing.entity';
 import ClientTag from './client_tag.entity';
 import Client from './client.entity';
@@ -44,4 +54,19 @@ export default class Customer {
 
   @Column({ default: false, type: 'boolean' })
   verified: boolean;
+
+  @Column({ nullable: true })
+  encryptionKey: string;
+
+  @CreateDateColumn()
+  readonly createdAt: Date;
+
+  @UpdateDateColumn()
+  readonly updatedAt: Date;
+
+  @DeleteDateColumn()
+  readonly deletedAt: Date;
+
+  @VersionColumn()
+  readonly version: number;
 }

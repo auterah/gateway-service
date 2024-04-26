@@ -6,13 +6,18 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RoleService } from '../../authorization/role/role.service';
 import { CustomerRepository } from '../repositories/customer.repository';
 import { FindOneOptions, FindManyOptions } from 'typeorm';
+import { CustomerEncryptionDto } from '../dtos/customer_encryption.dto';
+import { AesEncryption } from 'src/shared/utils/encryption';
+import { configs } from 'config/config.env';
 
 @Injectable()
 export class CustomerService {
+  private encryption = new AesEncryption(configs.ENCRYPTION_PRIVATE_KEY);
+
   constructor(
     private readonly customerRepo: CustomerRepository,
     private readonly roleService: RoleService,
-    private event: EventEmitter2,
+    private customerEvent: EventEmitter2,
   ) {}
 
   // Add New Customer
@@ -81,5 +86,15 @@ export class CustomerService {
 
   async save(customer: Customer): Promise<Customer> {
     return this.customerRepo.save(customer);
+  }
+
+  // Set Encryption Key
+  async setEncryptionKey(
+    customer: Customer,
+    encryptionDto: CustomerEncryptionDto,
+  ): Promise<any> {
+    const encryptionKey = this.encryption.encrypt(encryptionDto.encryptionKey);
+    await this.updateOneBy(customer.id, { encryptionKey });
+    return { serviceMessage: 'Encryption key set successfully' };
   }
 }

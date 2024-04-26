@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Patch,
   Put,
   Query,
   Req,
@@ -18,6 +19,8 @@ import { CustomerSettingsService } from '../services/customer_settings.service';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
 import { CustomerSettingDto } from '../dtos/customer_settings.dto';
 import Customer from '../entities/customer.entity';
+import { CustomerEncryptionDto } from '../dtos/customer_encryption.dto';
+import { ActionsGuard } from 'src/modules/auth/guards/actions_guard';
 
 @Controller('customers')
 export class CustomerController {
@@ -70,5 +73,14 @@ export class CustomerController {
       customer,
       updates,
     );
+  }
+
+  @Patch('encryption_key')
+  @UseGuards(ActionsGuard)
+  setCustomerEncryptionKey(
+    @Body() encryptionDto: CustomerEncryptionDto,
+    @GetCurrentCustomer() customer: Customer,
+  ) {
+    return this.customerService.setEncryptionKey(customer, encryptionDto);
   }
 }
