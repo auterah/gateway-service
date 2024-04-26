@@ -206,5 +206,6 @@ export class AuthService {
       verified: true,
     });
     await this.adminService.update(admin.id, admin);
+    return { serviceMessage: 'Verification successful' };
   }
 }
