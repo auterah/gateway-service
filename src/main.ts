@@ -16,7 +16,7 @@ const app = new Bootstrap({
     'auth/admin/verify-otp',
     'admins/(.*)',
     'add-smtp',
-    // 'billings/(.*)',
+    'billings/(.*)',
     'currencies/(.*)',
     'regions/(.*)',
   ],

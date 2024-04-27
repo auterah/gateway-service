@@ -105,33 +105,20 @@ export class ClientTagRepository {
   }
 
   // Count Tags Records
-  async countTagsRecords(
-    customerId: string,
-    findOpts: FindDataRequestDto,
-  ): Promise<StatsResponse> {
-    const query = this.tagEntity
+  async countTagsRecords(customerId: string): Promise<StatsResponse> {
+    let statistics = await this.tagEntity
       .createQueryBuilder('client_tags')
       .select('name', 'tag')
       .addSelect('COUNT(*)', 'count')
-      .where('customer_id = :customerId', { customerId });
+      .where('customer_id = :customerId', { customerId })
+      .groupBy('client_tags.name')
+      .getRawMany();
 
-    if (findOpts.start_date && findOpts.end_date) {
-      query
-        .andWhere('client_tags.createdAt >= :startDate', {
-          startDate: format(findOpts.start_date, 'yyyy-MM-dd'),
-        })
-        .andWhere('client_tags.createdAt <= :endDate', {
-          endDate: format(findOpts.end_date, 'yyyy-MM-dd'),
-        });
-    }
-    let statistics = await query.groupBy('client_tags.name').getRawMany();
-
-    statistics = statistics.map((e) => ({
-      ...e,
-      count: Number(e.count || '0'),
-    }));
-    const totalCount = statistics.reduce((acc, curr) => acc + curr.count, 0);
-
+    const totalCount = statistics.reduce(
+      (acc, curr) => acc + Number(curr.count || '0'),
+      0,
+    );
+    statistics = statistics.map((e) => e?.tag);
     return { statistics, totalCount };
   }
 

@@ -170,22 +170,7 @@ export class ClientTagService {
   }
 
   // Fetch Tag Stats
-  fetchTagsStats(
-    customer: Customer,
-    findOpts: FindDataRequestDto,
-  ): Promise<StatsResponse> {
-    const isDateRange = findOpts.start_date && findOpts.end_date;
-    const startDate =
-      isDateRange && DateUtils.parseHyphenatedDate(findOpts.start_date);
-    const endDate =
-      isDateRange && DateUtils.parseHyphenatedDate(findOpts.end_date);
-
-    const isInvalidDates = startDate || endDate;
-
-    if (isDateRange && !isInvalidDates) {
-      throw new HttpException('Invalid date', HttpStatus.BAD_REQUEST);
-    }
-
-    return this.tagRepo.countTagsRecords(customer.id, findOpts);
+  fetchTagsStats(customer: Customer): Promise<StatsResponse> {
+    return this.tagRepo.countTagsRecords(customer.id);
   }
 }

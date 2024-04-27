@@ -123,10 +123,7 @@ export class ClientTagController {
 
   @Get('statistics')
   @UseGuards(ActionsGuard)
-  getTagsStats(
-    @GetCurrentCustomer() customer: Customer,
-    @Query() queries: FindDataRequestDto,
-  ) {
-    return this.tagService.fetchTagsStats(customer, queries);
+  getTagsStats(@GetCurrentCustomer() customer: Customer) {
+    return this.tagService.fetchTagsStats(customer);
   }
 }
