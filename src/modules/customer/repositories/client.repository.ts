@@ -61,7 +61,7 @@ export class ClientRepository {
   async updateOneById(
     customerId: string,
     id: string,
-    updates: Partial<Client>,
+    { verified, tags, ...updates }: Partial<Client>,
     _return = false,
   ): Promise<void | Client> {
     if (updates.email) {

@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   ManyToOne,
+  ManyToMany,
 } from 'typeorm';
 import Customer from 'src/modules/customer/entities/customer.entity';
 import Client from './client.entity';
@@ -24,7 +25,7 @@ export default class ClientTag {
   @Column({ name: 'customer_id' })
   customerId: string;
 
-  @ManyToOne(() => Client, (client) => client.tags)
+  @ManyToMany(() => Client, (client) => client.tags)
   client: Client;
 
   @CreateDateColumn()

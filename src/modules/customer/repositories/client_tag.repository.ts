@@ -106,7 +106,7 @@ export class ClientTagRepository {
 
   // Count Tags Records
   async countTagsRecords(customerId: string): Promise<StatsResponse> {
-    let statistics = await this.tagEntity
+    let tags = await this.tagEntity
       .createQueryBuilder('client_tags')
       .select('name', 'tag')
       .addSelect('COUNT(*)', 'count')
@@ -114,12 +114,12 @@ export class ClientTagRepository {
       .groupBy('client_tags.name')
       .getRawMany();
 
-    const totalCount = statistics.reduce(
+    const totalCount = tags.reduce(
       (acc, curr) => acc + Number(curr.count || '0'),
       0,
     );
-    statistics = statistics.map((e) => e?.tag);
-    return { statistics, totalCount };
+    tags = tags.map((e) => e?.tag);
+    return { tags, totalCount };
   }
 
   get repo(): Repository<ClientTag> {

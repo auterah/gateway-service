@@ -8,6 +8,8 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
 } from 'typeorm';
 import ClientTag from './client_tag.entity';
 import Customer from './customer.entity';
@@ -23,7 +25,8 @@ export default class Client {
   @Column({ unique: true })
   email: string;
 
-  @OneToMany(() => ClientTag, (tag) => tag.client, { eager: true })
+  @ManyToMany(() => ClientTag, (tag) => tag.client, { eager: true })
+  @JoinTable()
   tags: ClientTag[];
 
   @Column({ name: 'customer_id' })
