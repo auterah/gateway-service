@@ -12,7 +12,6 @@ import Customer from '../entities/customer.entity';
 import { DateUtils } from 'src/shared/utils/date';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 
-type E = { error: string; tag: string };
 
 @Injectable()
 export class ClientTagService {
@@ -78,16 +77,12 @@ export class ClientTagService {
 
   // FindOne Tag By Id
   findOneById(customerId: string, id: string): Promise<ClientTag> {
-    return this.tagRepo.findOne({
-      where: { id, customerId },
-    });
+    return this.tagRepo.findOneById(customerId, id);
   }
 
   // Find Tag By Name
   findOneByName(customerId: string, name: string): Promise<ClientTag> {
-    return this.findOne({
-      where: { name, customerId },
-    });
+    return this.tagRepo.findOneByName(customerId, name);
   }
 
   // Fetch All Tag
@@ -126,42 +121,6 @@ export class ClientTagService {
     return this.tagRepo.updateOneById(customerId, id, updates, true);
   }
 
-  // Fetch Tags By Ids
-  async findTagsByIds(
-    customerId: string,
-    tagsIdentifiers: string[],
-    vetRecords = false,
-  ): Promise<{ errors: E[]; tags: ClientTag[] }> {
-    const errors: E[] = [];
-    const tags: ClientTag[] = [];
-
-    try {
-      for (const identifier of tagsIdentifiers) {
-        const tag = await (CryptoUtil.isUUID(identifier)
-          ? this.findOneById(customerId, identifier)
-          : this.findOneByName(customerId, identifier));
-
-        if (vetRecords && !tag) {
-          errors.push({
-            error: 'Invaild Tag',
-            tag: identifier,
-          });
-        }
-
-        if (tag) {
-          tags.push(tag);
-        }
-      }
-
-      return {
-        errors,
-        tags,
-      };
-    } catch (e) {
-      throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
-    }
-  }
-
   // Find All Tag By Admin
   findTagsByAdmin(
     findOpts: FindManyOptions<ClientTag>,
@@ -172,5 +131,13 @@ export class ClientTagService {
   // Fetch Tag Stats
   fetchTagsStats(customer: Customer): Promise<StatsResponse> {
     return this.tagRepo.countTagsRecords(customer.id);
+  }
+
+  findTagsByIds(customerId: string, tagIds: string[], vetRecords: boolean) {
+    return this.tagRepo.findTagsByIds(customerId, tagIds, vetRecords);
+  }
+
+  deleteMany(customerId: string, tagIds: string[]) {
+    return this.tagRepo.deleteMany(customerId, tagIds);
   }
 }

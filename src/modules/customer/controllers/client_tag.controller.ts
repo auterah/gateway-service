@@ -14,7 +14,7 @@ import { ActionsGuard } from '../../auth/guards/actions_guard';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
 import { ClientTagService } from '../services/client_tag.service';
 import Customer from '../entities/customer.entity';
-import { BulkClientTagDto, ClientTagDto } from '../dtos/client_tag.dto';
+import { AssignBulkClientTagsDto, BulkClientTagDto, BulkDeleteClientTagsDto, ClientTagDto } from '../dtos/client_tag.dto';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { ClientDto } from '../dtos/client.dto';
 import { ClientService } from '../services/client.service';
@@ -98,7 +98,7 @@ export class ClientTagController {
     return this.tagService.updateClientTag(customerId, id, payload);
   }
 
-  @Patch('assign/:clientId')
+  @Patch('assign/id/:clientId')
   @UseGuards(ActionsGuard)
   assignClientATag(
     @Param('clientId') clientId: string,
@@ -107,6 +107,15 @@ export class ClientTagController {
   ) {
     const _tags = tags as unknown as string[];
     return this.clientService.assignTag(customerId, clientId, _tags);
+  }
+
+  @Patch('assign/bulk')
+  @UseGuards(ActionsGuard)
+  assignManyTagsToManyClients(
+    @Body() payload: AssignBulkClientTagsDto,
+    @GetCurrentCustomer('id') customerId: string,
+  ) {
+    return this.clientService.assignTagsToMany(customerId, payload);
   }
 
   @Get('all')
@@ -125,5 +134,14 @@ export class ClientTagController {
   @UseGuards(ActionsGuard)
   getTagsStats(@GetCurrentCustomer() customer: Customer) {
     return this.tagService.fetchTagsStats(customer);
+  }
+
+  @Delete('bulk')
+  @UseGuards(ActionsGuard)
+  deleteManyTags(
+    @Body() payload: BulkDeleteClientTagsDto,
+    @GetCurrentCustomer('id') customerId: string,
+  ) {
+    return this.tagService.deleteMany(customerId, payload.tags);
   }
 }

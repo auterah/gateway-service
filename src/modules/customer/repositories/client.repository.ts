@@ -10,6 +10,11 @@ import { ClientDto } from '../dtos/client.dto';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { StatsResponse } from 'src/shared/types/response';
 import { format } from 'date-fns';
+import { CryptoUtil } from 'src/shared/utils/crypto';
+import { ClientUtils } from '../utils/client';
+import { ArrayUtils } from 'src/shared/utils/array.utils';
+
+type E = { error: string; client: string };
 
 @Injectable()
 export class ClientRepository {
@@ -120,5 +125,56 @@ export class ClientRepository {
 
   get repo(): Repository<Client> {
     return this.clientRepo;
+  }
+
+  // FindOne Client By Id
+  findOneById(customerId: string, id: string): Promise<Client> {
+    return this.clientRepo.findOne({
+      where: { id, customerId },
+    });
+  }
+
+  // FindOne Client By Email
+  findOneByEmail(customerId: string, email: string): Promise<Client> {
+    return this.findOne({
+      where: { email, customerId },
+    });
+  }
+
+  // Fetch Clients By Ids
+  async findClientsByIds(
+    customerId: string,
+    clientIdentifiers: string[],
+    vetRecords = false,
+  ): Promise<{ errors: E[]; clients: Client[] }> {
+    const errors: E[] = [];
+    const clients: Client[] = [];
+    const ids = ArrayUtils.removeDuplicates(clientIdentifiers);
+
+    try {
+      for (const id of ids) {
+        const client = await (CryptoUtil.isUUID(id)
+          ? this.findOneById(customerId, id)
+          : this.findOneByEmail(customerId, id));
+
+        if (vetRecords && !client) {
+          errors.push({
+            error: 'Invaild Client',
+            client: id,
+          });
+        }
+
+        if (client) {
+          clients.push(client);
+        }
+      }
+
+      return {
+        errors,
+        clients,
+      };
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
+    }
   }
 }

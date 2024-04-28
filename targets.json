@@ -79,6 +79,18 @@
   },
   {
     "route": {
+      "path": "/currencies/(.*)",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/regions/(.*)",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
       "path": "/api/v1/*",
       "method": "acl"
     }
@@ -157,6 +169,18 @@
   },
   {
     "route": {
+      "path": "/currencies/(.*)",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/regions/(.*)",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
       "path": "/app/init",
       "method": "post"
     }
@@ -223,12 +247,6 @@
   },
   {
     "route": {
-      "path": "/api/v1/apps/requests",
-      "method": "get"
-    }
-  },
-  {
-    "route": {
       "path": "/api/v1/apps/scopes",
       "method": "put"
     }
@@ -278,6 +296,258 @@
   {
     "route": {
       "path": "/api/v1/customers/x-customer/:email",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/customers/encryption_key",
+      "method": "patch"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/tags",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/tags/bulk",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/tags",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/tags/id/:id",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/tags/name/:name",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/tags/id/:id",
+      "method": "delete"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/tags/id/:id",
+      "method": "put"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/tags/assign/id/:clientId",
+      "method": "patch"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/tags/assign/bulk",
+      "method": "patch"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/tags/all",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/tags/statistics",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/tags/bulk",
+      "method": "delete"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/bulk",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/id/:id",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/id/:id",
+      "method": "delete"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/id/:id",
+      "method": "put"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/all",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/clients/statistics",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/customers/addresses",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/customers/addresses",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/customers/addresses/id/:id",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/customers/addresses/id/:id",
+      "method": "put"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/customers/addresses/id/:id",
+      "method": "delete"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/customers/addresses/all",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/customers/settings",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/customers/settings",
+      "method": "put"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/customers/settings/me",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/currencies",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/currencies",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/currencies/id/:id",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/currencies/id/:id",
+      "method": "delete"
+    }
+  },
+  {
+    "route": {
+      "path": "/currencies/id/:id",
+      "method": "put"
+    }
+  },
+  {
+    "route": {
+      "path": "/currencies/all",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/regions",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/regions",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/regions/id/:id",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/regions/id/:id",
+      "method": "delete"
+    }
+  },
+  {
+    "route": {
+      "path": "/regions/id/:id",
+      "method": "put"
+    }
+  },
+  {
+    "route": {
+      "path": "/regions/all",
       "method": "get"
     }
   },
@@ -385,7 +655,7 @@
   },
   {
     "route": {
-      "path": "/billings/commercials/many",
+      "path": "/billings/commercials/bulk",
       "method": "post"
     }
   },
@@ -415,49 +685,19 @@
   },
   {
     "route": {
+      "path": "/api/v1/reports/statistics",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
       "path": "/api/v1/reports/all",
       "method": "get"
     }
   },
   {
     "route": {
-      "path": "/api/v1/clients",
-      "method": "post"
-    }
-  },
-  {
-    "route": {
-      "path": "/api/v1/clients/bulk",
-      "method": "post"
-    }
-  },
-  {
-    "route": {
-      "path": "/api/v1/clients",
-      "method": "get"
-    }
-  },
-  {
-    "route": {
-      "path": "/api/v1/clients/id/:id",
-      "method": "get"
-    }
-  },
-  {
-    "route": {
-      "path": "/api/v1/clients/id/:id",
-      "method": "delete"
-    }
-  },
-  {
-    "route": {
-      "path": "/api/v1/clients/id/:id",
-      "method": "put"
-    }
-  },
-  {
-    "route": {
-      "path": "/api/v1/clients/all",
+      "path": "/api/v1/reports/api/requests",
       "method": "get"
     }
   }

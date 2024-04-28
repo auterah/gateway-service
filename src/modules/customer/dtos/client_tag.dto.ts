@@ -1,6 +1,9 @@
 import {
   ArrayNotEmpty,
+  IsArray,
+  IsBoolean,
   IsNotEmpty,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -19,4 +22,30 @@ export class BulkClientTagDto {
   @Type(() => ClientTagDto)
   @ArrayNotEmpty()
   tags: ClientTagDto[];
+}
+
+export class BulkDeleteClientTagsDto {
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNotEmpty({ each: true })
+  @IsString({ each: true })
+  tags: string[];
+}
+
+export class AssignBulkClientTagsDto {
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNotEmpty({ each: true })
+  @IsString({ each: true })
+  tags: string[];
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNotEmpty({ each: true })
+  @IsString({ each: true })
+  clients: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  strict = false;
 }

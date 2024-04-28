@@ -3,7 +3,7 @@ import { FindOneOptions, FindManyOptions, Repository } from 'typeorm';
 import { ClientRepository } from '../repositories/client.repository';
 import Client from '../entities/client.entity';
 import { PaginationData } from 'src/shared/types/pagination';
-import { ClientUtils } from '../utils/client';
+import { ClientTagUtils, ClientUtils } from '../utils/client';
 import { CustomerService } from './customer.service';
 import Customer from '../entities/customer.entity';
 import { ClientDto, BulkClientDto } from '../dtos/client.dto';
@@ -12,6 +12,7 @@ import { CryptoUtil } from 'src/shared/utils/crypto';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { DateUtils } from 'src/shared/utils/date';
 import { StatsResponse } from 'src/shared/types/response';
+import { AssignBulkClientTagsDto } from '../dtos/client_tag.dto';
 
 type E = { error: string; client: Client };
 
@@ -236,6 +237,53 @@ export class ClientService {
       client.tags = newTags;
       await this.repo.save(client);
       return client;
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
+    }
+  }
+
+  // Assign Tags To Many
+  async assignTagsToMany(
+    customerId: string,
+    assignDto: AssignBulkClientTagsDto,
+  ): Promise<Client[]> {
+    try {
+      const { clients, errors: clientErrs } =
+        await this.clientRepo.findClientsByIds(
+          customerId,
+          assignDto.clients,
+          true,
+        );
+
+      const { tags, errors: tagErrs } = await this.tagService.findTagsByIds(
+        customerId,
+        assignDto.tags,
+        true,
+      );
+
+      const _clients = [];
+
+      for (const client of clients) {
+        client.tags.push(
+          ...ClientTagUtils.removeDuplicatesIdentifiers([
+            ...client.tags,
+            ...tags,
+          ]),
+        );
+        _clients.push(client);
+      }
+
+      if (assignDto.strict) {
+        if (tagErrs.length) {
+          throw new HttpException(tagErrs, HttpStatus.EXPECTATION_FAILED);
+        }
+
+        if (clientErrs.length) {
+          throw new HttpException(clientErrs, HttpStatus.EXPECTATION_FAILED);
+        }
+      }
+
+      return this.repo.save(_clients);
     } catch (e) {
       throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
     }

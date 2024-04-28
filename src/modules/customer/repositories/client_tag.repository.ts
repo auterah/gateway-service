@@ -15,6 +15,10 @@ import { PaginationData } from 'src/shared/types/pagination';
 import { StatsResponse } from 'src/shared/types/response';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { format } from 'date-fns';
+import { CryptoUtil } from 'src/shared/utils/crypto';
+import { ArrayUtils } from 'src/shared/utils/array.utils';
+
+type E = { error: string; tag: string };
 
 @Injectable()
 export class ClientTagRepository {
@@ -106,7 +110,7 @@ export class ClientTagRepository {
 
   // Count Tags Records
   async countTagsRecords(customerId: string): Promise<StatsResponse> {
-    let tags = await this.tagEntity
+    let statistics = await this.tagEntity
       .createQueryBuilder('client_tags')
       .select('name', 'tag')
       .addSelect('COUNT(*)', 'count')
@@ -114,15 +118,105 @@ export class ClientTagRepository {
       .groupBy('client_tags.name')
       .getRawMany();
 
-    const totalCount = tags.reduce(
+    // const customerClientsTags = await this.tagEntity
+    //   .createQueryBuilder('customer_clients_client_tags')
+    //   .select('COUNT(id)', 'count')
+    //   // .leftJoin('user.courses', 'course')
+    //   // .where('course.name = :name', { name: 'JavaScript Fundamentals' })
+    //   // .andWhere('course.length = :length', { length: '8 hours' })
+    //   .getRawMany();
+
+    const totalTags = statistics.reduce(
       (acc, curr) => acc + Number(curr.count || '0'),
       0,
     );
-    tags = tags.map((e) => e?.tag);
-    return { tags, totalCount };
+    statistics = statistics.map((e) => e?.tag);
+    return { statistics, totalTags };
   }
 
   get repo(): Repository<ClientTag> {
     return this.tagEntity;
+  }
+
+  // FindOne Tag By Id
+  findOneById(customerId: string, id: string): Promise<ClientTag> {
+    return this.tagEntity.findOne({
+      where: { id, customerId },
+    });
+  }
+
+  // Find Tag By Name
+  findOneByName(customerId: string, name: string): Promise<ClientTag> {
+    return this.findOne({
+      where: { name, customerId },
+    });
+  }
+
+  // Fetch Tags By Ids
+  async findTagsByIds(
+    customerId: string,
+    tagsIdentifiers: string[],
+    vetRecords = false,
+  ): Promise<{ errors: E[]; tags: ClientTag[] }> {
+    const errors: E[] = [];
+    const tags: ClientTag[] = [];
+    const ids = ArrayUtils.removeDuplicates(tagsIdentifiers);
+
+    try {
+      for (const id of ids) {
+        const tag = await (CryptoUtil.isUUID(id)
+          ? this.findOneById(customerId, id)
+          : this.findOneByName(customerId, id));
+
+        if (vetRecords && !tag) {
+          errors.push({
+            error: 'Invaild Tag',
+            tag: id,
+          });
+        }
+
+        if (tag) {
+          tags.push(tag);
+        }
+      }
+
+      return {
+        errors,
+        tags,
+      };
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
+    }
+  }
+
+  // Delete Tags
+  async deleteMany(customerId: string, tagIds: string[]): Promise<string[]> {
+    const messages: string[] = [];
+    const { tags: tagsToDelete, errors } = await this.findTagsByIds(
+      customerId,
+      tagIds,
+      true,
+    );
+
+    if (!tagsToDelete.length) {
+      throw new HttpException(
+        'Ids does not exist',
+        HttpStatus.EXPECTATION_FAILED,
+      );
+    }
+
+    let index = 0;
+
+    while (true) {
+      const tag = tagsToDelete[index];
+      if (tag) {
+        await this.tagEntity.remove(tag);
+        messages.push(`Deleted ${tag.name}`);
+      }
+      if (index == tagsToDelete.length) break;
+      index++;
+    }
+
+    return messages;
   }
 }
