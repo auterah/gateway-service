@@ -16,7 +16,7 @@ import { StatsResponse } from 'src/shared/types/response';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { format } from 'date-fns';
 import { CryptoUtil } from 'src/shared/utils/crypto';
-import { ArrayUtils } from 'src/shared/utils/array.utils';
+import { ArrayUtils } from 'src/shared/utils/array';
 
 type E = { error: string; tag: string };
 

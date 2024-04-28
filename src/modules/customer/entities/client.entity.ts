@@ -10,6 +10,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  VersionColumn,
 } from 'typeorm';
 import ClientTag from './client_tag.entity';
 import Customer from './customer.entity';
@@ -38,6 +39,9 @@ export default class Client {
   @Column({ default: false, type: 'boolean' })
   verified: boolean;
 
+  @Column({ type: 'date', nullable: true })
+  dob: Date;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -46,4 +50,7 @@ export default class Client {
 
   @DeleteDateColumn()
   deleteAt: Date;
+
+  @VersionColumn()
+  version: number;
 }

@@ -12,7 +12,7 @@ import { StatsResponse } from 'src/shared/types/response';
 import { format } from 'date-fns';
 import { CryptoUtil } from 'src/shared/utils/crypto';
 import { ClientUtils } from '../utils/client';
-import { ArrayUtils } from 'src/shared/utils/array.utils';
+import { ArrayUtils } from 'src/shared/utils/array';
 
 type E = { error: string; client: string };
 
