@@ -6,14 +6,21 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import MailTransaction from '../../report/entities/mail_transaction.entity';
 import Email from '../entities/email.entity';
 import { PaginationData } from 'src/shared/types/pagination';
+import { TemplateDto } from '../dtos/template.dto';
 
 @Injectable()
 export class EmailRepository {
   constructor(
     @InjectRepository(MailTransaction)
     private readonly emailEntity: Repository<Email>,
-    private readonly mailEvents: EventEmitter2,
+    private readonly emailEvents: EventEmitter2,
   ) {}
+
+  // Create Email
+  create(tempDto: TemplateDto): Promise<Email> {
+    const newEmail = this.emailEntity.create(tempDto);
+    return this.emailEntity.save(newEmail);
+  }
 
   // Find Single Mail
   findOne(findOpts: FindOneOptions<Email>): Promise<Email> {

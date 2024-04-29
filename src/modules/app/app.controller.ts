@@ -23,7 +23,7 @@ import { GetCurrentApp } from 'src/shared/decorators/get_current_app';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
 import { AdminGuard } from '../auth/guards/admin_guard';
 import { VerifyDefaultConfigs } from 'src/guards/default_configs_guard';
-import { EmailService } from '../email/email.service';
+import { EmailService } from '../email/services/email.service';
 import { SmtpDto } from 'src/dtos/smtp.dto';
 
 @Controller('apps')

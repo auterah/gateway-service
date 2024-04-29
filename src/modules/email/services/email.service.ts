@@ -2,18 +2,19 @@ import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { configs } from 'config/config.env';
 import { MailEvents } from 'src/shared/events/mail.events';
-import App from '../app/entities/app.entity';
 import { BootEvents } from 'src/shared/events/local.events';
-import { EmailProcessorFactory } from './factory';
 import { EmailProcessors } from 'src/shared/enums';
-import { IEmailService, MailOptions } from './interfaces';
-import Customer from '../customer/entities/customer.entity';
 import { CustomerEvents } from 'src/shared/events/customer.events';
 import { AdminEvents } from 'src/shared/events/admin.events';
-import Admin from '../admin/admin.entity';
-import { SmtpRepository } from './repositories/smtp.repository';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { SmtpDto } from 'src/dtos/smtp.dto';
+import App from 'src/modules/app/entities/app.entity';
+import Customer from 'src/modules/customer/entities/customer.entity';
+import { EmailProcessorFactory } from '../factory';
+import { IEmailService, MailOptions } from '../interfaces';
+import { EmailRepository } from '../repositories/email.repository';
+import { SmtpRepository } from '../repositories/smtp.repository';
+import Admin from 'src/modules/admin/admin.entity';
 
 @Injectable()
 export class EmailService {
@@ -23,6 +24,7 @@ export class EmailService {
   constructor(
     private factory: EmailProcessorFactory,
     private smtpRepo: SmtpRepository,
+    private emailRepo: EmailRepository,
   ) {
     this.mailer = this.factory.findOne(EmailProcessors.NODE_MAILER);
   }
