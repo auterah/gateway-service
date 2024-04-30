@@ -26,7 +26,7 @@ export default class ClientTag {
   customerId: string;
 
   @ManyToMany(() => Client, (client) => client.tags)
-  client: Client;
+  client: Client[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -45,7 +45,7 @@ export class ClientService {
         if (errors.length) {
           throw new HttpException(errors, HttpStatus.EXPECTATION_FAILED);
         }
-        clientDto.tags = _tags;
+        clientDto.tags.push(..._tags);
       }
 
       clientDto.customer = customer;

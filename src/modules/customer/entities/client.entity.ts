@@ -26,7 +26,7 @@ export default class Client {
   @Column({ unique: true })
   email: string;
 
-  @ManyToMany(() => ClientTag, (tag) => tag.client, { eager: true })
+  @ManyToMany(() => ClientTag, (tag) => tag.client)
   @JoinTable()
   tags: ClientTag[];
 
