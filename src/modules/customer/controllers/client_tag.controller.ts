@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -105,6 +107,9 @@ export class ClientTagController {
     @Body() { tags }: Pick<ClientDto, 'tags'>,
     @GetCurrentCustomer('id') customerId: string,
   ) {
+    if (!tags) {
+      throw new HttpException('tags must be an array', HttpStatus.BAD_REQUEST);
+    }
     const _tags = tags as unknown as string[];
     return this.clientService.assignTag(customerId, clientId, _tags);
   }

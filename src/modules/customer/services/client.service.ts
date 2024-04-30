@@ -219,6 +219,7 @@ export class ClientService {
           HttpStatus.EXPECTATION_FAILED,
         );
       }
+
       const foundTags = await this.tagService.findTagsByIds(
         customerId,
         tags,
@@ -230,7 +231,11 @@ export class ClientService {
           HttpStatus.EXPECTATION_FAILED,
         );
       }
-      const newTags = [...client.tags, ...foundTags.tags].filter(
+      const newTags = [...foundTags.tags];
+      if (client.tags) {
+        newTags.push(...client.tags);
+      }
+      newTags.filter(
         (item, index, self) =>
           index === self.findIndex((t) => t.id === item.id),
       );
