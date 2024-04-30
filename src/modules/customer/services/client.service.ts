@@ -251,7 +251,7 @@ export class ClientService {
   async assignTagsToMany(
     customerId: string,
     assignDto: AssignBulkClientTagsDto,
-  ): Promise<Client[]> {
+  ) {
     try {
       const { clients, errors: clientErrs } =
         await this.clientRepo.findClientsByIds(
@@ -266,6 +266,16 @@ export class ClientService {
         true,
       );
 
+      if (assignDto.strict) {
+        if (tagErrs.length) {
+          throw new HttpException(tagErrs, HttpStatus.EXPECTATION_FAILED);
+        }
+
+        if (clientErrs.length) {
+          throw new HttpException(clientErrs, HttpStatus.EXPECTATION_FAILED);
+        }
+      }
+
       const _clients = [];
 
       for (const client of clients) {
@@ -276,16 +286,6 @@ export class ClientService {
           ]),
         );
         _clients.push(client);
-      }
-
-      if (assignDto.strict) {
-        if (tagErrs.length) {
-          throw new HttpException(tagErrs, HttpStatus.EXPECTATION_FAILED);
-        }
-
-        if (clientErrs.length) {
-          throw new HttpException(clientErrs, HttpStatus.EXPECTATION_FAILED);
-        }
       }
 
       return this.repo.save(_clients);

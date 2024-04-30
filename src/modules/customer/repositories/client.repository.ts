@@ -128,16 +128,22 @@ export class ClientRepository {
   }
 
   // FindOne Client By Id
-  findOneById(customerId: string, id: string): Promise<Client> {
+  findOneById(customerId: string, id: string, relations = []): Promise<Client> {
     return this.clientRepo.findOne({
       where: { id, customerId },
+      relations,
     });
   }
 
   // FindOne Client By Email
-  findOneByEmail(customerId: string, email: string): Promise<Client> {
+  findOneByEmail(
+    customerId: string,
+    email: string,
+    relations = []
+  ): Promise<Client> {
     return this.findOne({
       where: { email, customerId },
+      relations,
     });
   }
 
@@ -154,8 +160,8 @@ export class ClientRepository {
     try {
       for (const id of ids) {
         const client = await (CryptoUtil.isUUID(id)
-          ? this.findOneById(customerId, id)
-          : this.findOneByEmail(customerId, id));
+          ? this.findOneById(customerId, id, ['tags'])
+          : this.findOneByEmail(customerId, id, ['tags']));
 
         if (vetRecords && !client) {
           errors.push({
