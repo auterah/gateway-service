@@ -27,7 +27,7 @@ export class ClientService {
   // Add New Client
   async addClient(customer: Customer, clientDto: ClientDto) {
     try {
-      const exist = await this.findOneByEmail(clientDto.email);
+      const exist = await this.findOneByEmail(customer.id, clientDto.email);
       if (exist) {
         throw new HttpException(
           'Sorry! Email is unavailable',
@@ -151,9 +151,14 @@ export class ClientService {
   }
 
   // Find Client By Email
-  findOneByEmail(email: string): Promise<Client> {
+  findOneByEmail(
+    customerId: string,
+    email: string,
+    relations = [],
+  ): Promise<Client> {
     return this.findOne({
-      where: { email },
+      where: { email, customerId },
+      relations,
     });
   }
 
@@ -177,8 +182,12 @@ export class ClientService {
   }
 
   // Find Client By Id
-  async findClientById(customerId: string, id: string): Promise<Client> {
-    return this.clientRepo.findOne({ where: { id, customerId } });
+  async findClientById(
+    customerId: string,
+    id: string,
+    relations = [],
+  ): Promise<Client> {
+    return this.clientRepo.findOne({ where: { id, customerId }, relations });
   }
 
   // Delete Client By Id
@@ -212,7 +221,10 @@ export class ClientService {
     tags: string[],
   ): Promise<Client> {
     try {
-      const client = await this.findClientById(customerId, clientId);
+      const client = await (CryptoUtil.isUUID(clientId)
+        ? this.findClientById(customerId, clientId, ['tags'])
+        : this.findOneByEmail(customerId, clientId, ['tags']));
+
       if (!client) {
         throw new HttpException(
           'Invalid Client',
