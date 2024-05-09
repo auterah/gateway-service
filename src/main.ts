@@ -9,6 +9,8 @@ const app = new Bootstrap({
     'auth/register',
     'auth/customer-x-token',
     'auth/2',
+    'auth/sessions',
+    'auth/sessions/(.*)',
     'auth/2/verify-otp',
     'auth/me',
     'auth/admin',

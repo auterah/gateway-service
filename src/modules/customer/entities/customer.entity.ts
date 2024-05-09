@@ -16,6 +16,7 @@ import ClientTag from './client_tag.entity';
 import Client from './client.entity';
 import CustomerSettings from './customer_settings.entity';
 import CustomerAddress from './customer_address.entity';
+import LoginSession from 'src/modules/auth/entities/login_session.entity';
 
 @Entity('customers')
 export default class Customer {
@@ -51,6 +52,9 @@ export default class Customer {
     eager: true,
   })
   addresses: CustomerAddress[];
+
+  @OneToMany(() => LoginSession, (session) => session.customer)
+  loginSessions: LoginSession[];
 
   @Column({ type: 'enum', default: Roles.ADMIN, enum: Roles })
   role: Roles;

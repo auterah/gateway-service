@@ -17,6 +17,11 @@ import { SignAdminToken } from './dtos/sign_admin_token.dto';
 import { AdminService } from '../admin/admin.service';
 import Admin from '../admin/admin.entity';
 import { customerOTPMailTemplate } from '../email/templates/opt';
+import { LoginSessionRepository } from './repositories/login_session.repository';
+import { CryptoUtil } from 'src/shared/utils/crypto';
+import { PaginationData } from 'src/shared/types/pagination';
+import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
+import LoginSession from './entities/login_session.entity';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +31,7 @@ export class AuthService {
   constructor(
     private readonly customerService: CustomerService,
     private readonly adminService: AdminService,
+    private readonly sessionRepo: LoginSessionRepository,
     private authEvents: EventEmitter2,
   ) {
     this.jwtPrivateKey = configs.JWT_SECRET;
@@ -137,7 +143,7 @@ export class AuthService {
     );
   }
 
-  async verifyCustomerOtp(verifyOtpDto: VerifyOtpDto) {
+  async verifyCustomerOtp(verifyOtpDto: VerifyOtpDto, loginSession: Partial<LoginSession>) {
     const customer = await this.customerService.findOneByEmail(
       verifyOtpDto.email,
     );
@@ -154,8 +160,18 @@ export class AuthService {
 
     delete customer.apps;
     const accessToken = this.encryptCustomerToken(customer);
+    const session = await this.sessionRepo.create({
+      ...loginSession,
+      customerId: customer.id,
+      customer,
+      status: true,
+      id: `SESSION_${CryptoUtil.generateRandomStringAsync(6)}_${Date.now().toString()}`,
+    });
+    delete session.customer;
+    delete session.customerId;
     return {
       ...customer,
+      session,
       tokens: { accessToken },
       serviceMessage: 'Verification successful',
     };
@@ -207,5 +223,19 @@ export class AuthService {
     });
     await this.adminService.update(admin.id, admin);
     return { serviceMessage: 'Verification successful' };
+  }
+
+  async fetchLoginSessions(
+    queries: FindDataRequestDto,
+  ): Promise<PaginationData> {
+    return this.sessionRepo.findAllRecords({
+      skip: Number(queries.skip || '0'),
+      take: Number(queries.take || '10'),
+    });
+  }
+
+  async logoutSession(sessionId: string): Promise<any> {
+    await this.sessionRepo.deleteOne(sessionId);
+    return { serviceMessage: 'Logout successful' };
   }
 }

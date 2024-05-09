@@ -7,12 +7,16 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt/jwt-strategy';
 import { configs } from 'config/config.env';
 import { AdminModule } from '../admin/admin.module';
+import LoginSession from './entities/login_session.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { LoginSessionRepository } from './repositories/login_session.repository';
 
 @Module({
   controllers: [AuthController],
-  providers: [JwtService, JwtStrategy, AuthService],
-  exports: [JwtService, JwtStrategy, AuthService],
+  providers: [JwtService, JwtStrategy, AuthService, LoginSessionRepository],
+  exports: [JwtService, JwtStrategy, AuthService, LoginSessionRepository],
   imports: [
+    TypeOrmModule.forFeature([LoginSession]),
     PassportModule,
     JwtModule.register({
       secret: configs.JWT_SECRET, // Make sure to use your actual secret
