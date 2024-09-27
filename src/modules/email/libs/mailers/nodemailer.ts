@@ -15,6 +15,7 @@ import {
 } from 'src/modules/email/interfaces';
 import { MailEvents } from 'src/shared/events/mail.events';
 import { EmailUtils } from 'src/shared/utils/email.utils';
+import { configs as _configs } from 'config/config.env';
 
 type NodemailerConfig = {
   service: string;
@@ -42,15 +43,23 @@ export class Nodemailer implements IEmailService {
     this.logger = new Logger(Nodemailer.name);
     this.templateEngine = new HBSProvider();
     global.DATA_BASE_STATUS = false;
+    const configs: ISMTPConfigs = {
+      host: _configs.MAILER_CREDENTIALS.host,
+      username: _configs.MAILER_CREDENTIALS.username,
+      password: _configs.MAILER_CREDENTIALS.password,
+      port: _configs.MAILER_CREDENTIALS.port,
+      provider: 'gmail',
+  }
+    this.connection(configs);
   }
 
   @OnEvent(MailEvents.SET_SMTP)
-  async connection(configs?: ISMTPConfigs): Promise<void> {
+  async connection(configs: ISMTPConfigs): Promise<void> {
     this.sender = `<${configs.username}>`;
     this.smtpDomain = EmailUtils.getSmtpDomain(configs.host);
 
     this.smtpConfigs = {
-      service: this.smtpDomain,
+      service: 'gmail',
       host: configs.host,
       port: Number(configs.port),
       auth: {

@@ -2,6 +2,7 @@ import {
   IsBoolean,
   IsIn,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   validateSync,
@@ -10,6 +11,7 @@ import { config } from 'dotenv';
 import { plainToClass } from 'class-transformer';
 import { Logger } from '@nestjs/common';
 import { EmailUtils } from 'src/shared/utils/email.utils';
+import { MailerCredentials } from 'src/shared/types/mailer';
 
 const logger = new Logger('EnvConfig');
 const NODE_ENVS = ['development', 'production', 'staging', 'test'] as const;
@@ -83,6 +85,9 @@ class EnvConfig {
   @IsString()
   CUSTOMER_DEFAULT_PHOTO_URL: string;
 
+  @IsObject()
+  MAILER_CREDENTIALS: MailerCredentials;
+
   static getDefaultObject(): EnvConfig {
     const obj = new EnvConfig();
 
@@ -114,6 +119,13 @@ class EnvConfig {
       process.env.Q_LOOP_QUEUE_HOST || 'http://localhost:8001/api/v1';
     obj.SUPER_ADMIN_EMAIL = process.env.SUPER_ADMIN_EMAIL;
     obj.CUSTOMER_DEFAULT_PHOTO_URL = '';
+    obj.MAILER_CREDENTIALS = {
+      username: process.env.MAILER_USER,
+      host: process.env.MAILER_HOST,
+      service: 'gsmtp',
+      password: process.env.MAILER_PASSWORD,
+      port: process.env.MAILER_PORT || '3306',
+    };
 
     return obj;
   }
