@@ -79,7 +79,7 @@ export class ClientService {
     return errors;
   }
 
-  private async getTagFromDto(clients: Client[]) {
+  private async getTagFromDto(clients: Client[]) { // Todo: Rename to removeClientDuplicateTags
     let foundTags = [];
     for (const client of clients) {
       const tags = client.tags as unknown as string[];

@@ -11,19 +11,19 @@ import {
   Query,
   Delete,
   Ip,
+  Res,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 import { CustomerDto } from 'src/modules/customer/dtos/customer.dto';
-import { OtpSignInDto } from './dtos/otp_signin.dto';
-import { VerifyOtpDto } from './dtos/veriy_otp.dto';
-import { ActionsGuard } from './guards/actions_guard';
+import { OtpSignInDto } from '../dtos/otp_signin.dto';
+import { VerifyOtpDto } from '../dtos/veriy_otp.dto';
+import { ActionsGuard } from '../guards/actions_guard';
 import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
-import { SignAdminToken } from './dtos/sign_admin_token.dto';
+import { SignAdminToken } from '../dtos/sign_admin_token.dto';
 import { EmailUtils } from 'src/shared/utils/email.utils';
-import { CustomerService } from '../customer/services/customer.service';
-import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
-import { AdminGuard } from './guards/admin_guard';
-import LoginSession from './entities/login_session.entity';
+import { CustomerService } from '../../customer/services/customer.service';
+import LoginSession from '../entities/login_session.entity';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -64,8 +64,9 @@ export class AuthController {
 
   // Verify Customer OTP
   @Post('2/verify-otp')
-  verifyCustomerOtp(
+  async verifyCustomerOtp(
     @Body() payload: VerifyOtpDto,
+    @Res({ passthrough: true }) res: Response,
     @Headers('User-Agent') userAgent: string,
     @Ip() ipAddress: string,
   ) {
@@ -73,7 +74,17 @@ export class AuthController {
       userAgent,
       ipAddress,
     };
-    return this.authService.verifyCustomerOtp(payload, loginSession);
+    const response = await this.authService.verifyCustomerOtp(
+      payload,
+      loginSession,
+    );
+    res.cookie('SESSION_TOKEN', response.session.id, {
+      httpOnly: true,
+      // Optionally, you can also set the secure flag if you're serving your application over HTTPS
+      secure: true, // Ensure this is set if your site is served over HTTPS
+      sameSite: 'strict', // Helps prevent CSRF attacks
+    });
+    return response;
   }
 
   // Get Customer Info.
@@ -96,18 +107,5 @@ export class AuthController {
   @Post('admin/verify-otp')
   verifySuperadminOtp(@Body() payload: VerifyOtpDto) {
     return this.authService.verifySuperadminOtp(payload);
-  }
-
-  // Login Sessions
-  @Get('sessions')
-  @UseGuards(AdminGuard)
-  getLoginSessions(@Query() queries: FindDataRequestDto) {
-    return this.authService.fetchLoginSessions(queries);
-  }
-
-  // Logout
-  @Delete('sessions/:session_id')
-  deleteLoginSessions(@Param('session_id') sessionId: string) {
-    return this.authService.logoutSession(sessionId);
   }
 }

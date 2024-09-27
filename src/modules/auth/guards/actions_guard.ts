@@ -17,6 +17,7 @@ import { EAppRequestStatus } from 'src/modules/app/enums/app_request_status';
 import { AppRequestEvents } from 'src/shared/events/app.events';
 import { CurrentApp, CurrentCustomer } from 'src/shared/types/request';
 import Customer from 'src/modules/customer/entities/customer.entity';
+import LoginSession from '../entities/login_session.entity';
 
 @Injectable()
 export class ActionsGuard implements CanActivate {
@@ -36,6 +37,8 @@ export class ActionsGuard implements CanActivate {
     if (request.headers['x-api-key']) {
       const app = await this.verifyAppKey(request);
       request.currentApp = app;
+    } else if (request.headers['x-session']) {
+      await this.verifyLoginSession(request);
     } else if (
       request.headers['authorization'] &&
       request.headers['authorization'].includes('Bearer ')
@@ -121,7 +124,7 @@ export class ActionsGuard implements CanActivate {
     }
   }
 
-  private async verifyCustomer(request: CurrentCustomer) {
+  private async verifyCustomer(request: CurrentCustomer) { // todo: This might not be needed. Replaced by this.verifyLoginSession
     const { authorization }: any = request.headers;
     const xCustomerURL = `${request.protocol}://${request.get('Host')}/${configs.API_VERSION}/customers/x-customer`;
 
@@ -169,6 +172,36 @@ export class ActionsGuard implements CanActivate {
         JSON.stringify(customer),
       );
       return customer;
+    } catch (e: any) {
+      throw new HttpException(
+        e?.message || 'Something went wrong',
+        e?.status || HttpStatus.EXPECTATION_FAILED,
+      );
+    }
+  }
+
+  private async verifyLoginSession(request: CurrentCustomer) {
+    const sessionId = request.headers['x-session'];
+    const xSessionURL = `${request.protocol}://${request.get('Host')}/${configs.API_VERSION}/sessions/session-x-id`;
+
+    if (sessionId == '' || sessionId?.length == 0) {
+      throw new HttpException('Missing session token', HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      const { data } = await axios.get(`${xSessionURL}/${sessionId}`, {
+        headers: {
+          Authorization: '%x-session/:sessionId%',
+        },
+      });
+      const session: LoginSession = data?.data;
+
+      // If session is null
+      if (!session) {
+        throw new HttpException('Invalid session', HttpStatus.UNAUTHORIZED);
+      }
+
+      return session;
     } catch (e: any) {
       throw new HttpException(
         e?.message || 'Something went wrong',

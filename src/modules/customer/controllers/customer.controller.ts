@@ -43,6 +43,7 @@ export class CustomerController {
     }
     return this.customerService.findXCustomer({
       where: { email },
+      relations: ['loginSessions'],
     });
   }
 

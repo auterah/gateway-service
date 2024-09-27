@@ -1,6 +1,8 @@
 import { configs } from 'config/config.env';
 import { Bootstrap } from './bootstrap';
 
+console.log('Main.js called');
+
 const app = new Bootstrap({
   serverPort: configs.SERVER_PORT,
   serverName: configs.SERVER_NAME,
@@ -9,8 +11,7 @@ const app = new Bootstrap({
     'auth/register',
     'auth/customer-x-token',
     'auth/2',
-    'auth/sessions',
-    'auth/sessions/(.*)',
+    'sessions/(.*)',
     'auth/2/verify-otp',
     'auth/me',
     'auth/admin',

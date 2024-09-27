@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
+import { AuthController } from './controllers/auth.controller';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { CustomerModule } from 'src/modules/customer/customer.module';
@@ -10,9 +10,10 @@ import { AdminModule } from '../admin/admin.module';
 import LoginSession from './entities/login_session.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoginSessionRepository } from './repositories/login_session.repository';
+import { SessionController } from './controllers/session.controller';
 
 @Module({
-  controllers: [AuthController],
+  controllers: [AuthController, SessionController],
   providers: [JwtService, JwtStrategy, AuthService, LoginSessionRepository],
   exports: [JwtService, JwtStrategy, AuthService, LoginSessionRepository],
   imports: [

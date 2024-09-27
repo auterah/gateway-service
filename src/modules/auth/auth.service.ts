@@ -143,7 +143,10 @@ export class AuthService {
     );
   }
 
-  async verifyCustomerOtp(verifyOtpDto: VerifyOtpDto, loginSession: Partial<LoginSession>) {
+  async verifyCustomerOtp(
+    verifyOtpDto: VerifyOtpDto,
+    loginSession: Partial<LoginSession>,
+  ) {
     const customer = await this.customerService.findOneByEmail(
       verifyOtpDto.email,
     );
@@ -237,5 +240,14 @@ export class AuthService {
   async logoutSession(sessionId: string): Promise<any> {
     await this.sessionRepo.deleteOne(sessionId);
     return { serviceMessage: 'Logout successful' };
+  }
+
+  findSessionById(sessionId: string): Promise<LoginSession> {
+    return this.sessionRepo.findOne({
+      where: {
+        id: sessionId,
+      },
+      relations: ['customer'],
+    });
   }
 }

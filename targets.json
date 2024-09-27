@@ -31,6 +31,12 @@
   },
   {
     "route": {
+      "path": "/sessions/(.*)",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
       "path": "/auth/2/verify-otp",
       "method": "acl"
     }
@@ -116,6 +122,12 @@
   {
     "route": {
       "path": "/auth/2",
+      "method": "acl"
+    }
+  },
+  {
+    "route": {
+      "path": "/sessions/(.*)",
       "method": "acl"
     }
   },
@@ -463,7 +475,7 @@
   },
   {
     "route": {
-      "path": "/api/v1/customers/settings",
+      "path": "/api/v1/customers/settings/all",
       "method": "get"
     }
   },
@@ -553,6 +565,24 @@
   },
   {
     "route": {
+      "path": "/api/v1/templates",
+      "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/templates",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/api/v1/templates/id/:id",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
       "path": "/auth/register",
       "method": "post"
     }
@@ -591,6 +621,24 @@
     "route": {
       "path": "/auth/admin/verify-otp",
       "method": "post"
+    }
+  },
+  {
+    "route": {
+      "path": "/sessions/session-x-id/:session_id",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/sessions",
+      "method": "get"
+    }
+  },
+  {
+    "route": {
+      "path": "/sessions/id/:session_id",
+      "method": "delete"
     }
   },
   {

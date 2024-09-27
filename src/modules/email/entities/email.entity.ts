@@ -19,7 +19,7 @@ export default class Email {
   @Column({ nullable: true })
   email: string;
 
-  @Column()
+  @Column({ type: 'longtext' })
   html: string;
 
   @Column()
