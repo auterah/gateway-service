@@ -1,43 +1,49 @@
-name: Deploy Script
+name: Deploy to Development
 
 on:
-  push:
-    branches: [ development ]
   pull_request:
-    branches: [ development ]
+    branches:
+      - development
+    types:
+      - closed
 
 jobs:
   deploy:
+      if: github.event.pull_request.merged == true
+      runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest
+      steps:
+        - name: checkout repo
+          uses: actions/checkout@v3
 
-    steps:
-      - uses: actions/checkout@v4
+        - name: use node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: '20'
+        - run: npm install
+        - run: npx nest build
+        - run: rm -rf .git .github  # remove git folders
 
-      - name: Copy file via scp
-        uses: appleboy/scp-action@master
-        with:
-          HOST: ${{ secrets.SSH_HOST }}
-          USERNAME: ${{ secrets.SSH_USER }}
-          KEY: ${{ secrets.SSH_KEY }}
-          source: "./"
-          target: ${{ secrets.APP_PATH }}
+        - name: Copy file via scp
+          uses: appleboy/scp-action@master
+          with:
+            HOST: ${{ secrets.SSH_HOST }}
+            USERNAME: ${{ secrets.SSH_USER }}
+            KEY: ${{ secrets.SSH_KEY }}
+            source: "./"
+            target: ${{ secrets.APP_PATH }}
 
-      - name: Executing remote  command
-        uses: appleboy/ssh-action@master
-        with:
-          HOST: ${{ secrets.SSH_HOST }}
-          USERNAME: ${{ secrets.SSH_USER }}
-          KEY: ${{ secrets.SSH_KEY }}
-          script: |
-            # move to project directory
-            cd ${{ secrets.APP_PATH }} && \
-            # upload new ENV
-            echo "${{secrets.ENV}}" > .env && \
-            # install npm packages
-            npm install && npm run build && npm run start:staging
-            # remove git folders
-            rm -rf .git && \
-            rm -rf .github && \
-            cd ~  && \
-            rm -rf .github
+        - name: Executing remote  command
+          uses: appleboy/ssh-action@master
+          with:
+            HOST: ${{ secrets.SSH_HOST }}
+            USERNAME: ${{ secrets.SSH_USER }}
+            KEY: ${{ secrets.SSH_KEY }}
+            script: |
+              # move to project directory
+              cd ${{ secrets.APP_PATH }} && \
+              # upload new ENV
+              echo "${{secrets.ENV}}" > .env && \
+              # install npm packages
+              npm install && npm run start:staging
+              echo "Deployment completed ✅"
