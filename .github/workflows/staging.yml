@@ -1,9 +1,9 @@
-name: Deploy to Development
+name: Deploy to Staging
 
 on:
   pull_request:
     branches:
-      - development
+      - staging
     types:
       - closed
 
