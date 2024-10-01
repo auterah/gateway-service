@@ -12,7 +12,7 @@ const app = new Bootstrap({
     'auth/customer-x-token',
     'auth/2',
     'sessions/(.*)',
-    'auth/2/verify-otp',
+    'auth/2/sign-in',
     'auth/me',
     'auth/admin',
     'app/init',

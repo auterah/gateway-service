@@ -109,4 +109,13 @@ export class AppRepository {
     await this.appEntity.update(where, updates);
     if (returnNew) return this.appEntity.findOne({ where: { id: where.id } });
   }
+
+  // Customer Has An App
+  async customerHasApp(customerId: string): Promise<boolean> {
+    const apps = await this.appEntity.find({
+      where: { customer: { id: customerId } },
+      // relations: ['customer']
+    });
+    return !!apps.length;
+  }
 }
