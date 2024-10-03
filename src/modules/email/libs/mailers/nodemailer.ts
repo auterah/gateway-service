@@ -48,7 +48,7 @@ export class Nodemailer implements IEmailService {
       username: _configs.MAILER_CREDENTIALS.username,
       password: _configs.MAILER_CREDENTIALS.password,
       port: _configs.MAILER_CREDENTIALS.port,
-      provider: 'gmail',
+      // provider: 'gmail',
   }
     this.connection(configs);
   }
@@ -59,7 +59,7 @@ export class Nodemailer implements IEmailService {
     this.smtpDomain = EmailUtils.getSmtpDomain(configs.host);
 
     this.smtpConfigs = {
-      service: 'gmail',
+      service: this.smtpDomain,
       host: configs.host,
       port: Number(configs.port),
       auth: {

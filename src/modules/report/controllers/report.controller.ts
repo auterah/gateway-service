@@ -6,6 +6,8 @@ import App from 'src/modules/app/entities/app.entity';
 import { ActionsGuard } from 'src/modules/auth/guards/actions_guard';
 import { AdminGuard } from 'src/modules/auth/guards/admin_guard';
 import { ReportService } from '../services/report.service';
+import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
+import Customer from 'src/modules/customer/entities/customer.entity';
 
 @Controller('reports')
 @UseGuards(VerifyDefaultConfigs)
@@ -33,8 +35,8 @@ export class ReportController {
 
   @Get('overview')
   @UseGuards(ActionsGuard)
-  getOverview(@Query() queries: FindDataRequestDto, @GetCurrentApp() app: App) {
-    return this.reportService.fetchOverviewByAppId(app.id, queries);
+  getOverview(@Query() queries: FindDataRequestDto, @GetCurrentCustomer('id') customerId: string) {
+    return this.reportService.fetchOverviewForAll(customerId, queries);
   }
 
   @Get('statistics')
