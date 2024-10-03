@@ -132,7 +132,7 @@ export class AuthService {
       throw new HttpException('Invalid email address.', HttpStatus.BAD_REQUEST);
     }
 
-    const otp = AuthService.generateOtp(6);
+    const otp = configs.NODE_ENV == 'production' ? AuthService.generateOtp(6) : '123456';
     customer.otp = parseInt(otp);
     this.customerService.save(customer);
 
