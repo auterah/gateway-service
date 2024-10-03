@@ -1,8 +1,6 @@
 import { configs } from 'config/config.env';
 import { Bootstrap } from './bootstrap';
 
-console.log('Main.js called');
-
 const app = new Bootstrap({
   serverPort: configs.SERVER_PORT,
   serverName: configs.SERVER_NAME,

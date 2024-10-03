@@ -53,7 +53,7 @@ export class Bootstrap {
       this.logger.log(`${this.serverName} is up on port ${this.serverPort}`);
     });
     const availableRoutes = this.getAvailableRoutes(app);
-    this.memorizeAvailableRoutes(availableRoutes);
+    // this.memorizeAvailableRoutes(availableRoutes);
   }
 
   getAvailableRoutes(app) {
