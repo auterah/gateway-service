@@ -43,6 +43,9 @@ export default class App {
   @Column({ default: 0 })
   sentScore: number;
 
+  @Column({ default: true })
+  isActive: boolean;
+
   @Column({ default: 0 })
   failedScore: number;
 

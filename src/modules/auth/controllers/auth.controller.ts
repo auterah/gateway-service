@@ -62,9 +62,9 @@ export class AuthController {
     return `Kindly check your mailbox for the OTP`;
   }
 
-  // Verify Customer OTP
-  @Post('2/verify-otp')
-  async verifyCustomerOtp(
+  // Sign in
+  @Post('2/sign-in')
+  async signIn(
     @Body() payload: VerifyOtpDto,
     @Res({ passthrough: true }) res: Response,
     @Headers('User-Agent') userAgent: string,

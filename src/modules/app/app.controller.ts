@@ -25,6 +25,7 @@ import { AdminGuard } from '../auth/guards/admin_guard';
 import { VerifyDefaultConfigs } from 'src/guards/default_configs_guard';
 import { EmailService } from '../email/services/email.service';
 import { SmtpDto } from 'src/dtos/smtp.dto';
+import Customer from '../customer/entities/customer.entity';
 
 @Controller('apps')
 @UseGuards(VerifyDefaultConfigs)
@@ -65,9 +66,12 @@ export class AppController {
   }
 
   @Post()
-  // @UseGuards(ActionsGuard)
-  createApp(@Body() newApp: AppDto) {
-    return this.appService.createApp(newApp);
+  @UseGuards(ActionsGuard)
+  createApp(@GetCurrentCustomer() customer: Customer, @Body() newApp: AppDto) {
+    return this.appService.createApp({
+      ...newApp,
+      customer,
+    });
   }
 
   @Get()

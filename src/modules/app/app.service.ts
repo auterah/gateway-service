@@ -44,9 +44,18 @@ export class AppService {
 
   // Add New App
   async createApp(newApp: AppDto): Promise<App> {
-    const exist = await this.findOneByAppName(newApp.name);
-    if (exist) {
-      throw new HttpException('Name already exist', HttpStatus.BAD_REQUEST);
+    // const exist = await this.findOneByAppName(newApp.name);
+    // if (exist) {
+    //   throw new HttpException('Name already exist', HttpStatus.BAD_REQUEST);
+    // }
+    const customerHasApp = await this.appRepo.customerHasApp(
+      newApp.customer.id,
+    );
+    if (customerHasApp) {
+      throw new HttpException(
+        'Upgrade is required to create more apps. Please check notification page for more information',
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     const defaultPermissions = await this.permService.findAllRecords({
