@@ -8,33 +8,27 @@ import {
 } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import App from '../entities/app.entity';
-import { CustomerRepository } from 'src/modules/customer/repositories/customer.repository';
 import { AppDto } from '../dtos/newapp.dto';
 import { defaultAdmin } from 'src/database/mocks/default_admins';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { BootEvents } from 'src/shared/events/local.events';
+import Customer from 'src/modules/customer/entities/customer.entity';
 
 @Injectable()
 export class AppRepository {
   constructor(
     @InjectRepository(App)
     private readonly appEntity: Repository<App>,
-    private readonly customerRepo: CustomerRepository,
     private readonly appEvent: EventEmitter2,
   ) {
     this.memorizeAdminApp();
   }
 
   // Create App
-  async create(newApp: AppDto): Promise<App> {
-    const customer = await this.customerRepo.findOrCreate({
-      businessName: newApp.name,
-      email: newApp?.email,
-    });
-
+  async create(customer: Customer, newApp: Partial<App>): Promise<App> {
     const app = this.appEntity.create({
-      customer,
       ...newApp,
+      customer,
     });
     return this.appEntity.save(app);
   }

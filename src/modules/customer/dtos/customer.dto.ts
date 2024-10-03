@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import Customer from '../entities/customer.entity';
 import { Roles } from 'src/shared/enums/roles';
+import { IsMultiCountryCode } from 'src/shared/validators/phone_number.validator';
 
 export class CustomerDto extends Customer {
   @IsEmail()
@@ -16,6 +17,10 @@ export class CustomerDto extends Customer {
   @IsString()
   @IsNotEmpty()
   businessName: string;
+
+  @IsMultiCountryCode()
+  @IsNotEmpty()
+  phone: string;
 
   @IsEnum(Roles)
   @IsOptional()

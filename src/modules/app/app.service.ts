@@ -13,6 +13,8 @@ import { PermissionService } from '../authorization/permission/permission.servic
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AppEvents } from 'src/shared/events/app.events';
 import { StringUtils } from 'src/shared/utils/string';
+import Customer from '../customer/entities/customer.entity';
+import { HttpStatusCode } from 'axios';
 
 @Injectable()
 export class AppService {
@@ -43,17 +45,17 @@ export class AppService {
   }
 
   // Add New App
-  async createApp(newApp: AppDto): Promise<App> {
+  async createApp(customer: Customer, newApp: AppDto): Promise<App> {
     // const exist = await this.findOneByAppName(newApp.name);
     // if (exist) {
     //   throw new HttpException('Name already exist', HttpStatus.BAD_REQUEST);
     // }
     const customerHasApp = await this.appRepo.customerHasApp(
-      newApp.customer.id,
+      customer.id,
     );
     if (customerHasApp) {
       throw new HttpException(
-        'Upgrade is required to create more apps. Please check notification page for more information',
+        'Upgrade is required to create more apps. Need help with account upgrade? https://hello.sendpouch.com/upgrade',
         HttpStatus.FORBIDDEN,
       );
     }
@@ -65,8 +67,10 @@ export class AppService {
     newApp.scopes = defaultPermissions.records;
     newApp.privateKey = AppService.generatePrivateKey();
     newApp.publicKey = AppService.generatePublicKey();
+    
 
-    const app = await this.appRepo.create(newApp);
+    const app = await this.appRepo.create(customer, newApp);
+    delete app.customer;
     this.appEvent.emit(AppEvents.CREATED, app);
     return app;
   }
@@ -129,5 +133,17 @@ export class AppService {
     returnNew = false,
   ) {
     return this.appRepo.updateOne(where, updates, returnNew);
+  }
+
+  async deleteCustomerApp(customerId: string, appId: string) {
+    try {
+      const app = await this.findOne({ where: { customer: { id: customerId }, id: appId }});
+      if (!app) {
+        throw new HttpException('App not found', HttpStatusCode.UnprocessableEntity);
+      }
+      await this.appRepo.remove(app);
+    } catch (error) {
+      throw error;
+    }
   }
 }

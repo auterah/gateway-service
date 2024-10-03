@@ -68,10 +68,7 @@ export class AppController {
   @Post()
   @UseGuards(ActionsGuard)
   createApp(@GetCurrentCustomer() customer: Customer, @Body() newApp: AppDto) {
-    return this.appService.createApp({
-      ...newApp,
-      customer,
-    });
+    return this.appService.createApp(customer, newApp);
   }
 
   @Get()
@@ -99,8 +96,8 @@ export class AppController {
     return this.appService.removeScope(scopeDto, app);
   }
 
-  @Get('/id/:app_id')
-  getSingleApp(@Param('app_id') appId: string) {
+  @Get('/id/:appId')
+  getSingleApp(@Param('appId') appId: string) {
     return this.appService.findById(appId);
   }
 
@@ -118,22 +115,31 @@ export class AppController {
 
   @Post('smtps')
   @UseGuards(ActionsGuard)
-  addAppSmtp(@Body() newSmtp: SmtpDto, @GetCurrentApp() app: App) {
+  addAppSmtp(@Body() newSmtp: SmtpDto, @GetCurrentApp() app: App) { //todo: Move to smtp controller
     return this.emailService.addSMTP(app, newSmtp);
   }
 
   @Get('smtps')
   @UseGuards(ActionsGuard)
-  getAppSmtp(@GetCurrentApp('id') appId: string) {
+  getAppSmtp(@GetCurrentApp('id') appId: string) { //todo: Move to smtp controller
     return this.emailService.findSmtpByAppId(appId);
   }
 
   @Get('smtps/all')
   @UseGuards(AdminGuard)
-  getAlSmtp(@Query() queries: FindDataRequestDto) {
+  getAlSmtp(@Query() queries: FindDataRequestDto) { //todo: Move to smtp controller
     if (queries.id) {
       return this.emailService.findSmtpByAppId(queries.id);
     }
     return this.emailService.fetchAllSmtp(queries);
+  }
+
+  @Delete('id/:appId')
+  @UseGuards(ActionsGuard)
+  deleteApp(
+    @GetCurrentCustomer('id') customerId: string,
+    @Param('appId') appId: string,
+  ) {
+    return this.appService.deleteCustomerApp(customerId, appId);
   }
 }
