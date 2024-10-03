@@ -38,9 +38,9 @@ export class CustomerService {
       customerDto.role = role.role;
     }
 
-    const salt = await bcrypt.genSalt();
-    const hashPassword = await bcrypt.hash(customerDto.password, salt);
-    customerDto.password = hashPassword;
+    // const salt = await bcrypt.genSalt();
+    // const hashPassword = await bcrypt.hash(customerDto.password, salt);
+    // customerDto.password = hashPassword;
     return this.customerRepo.create(customerDto);
   }
 

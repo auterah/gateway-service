@@ -1,0 +1,6 @@
+# Billings
+  # Freemium
+  - 21 days for Freemium
+  - After first week; Mail customers to choose a billing plan
+  - Mail them again on the second week
+  - Suspend their account if they don't choose a plan at the end of the 3rd week.
