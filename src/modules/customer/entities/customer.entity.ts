@@ -23,10 +23,10 @@ export default class Customer {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'business_name', nullable: true })
+  @Column({ name: 'business_name', nullable: true, unique: true })
   businessName: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   email: string;
 
   @Column({ nullable: true })
@@ -67,6 +67,9 @@ export default class Customer {
 
   @Column({ nullable: true })
   encryptionKey: string;
+
+  @Column()
+  phone: string;
 
   @CreateDateColumn()
   readonly createdAt: Date;

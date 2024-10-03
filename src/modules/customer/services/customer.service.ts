@@ -25,7 +25,17 @@ export class CustomerService {
     const exist = await this.findOneByEmail(customerDto.email);
     if (exist) {
       throw new HttpException(
-        'Sorry! Email is unavailable',
+        'Sorry! Email already taken',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const businessNameExist = await this.findOneByBusinessName(
+      customerDto.businessName,
+    );
+    if (businessNameExist) {
+      throw new HttpException(
+        'Sorry! Business already taken',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -60,6 +70,13 @@ export class CustomerService {
   findOneById(id: string): Promise<Customer> {
     return this.findOne({
       where: { id },
+    });
+  }
+
+  // Find Customer By BusinessName
+  findOneByBusinessName(businessName: string): Promise<Customer> {
+    return this.findOne({
+      where: { businessName },
     });
   }
 
