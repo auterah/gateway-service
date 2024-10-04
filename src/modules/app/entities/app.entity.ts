@@ -21,6 +21,9 @@ export default class App {
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  domain: string;
+
   @Column({ name: 'private_key' })
   privateKey: string;
 

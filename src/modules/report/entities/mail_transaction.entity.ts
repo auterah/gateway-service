@@ -48,7 +48,7 @@ export default class MailTransaction {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   cost: number;
 
-  @Column()
+  @Column({ nullable: true })
   customerId: string;
 
   @CreateDateColumn()

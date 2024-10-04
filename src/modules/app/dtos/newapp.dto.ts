@@ -5,4 +5,8 @@ export class AppDto extends App {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  domain: string;
 }

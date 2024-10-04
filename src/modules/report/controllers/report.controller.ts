@@ -35,8 +35,8 @@ export class ReportController {
 
   @Get('overview')
   @UseGuards(ActionsGuard)
-  getOverview(@Query() queries: FindDataRequestDto, @GetCurrentCustomer('id') customerId: string) {
-    return this.reportService.fetchOverviewForAll(customerId, queries);
+  getOverview(@Query() queries: FindDataRequestDto,  @GetCurrentApp('id') appId: string,) {
+    return this.reportService.fetchStatisticsByAppId(appId, queries);
   }
 
   @Get('statistics')
