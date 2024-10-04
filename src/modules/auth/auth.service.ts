@@ -71,8 +71,14 @@ export class AuthService {
     );
   }
 
-  registerCustomer(newCustomer: CustomerDto): Promise<Customer> {
-    return this.customerService.addCustomer(newCustomer);
+  async registerCustomer(newCustomer: CustomerDto) {
+    try {
+      const customer = await this.customerService.addCustomer(newCustomer);
+      const accessToken = this.encryptCustomerToken(customer);
+      return { ...customer, tokens: { accessToken } };
+    } catch (error) {
+      throw error;
+    }
   }
 
   async generateAccessToken(genTokenDto: GenTokenDto) {

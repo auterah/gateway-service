@@ -7,7 +7,9 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { ActionsGuard } from '../../auth/guards/actions_guard';
@@ -16,12 +18,15 @@ import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
 import { AdminGuard } from '../../auth/guards/admin_guard';
 import Customer from '../entities/customer.entity';
 import { ClientService } from '../services/client.service';
+import { ClientSource } from '../enums/client_source.enum';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileType } from 'src/modules/file/types/file';
 
 @Controller('clients')
 export class ClientController {
   constructor(private clientService: ClientService) {}
 
-  @Post()
+  @Post('add')
   @UseGuards(ActionsGuard)
   addClient(
     @Body() payload: ClientDto,
@@ -36,7 +41,29 @@ export class ClientController {
     @Body() payload: BulkClientDto,
     @GetCurrentCustomer() customer: Customer,
   ) {
+    payload.source = ClientSource.BY_ADMIN;
     return this.clientService.addBulkClients(customer, payload);
+  }
+
+  @Post('bulk/add-list')
+  @UseGuards(ActionsGuard)
+  addBulkClientFromList(
+    @Body() payload: BulkClientDto,
+    @GetCurrentCustomer() customer: Customer,
+  ) {
+    payload.source = ClientSource.BY_COPY_AND_PASTE;
+    return this.clientService.addBulkClients(customer, payload);
+  }
+
+  @Post('file-uploads')
+  @UseGuards(ActionsGuard)
+  @UseInterceptors(FileInterceptor('file')) // 'file' is the name of the form field
+  async uploadFile(
+    @UploadedFile() file: FileType,
+    @GetCurrentCustomer() customer: Customer,
+  ) {
+    await this.clientService.handleClientsUpload(customer, file);
+    return 'Upload in progress...';
   }
 
   @Get()

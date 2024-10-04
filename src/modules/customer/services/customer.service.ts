@@ -22,20 +22,27 @@ export class CustomerService {
 
   // Add New Customer
   async addCustomer(customerDto: CustomerDto): Promise<Customer> {
-    const exist = await this.findOneByEmail(customerDto.email);
-    if (exist) {
+    const exist = await this.findByEmailOrBusinessName(
+      customerDto.email,
+      customerDto.businessName,
+    );
+    if (
+      exist?.email == customerDto.email &&
+      exist?.businessName == customerDto.businessName
+    ) {
       throw new HttpException(
-        'Sorry! Email already taken',
+        'Email & Business name already taken',
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    const businessNameExist = await this.findOneByBusinessName(
-      customerDto.businessName,
-    );
-    if (businessNameExist) {
+    if (exist?.email == customerDto.email) {
+      throw new HttpException('Email already taken', HttpStatus.BAD_REQUEST);
+    }
+
+    if (exist?.businessName == customerDto.businessName) {
       throw new HttpException(
-        'Sorry! Business already taken',
+        'Business name already taken',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -113,5 +120,12 @@ export class CustomerService {
     const encryptionKey = this.encryption.encrypt(encryptionDto.encryptionKey);
     await this.updateOneBy(customer.id, { encryptionKey });
     return { serviceMessage: 'Encryption key set successfully' };
+  }
+
+  findByEmailOrBusinessName(
+    email: string,
+    businessName: string,
+  ): Promise<Customer> {
+    return this.customerRepo.findByEmailOrBusinessName(email, businessName);
   }
 }

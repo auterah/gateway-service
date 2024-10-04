@@ -87,4 +87,15 @@ export class CustomerRepository {
   async save(customer: Customer): Promise<Customer> {
     return this.customerRepo.save(customer);
   }
+
+  findByEmailOrBusinessName(
+    email: string,
+    businessName: string,
+  ): Promise<Customer> {
+    return this.customerRepo
+      .createQueryBuilder('customer')
+      .where('customer.email = :email', { email })
+      .orWhere('customer.businessName = :businessName', { businessName })
+      .getOne();
+  }
 }

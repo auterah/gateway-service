@@ -48,11 +48,15 @@ export class AppService {
   async createApp(customer: Customer, newApp: AppDto): Promise<App> {
     // const exist = await this.findOneByAppName(newApp.name);
     // if (exist) {
-    //   throw new HttpException('Name already exist', HttpStatus.BAD_REQUEST);
+    //   throw new HttpException('exist', HttpStatus.BAD_REQUEST);
     // }
-    const customerHasApp = await this.appRepo.customerHasApp(
+    const customerHasApp = await this.appRepo.findByCustomerIdOrAppName(
       customer.id,
+      newApp.name,
     );
+    if (customerHasApp?.name == newApp.name) {
+      throw new HttpException('App name already taken', HttpStatus.CONFLICT);
+    }
     if (customerHasApp) {
       throw new HttpException(
         'Upgrade is required to create more apps. Need help with account upgrade? https://hello.sendpouch.com/upgrade',
@@ -67,7 +71,6 @@ export class AppService {
     newApp.scopes = defaultPermissions.records;
     newApp.privateKey = AppService.generatePrivateKey();
     newApp.publicKey = AppService.generatePublicKey();
-    
 
     const app = await this.appRepo.create(customer, newApp);
     delete app.customer;
@@ -137,9 +140,14 @@ export class AppService {
 
   async deleteCustomerApp(customerId: string, appId: string) {
     try {
-      const app = await this.findOne({ where: { customer: { id: customerId }, id: appId }});
+      const app = await this.findOne({
+        where: { customer: { id: customerId }, id: appId },
+      });
       if (!app) {
-        throw new HttpException('App not found', HttpStatusCode.UnprocessableEntity);
+        throw new HttpException(
+          'App not found',
+          HttpStatusCode.UnprocessableEntity,
+        );
       }
       await this.appRepo.remove(app);
     } catch (error) {
