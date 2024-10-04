@@ -7,7 +7,9 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
 import { ActionsGuard } from '../../auth/guards/actions_guard';
@@ -17,6 +19,8 @@ import { AdminGuard } from '../../auth/guards/admin_guard';
 import Customer from '../entities/customer.entity';
 import { ClientService } from '../services/client.service';
 import { ClientSource } from '../enums/client_source.enum';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileType } from 'src/modules/file/types/file';
 
 @Controller('clients')
 export class ClientController {
@@ -49,6 +53,17 @@ export class ClientController {
   ) {
     payload.source = ClientSource.BY_COPY_AND_PASTE;
     return this.clientService.addBulkClients(customer, payload);
+  }
+
+  @Post('file-uploads')
+  @UseGuards(ActionsGuard)
+  @UseInterceptors(FileInterceptor('file')) // 'file' is the name of the form field
+  async uploadFile(
+    @UploadedFile() file: FileType,
+    @GetCurrentCustomer() customer: Customer,
+  ) {
+    await this.clientService.handleClientsUpload(customer, file);
+    return 'Upload in progress...';
   }
 
   @Get()

@@ -14,6 +14,7 @@ import { DateUtils } from 'src/shared/utils/date';
 import { StatsResponse } from 'src/shared/types/response';
 import { AssignBulkClientTagsDto } from '../dtos/client_tag.dto';
 import { ClientSource } from '../enums/client_source.enum';
+import { FileType } from 'src/modules/file/types/file';
 
 type E = { error: string; client: Client };
 
@@ -329,5 +330,10 @@ export class ClientService {
     }
 
     return this.clientRepo.countClientsRecords(customerId, findOpts);
+  }
+
+  handleClientsUpload(customer: Customer, file: FileType) {
+   //todo: handle with queue process
+  //  ClientSource.BY_FILE_UPLOAD
   }
 }
