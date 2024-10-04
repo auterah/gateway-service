@@ -55,6 +55,9 @@ export class AppService {
       newApp.name,
       newApp.domain,
     );
+    if (customerHasApp?.domain == newApp.domain) {
+      throw new HttpException('Domain already taken', HttpStatus.CONFLICT);
+    }
     if (customerHasApp?.name == newApp.name) {
       throw new HttpException('App name already taken', HttpStatus.CONFLICT);
     }
