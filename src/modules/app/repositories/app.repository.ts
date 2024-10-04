@@ -112,4 +112,16 @@ export class AppRepository {
     });
     return !!apps.length;
   }
+
+  async findByCustomerIdOrAppName(
+    customerId: string,
+    appName: string,
+  ): Promise<App> {
+    return this.appEntity
+      .createQueryBuilder('app')
+      .leftJoinAndSelect('app.customer', 'customer')
+      .where('customer.id = :customerId', { customerId })
+      .orWhere('app.name = :name', { name: appName })
+      .getOne();
+  }
 }
