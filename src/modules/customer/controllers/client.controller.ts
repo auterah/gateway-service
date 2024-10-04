@@ -21,6 +21,9 @@ import { ClientService } from '../services/client.service';
 import { ClientSource } from '../enums/client_source.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileType } from 'src/modules/file/types/file';
+import { GetCurrentApp } from 'src/shared/decorators/get_current_app';
+import App from 'src/modules/app/entities/app.entity';
+import { AddEmailList } from '../dtos/add_email_list.dto';
 
 @Controller('clients')
 export class ClientController {
@@ -31,6 +34,7 @@ export class ClientController {
   addClient(
     @Body() payload: ClientDto,
     @GetCurrentCustomer() customer: Customer,
+    @GetCurrentApp() app: App,
   ) {
     return this.clientService.addClient(customer, payload);
   }
@@ -53,6 +57,15 @@ export class ClientController {
   ) {
     payload.source = ClientSource.BY_COPY_AND_PASTE;
     return this.clientService.addBulkClients(customer, payload);
+  }
+
+  @Post('email-list')
+  @UseGuards(ActionsGuard)
+  addEmailList(
+    @Body() emailList: AddEmailList,
+    @GetCurrentCustomer() customer: Customer,
+  ) {
+    return this.clientService.handleEmailList(customer, emailList);
   }
 
   @Post('file-uploads')

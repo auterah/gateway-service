@@ -128,8 +128,7 @@ export class ActionsGuard implements CanActivate {
     const { authorization }: any = request.headers;
     const xCustomerURL = `http://localhost:${configs.SERVER_PORT}/${configs.API_VERSION}/customers/x-customer`;
     // const xCustomerURL = `${request.protocol}://${request.get('Host')}/${configs.API_VERSION}/customers/x-customer`;
-    console.log(xCustomerURL);
-    
+
     if (
       !authorization ||
       authorization.trim() === '' ||

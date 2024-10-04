@@ -113,15 +113,17 @@ export class AppRepository {
     return !!apps.length;
   }
 
-  async findByCustomerIdOrAppName(
+  async findByCustomerIdOrAppNameOrDomain(
     customerId: string,
     appName: string,
+    domain: string,
   ): Promise<App> {
     return this.appEntity
       .createQueryBuilder('app')
       .leftJoinAndSelect('app.customer', 'customer')
       .where('customer.id = :customerId', { customerId })
       .orWhere('app.name = :name', { name: appName })
+      .orWhere('app.domain = :domain', { domain })
       .getOne();
   }
 }
