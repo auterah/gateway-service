@@ -14,6 +14,7 @@ import {
 } from 'typeorm';
 import ClientTag from './client_tag.entity';
 import Customer from './customer.entity';
+import { ClientSource } from '../enums/client_source.enum';
 
 @Entity('customer_clients')
 export default class Client {
@@ -21,10 +22,22 @@ export default class Client {
   id: string;
 
   @Column({ nullable: true })
-  name: string;
+  firstName: string;
+
+  @Column({ nullable: true })
+  lastName: string;
 
   @Column({ unique: true })
   email: string;
+
+  @Column({ nullable: true })
+  address: string;
+
+  @Column({ nullable: true })
+  phone: string;
+
+  @Column({ nullable: true })
+  company: string;
 
   @ManyToMany(() => ClientTag, (tag) => tag.client)
   @JoinTable()
@@ -41,6 +54,12 @@ export default class Client {
 
   @Column({ type: 'date', nullable: true })
   dob: Date;
+
+  @Column({ type: 'enum', enum: ClientSource })
+  source: ClientSource;
+
+  @Column({ default: true, type: 'boolean' })
+  isSubscribed: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

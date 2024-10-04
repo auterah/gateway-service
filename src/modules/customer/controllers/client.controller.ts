@@ -16,12 +16,13 @@ import { GetCurrentCustomer } from 'src/shared/decorators/get_current_customer';
 import { AdminGuard } from '../../auth/guards/admin_guard';
 import Customer from '../entities/customer.entity';
 import { ClientService } from '../services/client.service';
+import { ClientSource } from '../enums/client_source.enum';
 
 @Controller('clients')
 export class ClientController {
   constructor(private clientService: ClientService) {}
 
-  @Post()
+  @Post('add')
   @UseGuards(ActionsGuard)
   addClient(
     @Body() payload: ClientDto,
@@ -36,6 +37,17 @@ export class ClientController {
     @Body() payload: BulkClientDto,
     @GetCurrentCustomer() customer: Customer,
   ) {
+    payload.source = ClientSource.BY_ADMIN;
+    return this.clientService.addBulkClients(customer, payload);
+  }
+
+  @Post('bulk/add-list')
+  @UseGuards(ActionsGuard)
+  addBulkClientFromList(
+    @Body() payload: BulkClientDto,
+    @GetCurrentCustomer() customer: Customer,
+  ) {
+    payload.source = ClientSource.BY_COPY_AND_PASTE;
     return this.clientService.addBulkClients(customer, payload);
   }
 
