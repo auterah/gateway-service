@@ -50,12 +50,12 @@ export class AppService {
     // if (exist) {
     //   throw new HttpException('exist', HttpStatus.BAD_REQUEST);
     // }
-    const customerHasApp = await this.appRepo.findByCustomerIdOrAppName(customer.id, newApp.name);    
+    const customerHasApp = await this.appRepo.findByCustomerIdOrAppName(
+      customer.id,
+      newApp.name,
+    );
     if (customerHasApp?.name == newApp.name) {
-      throw new HttpException(
-        'Sorry. App name already taken',
-        HttpStatus.CONFLICT,
-      );
+      throw new HttpException('App name already taken', HttpStatus.CONFLICT);
     }
     if (customerHasApp) {
       throw new HttpException(
