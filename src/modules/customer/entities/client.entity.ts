@@ -61,6 +61,9 @@ export default class Client {
   @Column({ default: true, type: 'boolean' })
   isSubscribed: boolean;
 
+  @Column()
+  appId: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

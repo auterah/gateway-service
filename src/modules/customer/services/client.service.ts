@@ -15,6 +15,7 @@ import { StatsResponse } from 'src/shared/types/response';
 import { AssignBulkClientTagsDto } from '../dtos/client_tag.dto';
 import { ClientSource } from '../enums/client_source.enum';
 import { FileType } from 'src/modules/file/types/file';
+import { AddEmailList } from '../dtos/add_email_list.dto';
 
 type E = { error: string; client: Client };
 
@@ -85,7 +86,6 @@ export class ClientService {
   private async prepNewClient(customer: Customer, clients: Client[]) {
     const _clients = [];
     for (const client of clients) {
-
       if (client.tags) {
         const foundTags = [];
         const tags = client.tags as unknown as string[];
@@ -333,7 +333,34 @@ export class ClientService {
   }
 
   handleClientsUpload(customer: Customer, file: FileType) {
-   //todo: handle with queue process
-  //  ClientSource.BY_FILE_UPLOAD
+    //todo: handle with queue process
+    //  ClientSource.BY_FILE_UPLOAD
+  }
+
+  async handleEmailList(customer: Customer, payload: AddEmailList) {
+    try {
+      const emailRecords = await this.repo.find({
+        where: { appId: payload.appId },
+        select: ['email'],
+      });
+
+      const getDuplicateEmails = (emailList: string[]) => {
+        return [...new Set(emailList)];
+      };
+
+      const uniqueEmails = getDuplicateEmails([
+        ...payload.emailList,
+        ...emailRecords?.map((e) => e.email),
+      ]).map((email) => ({ email, customer, appId: payload.appId }));
+
+      // check that no duplicate client
+      const clients = await this.repo.save(uniqueEmails);
+      for (const client of clients) {
+        delete client.customer;
+      }
+      return clients;
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
+    }
   }
 }
