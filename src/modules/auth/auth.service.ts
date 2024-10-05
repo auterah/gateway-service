@@ -71,11 +71,29 @@ export class AuthService {
     );
   }
 
-  async registerCustomer(newCustomer: CustomerDto) {
+  async registerCustomer(
+    newCustomer: CustomerDto,
+    loginSession: Partial<LoginSession>,
+  ) {
     try {
       const customer = await this.customerService.addCustomer(newCustomer);
+
+      delete customer.apps;
       const accessToken = this.encryptCustomerToken(customer);
-      return { ...customer, tokens: { accessToken } };
+      const session = await this.sessionRepo.create({
+        ...loginSession,
+        customerId: customer.id,
+        customer,
+        status: true,
+        id: `SESSION_${CryptoUtil.generateRandomStringAsync(6)}_${Date.now().toString()}`,
+      });
+      delete session.customer;
+      delete session.customerId;
+      return {
+        ...customer,
+        session,
+        tokens: { accessToken },
+      };
     } catch (error) {
       throw error;
     }

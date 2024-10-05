@@ -34,14 +34,22 @@ export class AuthController {
 
   // register customer
   @Post('register')
-  async addCustomer(@Body() newCustomer: CustomerDto) {
+  async addCustomer(
+    @Body() newCustomer: CustomerDto,
+    @Headers('User-Agent') userAgent: string,
+    @Ip() ipAddress: string,
+  ) {
     if (!(await EmailUtils.validateEmail(newCustomer.email))) {
       throw new HttpException(
         'Invalid email address',
         HttpStatus.EXPECTATION_FAILED,
       );
     }
-    return this.authService.registerCustomer(newCustomer);
+    const loginSession: Partial<LoginSession> = {
+      userAgent,
+      ipAddress,
+    };
+    return this.authService.registerCustomer(newCustomer, loginSession);
   }
 
   // sign user token
