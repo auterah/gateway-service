@@ -47,10 +47,7 @@ export class LoginSessionRepository {
       where: { id },
     });
     if (!session) {
-      throw new HttpException(
-        'Invalid login session',
-        HttpStatus.EXPECTATION_FAILED,
-      );
+      throw new HttpException('Session expired', HttpStatus.BAD_REQUEST);
     }
     await this.sessionEntity.remove(session);
     return true;
