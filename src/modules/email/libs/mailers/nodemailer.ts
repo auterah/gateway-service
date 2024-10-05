@@ -42,15 +42,7 @@ export class Nodemailer implements IEmailService {
   constructor(private event: EventEmitter2) {
     this.logger = new Logger(Nodemailer.name);
     this.templateEngine = new HBSProvider();
-    global.DATA_BASE_STATUS = false;
-    const configs: ISMTPConfigs = {
-      host: _configs.MAILER_CREDENTIALS.host,
-      username: _configs.MAILER_CREDENTIALS.username,
-      password: _configs.MAILER_CREDENTIALS.password,
-      port: _configs.MAILER_CREDENTIALS.port,
-      // provider: 'gmail',
-  }
-    this.connection(configs);
+    global.EMAIL_SERVER_RUNNING = false;
   }
 
   @OnEvent(MailEvents.SET_SMTP)
@@ -88,7 +80,7 @@ export class Nodemailer implements IEmailService {
       setTimeout(() => {
         if (!status) this.connection(configs);
       }, this.retryAt);
-      global.DATA_BASE_STATUS = true;
+      global.EMAIL_SERVER_RUNNING = true;
     } catch (error) {
       this.logger.error('connectionError');
     }
