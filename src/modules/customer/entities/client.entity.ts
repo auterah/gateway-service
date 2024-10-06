@@ -27,7 +27,7 @@ export default class Client {
   @Column({ nullable: true })
   lastName: string;
 
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @Column({ nullable: true })
