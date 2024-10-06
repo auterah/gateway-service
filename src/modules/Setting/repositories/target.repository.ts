@@ -20,7 +20,7 @@ export class TargetRepository {
   }
 
   // Add Many Target
-  addManyTarget(inTargets: Partial<Target>[]): Promise<Target[]> {
+  async addManyTarget(inTargets: Partial<Target>[]): Promise<void> {
     const targets: Partial<Target>[] = [];
 
     for (const inTarget of inTargets) {
@@ -28,8 +28,8 @@ export class TargetRepository {
       targets.push(newTarget);
     }
 
-    this.logger.verbose(`Saved "${targets.length}" targets`);
-    return this.targetRepo.save(targets);
+    this.logger.verbose(`Saving "${targets.length}" targets`);
+    this.targetRepo.insert(targets);
   }
 
   // Find Target
@@ -46,5 +46,16 @@ export class TargetRepository {
       records: records[0],
       totalItems: records[1],
     };
+  }
+
+  async emptyTable(): Promise<boolean> {
+    try {
+      await this.targetRepo.clear();
+      this.logger.verbose('Cleared Targets table');
+      return true;
+    } catch (error) {
+      this.logger.error(error);
+      return false;
+    }
   }
 }
