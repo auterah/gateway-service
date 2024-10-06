@@ -18,6 +18,7 @@ import { TargetRepository } from './repositories/target.repository';
 import { AvailableRoute } from 'src/shared/types/app_bootstrap';
 import Target from './entities/target.entity';
 import { FindDataRequestDto } from 'src/shared/utils/dtos/find.data.request.dto';
+import { Bootstrap } from 'src/bootstrap';
 
 @Injectable()
 export class SettingService {
@@ -142,21 +143,18 @@ export class SettingService {
   }
 
   async savePermissionTargets() {
-    const { records } = await this.targetRepo.findAllRecords({});
-    const availableRoutes = await FsService.readFile('targets.json');
-
     try {
-      const targets: AvailableRoute[] = JSON.parse(availableRoutes);
-      const routes = targets.map((e) => ({
+      const { records } = await this.targetRepo.findAllRecords({});
+      const availableRoutes = Bootstrap.routeStore.get();
+      const routes = availableRoutes.map((e) => ({
         target: e.route.path,
       }));
 
-      if (
-        routes.length > records.length ||
-        !(routes.length && !records.length)
-      ) {
-        this.targetRepo.addManyTarget(routes as unknown as Partial<Target>[]);
-      }
+      await this.targetRepo.emptyTable();
+      await this.targetRepo.addManyTarget(
+        routes as unknown as Partial<Target>[],
+      );
+      Bootstrap.routeStore.clear();
     } catch (e) {
       this.logger.error(
         `Error saving permission targets: ${JSON.stringify(e)}`,

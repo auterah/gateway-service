@@ -16,6 +16,7 @@ import { AssignBulkClientTagsDto } from '../dtos/client_tag.dto';
 import { ClientSource } from '../enums/client_source.enum';
 import { FileType } from 'src/modules/file/types/file';
 import { AddEmailList } from '../dtos/add_email_list.dto';
+import App from 'src/modules/app/entities/app.entity';
 
 type E = { error: string; client: Client };
 
@@ -28,8 +29,9 @@ export class ClientService {
   ) {}
 
   // Add New Client
-  async addClient(customer: Customer, clientDto: ClientDto) {
+  async addClient(app: App, clientDto: ClientDto) {
     try {
+      const customer = app.customer;
       const exist = await this.findOneByEmail(customer.id, clientDto.email);
       if (exist) {
         throw new HttpException('Email already exist', HttpStatus.BAD_REQUEST);
@@ -50,6 +52,7 @@ export class ClientService {
 
       clientDto.customer = customer;
       clientDto.customerId = customer.id;
+      clientDto.appId = app.id;
 
       const client = await this.clientRepo.create(clientDto);
       delete client.customer;
@@ -83,7 +86,8 @@ export class ClientService {
     return foundTags;
   }
 
-  private async prepNewClient(customer: Customer, clients: Client[]) {
+  private async prepNewClient(app: App, clients: Client[]) {
+    const customer = app.customer;
     const _clients = [];
     for (const client of clients) {
       if (client.tags) {
@@ -101,6 +105,7 @@ export class ClientService {
       }
       client.customer = customer;
       client.customerId = customer.id;
+      client.appId = app.id;
       _clients.push(client);
     }
     return _clients;
@@ -117,7 +122,7 @@ export class ClientService {
   }
 
   // Add Bulk Clients
-  async addBulkClients(customer: Customer, clientDto: BulkClientDto) {
+  async addBulkClients(app: App, clientDto: BulkClientDto) {
     try {
       const errors = [];
       const _clients = this._attachClientSource(
@@ -127,7 +132,7 @@ export class ClientService {
       const clients = ClientUtils.removeDuplicatesByEmail(_clients);
       const tags = await this.getTagFromDto(_clients);
       const foundTags = await this.tagService.findTagsByIds(
-        customer.id,
+        app.customer.id,
         tags,
         true,
       );
@@ -139,7 +144,7 @@ export class ClientService {
       if (errors.length) {
         throw new HttpException(errors, HttpStatus.EXPECTATION_FAILED);
       }
-      const queue = await this.prepNewClient(customer, clients);
+      const queue = await this.prepNewClient(app, clients);
       const newClients = await this.getUniqueClients(queue);
       const savedClients = await this.repo.save(newClients);
       for (const client of savedClients) {
@@ -337,10 +342,12 @@ export class ClientService {
     //  ClientSource.BY_FILE_UPLOAD
   }
 
-  async handleEmailList(customer: Customer, payload: AddEmailList) {
+  async handleEmailList(app: App, payload: AddEmailList) {
     try {
+      const customer = app.customer;
+      const appId = app.id;
       const emailRecords = await this.repo.find({
-        where: { appId: payload.appId },
+        where: { appId },
         select: ['email'],
       });
 
@@ -351,7 +358,7 @@ export class ClientService {
       const uniqueEmails = getDuplicateEmails([
         ...payload.emailList,
         ...emailRecords?.map((e) => e.email),
-      ]).map((email) => ({ email, customer, appId: payload.appId }));
+      ]).map((email) => ({ email, customer, appId }));
 
       // check that no duplicate client
       const clients = await this.repo.save(uniqueEmails);

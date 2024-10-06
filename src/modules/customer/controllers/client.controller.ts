@@ -31,41 +31,34 @@ export class ClientController {
 
   @Post('add')
   @UseGuards(ActionsGuard)
-  addClient(
-    @Body() payload: ClientDto,
-    @GetCurrentCustomer() customer: Customer,
-    @GetCurrentApp() app: App,
-  ) {
-    return this.clientService.addClient(customer, payload);
+  addClient(@Body() payload: ClientDto, @GetCurrentApp() app: App) {
+    return this.clientService.addClient(app, payload);
   }
 
-  @Post('bulk')
-  @UseGuards(ActionsGuard)
-  addBulkClient(
-    @Body() payload: BulkClientDto,
-    @GetCurrentCustomer() customer: Customer,
-  ) {
-    payload.source = ClientSource.BY_ADMIN;
-    return this.clientService.addBulkClients(customer, payload);
-  }
+  // @Post('bulk')
+  // @UseGuards(ActionsGuard)
+  // addBulkClient(
+  //   @Body() payload: BulkClientDto,
+  //   @GetCurrentCustomer() customer: Customer,
+  // ) {
+  //   payload.source = ClientSource.BY_ADMIN;
+  //   return this.clientService.addBulkClients(customer, payload);
+  // }
 
-  @Post('bulk/add-list')
+  @Post('bulk-add')
   @UseGuards(ActionsGuard)
   addBulkClientFromList(
     @Body() payload: BulkClientDto,
-    @GetCurrentCustomer() customer: Customer,
+    @GetCurrentApp() app: App,
   ) {
-    payload.source = ClientSource.BY_COPY_AND_PASTE;
-    return this.clientService.addBulkClients(customer, payload);
+    // payload.source = ClientSource.BY_COPY_AND_PASTE;
+    return this.clientService.addBulkClients(app, payload);
   }
 
   @Post('email-list')
   @UseGuards(ActionsGuard)
-  addEmailList(
-    @Body() emailList: AddEmailList,
-    @GetCurrentCustomer() customer: Customer,
-  ) {
-    return this.clientService.handleEmailList(customer, emailList);
+  addEmailList(@Body() emailList: AddEmailList, @GetCurrentApp() app: App) {
+    return this.clientService.handleEmailList(app, emailList);
   }
 
   @Post('file-uploads')
@@ -85,8 +78,11 @@ export class ClientController {
     @Query() queries: FindDataRequestDto,
     @GetCurrentCustomer('id') customerId: string,
   ) {
+    const where = queries.app_id
+      ? { customerId, appId: queries.app_id }
+      : { customerId };
     return this.clientService.findAllRecords({
-      where: { customerId },
+      where,
       take: Number(queries.take || '10'),
       skip: Number(queries.skip || '0'),
     });

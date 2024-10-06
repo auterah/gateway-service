@@ -1,50 +1,48 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './bootstrap.module';
-import { configs } from 'config/config.env';
+import { configs as appConfigs } from 'config/config.env';
 import { IBootstrapConfigs } from './shared/interfaces/app_bootstrap';
 import { ILogger } from './shared/interfaces/logger';
 import { APP_LOGGER } from './shared/utils/Loggers';
 import { ValidationPipe } from '@nestjs/common';
-import { json, urlencoded } from 'express';
+import { json } from 'express';
 import { LoggingInterceptor } from './shared/Interceptors/logging.interceptor';
 import { TransformInterceptor } from './shared/Interceptors/transform.interceptor';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { BootEvents } from './shared/events/local.events';
 import { AvailableRoute } from './shared/types/app_bootstrap';
-import { FsService } from './modules/file/file.service';
 import { AllExceptionsFilter } from './shared/filters/exception_filter';
 
 export class Bootstrap {
   protected serverName: string;
   protected serverPort: number;
+  private static routeList: AvailableRoute[] = [];
   protected routesToExclude: string[];
 
   private logger: ILogger;
 
-  constructor(configs: IBootstrapConfigs) {
-    this.serverName = configs.serverName;
-    this.serverPort = configs.serverPort;
-    this.routesToExclude = configs.routesToExclude;
+  constructor(private configs: IBootstrapConfigs) {
+    this.serverName = this.configs.serverName;
+    this.serverPort = this.configs.serverPort;
+    this.routesToExclude = this.configs.routesToExclude;
     this.logger = new APP_LOGGER(
-      configs.logger?.provider || 'DEFAULT',
+      this.configs.logger?.provider || 'DEFAULT',
     ).logger();
   }
 
   async init(): Promise<void> {
     const app = await NestFactory.create(AppModule);
-    const PORT = configs.SERVER_PORT;
+    const PORT = appConfigs.SERVER_PORT;
     app.useGlobalInterceptors(new LoggingInterceptor());
     app.useGlobalInterceptors(new TransformInterceptor());
     app.useGlobalFilters(new AllExceptionsFilter());
 
-    app.setGlobalPrefix(configs.API_VERSION, {
+    app.setGlobalPrefix(appConfigs.API_VERSION, {
       exclude: this.routesToExclude,
     });
 
     app.use(json({ limit: '400000mb' }));
 
     app.enableCors({
-      allowedHeaders: '*', 
+      allowedHeaders: '*',
       origin: '*', // Todo: Make sure to block unrecognized requester.
     });
     app.useGlobalPipes(new ValidationPipe());
@@ -53,7 +51,7 @@ export class Bootstrap {
       this.logger.log(`${this.serverName} is up on port ${this.serverPort}`);
     });
     const availableRoutes = this.getAvailableRoutes(app);
-    // this.memorizeAvailableRoutes(availableRoutes);
+    Bootstrap.routeStore.save(availableRoutes);
   }
 
   getAvailableRoutes(app) {
@@ -74,7 +72,17 @@ export class Bootstrap {
     return availableRoutes;
   }
 
-  memorizeAvailableRoutes(routes: AvailableRoute[]) {
-    FsService.writeFile('targets.json', routes, true);
+  static get routeStore() {
+    return {
+      save(routes: AvailableRoute[]) {
+        Bootstrap.routeList.push(...routes);
+      },
+      get() {
+        return Bootstrap.routeList;
+      },
+      clear() {
+        Bootstrap.routeList = [];
+      },
+    };
   }
 }

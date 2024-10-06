@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import Admin from 'src/modules/admin/admin.entity';
-import { defaultAdmin } from 'src/database/mocks/default_admins';
+import { defaultAdmin, defaultAdminCustomer } from 'src/database/mocks/default_admins';
 import Permission from 'src/modules/authorization/permission/permission.entity';
 import Role from 'src/modules/authorization/role/role.entity';
 import { Roles } from 'src/shared/enums/roles';
@@ -69,11 +69,8 @@ export class SeedingService {
       // -- End of Seeding permissions
 
       // -- Seed Admin app
-      const newCustomer = customerRepository.create({
-        email: defaultAdmin.email,
-        role: defaultAdmin.role,
-      });
-      const customer = await customerRepository.save(newCustomer);
+      const adminCustomerAccount = customerRepository.create(defaultAdminCustomer);
+      const customer = await customerRepository.save(adminCustomerAccount);
       const newApp = appRepository.create({
         ...defaultApp,
         scopes: newPerms,
@@ -100,7 +97,7 @@ export class SeedingService {
     } catch (e) {
       await queryRunner.rollbackTransaction();
       this.logger.error(`Error seeding default records: ${JSON.stringify(e)}`);
-      throw e;
+      // throw e;
     } finally {
       await queryRunner.release();
     }
