@@ -32,4 +32,40 @@ export const defaultPermissions: Partial<Permission>[] = [
     target: `/${configs.API_VERSION}/reports`,
     default: true,
   },
+  {
+    name: 'Client Action',
+    action: 'Add Client',
+    target: `/${configs.API_VERSION}/clients/add`,
+    default: true,
+  },
+  {
+    name: 'Client Action',
+    action: 'Bulk Add Client',
+    target: `/${configs.API_VERSION}/clients/bulk-add`,
+    default: true,
+  },
+  {
+    name: 'Client Action',
+    action: 'Add Clients Via Email List',
+    target: `/${configs.API_VERSION}/clients/email-list`,
+    default: true,
+  },
+  {
+    name: 'Client Action',
+    action: 'Add Clients Via File Upload',
+    target: `/${configs.API_VERSION}/clients/file-uploads`,
+    default: true,
+  },
+  {
+    name: 'Client Action',
+    action: 'Manage Single Client',
+    target: `/${configs.API_VERSION}/clients/id/:id`,
+    default: true,
+  },
+  {
+    name: 'Client Action',
+    action: 'Get Statistics',
+    target: `/${configs.API_VERSION}/clients/statistics`,
+    default: true,
+  },
 ];
