@@ -6,7 +6,4 @@ export class AddEmailList {
   @IsNotEmpty({ each: true })
   @IsString({ each: true })
   emailList: string[];
-
-  @IsString()
-  appId: string;
 }
