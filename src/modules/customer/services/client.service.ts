@@ -34,7 +34,10 @@ export class ClientService {
       const customer = app.customer;
       const exist = await this.findOneByEmail(customer.id, clientDto.email);
       if (exist) {
-        throw new HttpException('Email already exist', HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          'Contact already exist',
+          HttpStatus.BAD_REQUEST,
+        );
       }
       const tags = clientDto.tags as unknown as string[];
       if (tags) {
@@ -353,19 +356,21 @@ export class ClientService {
 
       const getDuplicateEmails = (emailList: string[]) => {
         return [...new Set(emailList)];
-      };
+      }; // todo: Make sure to remove duplicate from both email lists before saving.
 
       const uniqueEmails = getDuplicateEmails([
         ...payload.emailList,
         ...emailRecords?.map((e) => e.email),
       ]).map((email) => ({ email, customer, appId }));
 
-      // check that no duplicate client
-      const clients = await this.repo.save(uniqueEmails);
-      for (const client of clients) {
-        delete client.customer;
+      if (uniqueEmails.length) {
+        // check that no duplicate client
+        const clients = await this.repo.save(uniqueEmails);
+        for (const client of clients) {
+          delete client.customer;
+        }
+        return clients;
       }
-      return clients;
     } catch (e) {
       throw new HttpException(e, HttpStatus.EXPECTATION_FAILED);
     }
