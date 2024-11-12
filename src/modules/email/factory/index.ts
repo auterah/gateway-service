@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Nodemailer } from '../libs/mailers/nodemailer';
 import { EmailProcessors } from 'src/shared/enums';
 import { IEmailService } from '../interfaces';
+import { ResendEmailService } from 'src/_providers/resend/resend.email.service';
 
 /**
  * Factory class responsible for returning a collection of Email Processor classes
@@ -10,11 +11,12 @@ import { IEmailService } from '../interfaces';
 export class EmailProcessorFactory {
   emailProcessors: Map<EmailProcessors, IEmailService>;
 
-  constructor(nodemailer: Nodemailer) {
+  constructor(nodemailer: Nodemailer, resendEmailService: ResendEmailService) {
     if (!this.emailProcessors) {
       this.emailProcessors = new Map<EmailProcessors, IEmailService>();
 
       this.emailProcessors.set(EmailProcessors.NODE_MAILER, nodemailer);
+      this.emailProcessors.set(EmailProcessors.RESEND, resendEmailService);
     }
   }
 

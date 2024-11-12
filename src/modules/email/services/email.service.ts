@@ -11,7 +11,7 @@ import { SmtpDto } from 'src/dtos/smtp.dto';
 import App from 'src/modules/app/entities/app.entity';
 import Customer from 'src/modules/customer/entities/customer.entity';
 import { EmailProcessorFactory } from '../factory';
-import { IEmailService, MailOptions } from '../interfaces';
+import { IEmailService, ISMTPConfigs, MailOptions } from '../interfaces';
 import { EmailRepository } from '../repositories/email.repository';
 import { SmtpRepository } from '../repositories/smtp.repository';
 import Admin from 'src/modules/admin/admin.entity';
@@ -21,12 +21,25 @@ export class EmailService {
   private logger = new Logger(EmailService.name);
   private adminApp: App;
   private mailer: IEmailService;
+  private _useDefaultMailer: boolean = false;
   constructor(
     private factory: EmailProcessorFactory,
     private smtpRepo: SmtpRepository,
     private emailRepo: EmailRepository,
   ) {
-    this.mailer = this.factory.findOne(EmailProcessors.NODE_MAILER);
+    this.mailer = this.factory.findOne(EmailProcessors.RESEND);
+    this.logger.verbose(`${this.mailer.service} service`);
+  }
+
+  async connect(credentials: ISMTPConfigs) {
+    try {
+      await this.mailer.connection(credentials);
+      if (!credentials) {
+        this._useDefaultMailer = true;
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 
   @OnEvent(BootEvents.ADMIN_APP_IS_SET)

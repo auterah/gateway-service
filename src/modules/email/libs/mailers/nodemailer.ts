@@ -2,7 +2,7 @@ import * as nodemailer from 'nodemailer';
 import { HttpException, Inject, Logger } from '@nestjs/common';
 import * as _ from 'lodash';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { SmtpProviders } from 'src/shared/enums';
+import { EmailProcessors, SmtpProviders } from 'src/shared/enums';
 import { HBSProvider } from '../providers/handlebar.provider';
 import * as Email from 'email-templates';
 
@@ -29,6 +29,7 @@ type NodemailerConfig = {
 
 export class Nodemailer implements IEmailService {
   isConnected = null;
+  service: EmailProcessors = EmailProcessors.NODE_MAILER;
   private transporter: any;
   private smtpDomain = 'Unrecognized';
   private sender: string;

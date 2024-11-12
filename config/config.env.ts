@@ -85,6 +85,9 @@ class EnvConfig {
   @IsString()
   CUSTOMER_DEFAULT_PHOTO_URL: string;
 
+  @IsString()
+  RESEND_API_KEY: string;
+
   @IsObject()
   MAILER_CREDENTIALS: MailerCredentials;
 
@@ -119,6 +122,7 @@ class EnvConfig {
       process.env.Q_LOOP_QUEUE_HOST || 'http://localhost:8001/api/v1';
     obj.SUPER_ADMIN_EMAIL = process.env.SUPER_ADMIN_EMAIL;
     obj.CUSTOMER_DEFAULT_PHOTO_URL = '';
+    obj.RESEND_API_KEY = process.env.RESEND_API_KEY;
     obj.MAILER_CREDENTIALS = {
       username: process.env.MAILER_USER,
       host: process.env.MAILER_HOST,

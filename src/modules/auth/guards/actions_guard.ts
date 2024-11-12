@@ -88,12 +88,12 @@ export class ActionsGuard implements CanActivate {
         status: EAppRequestStatus.SUCCESS,
       };
 
-      if (!app.customer.verified) {
-        throw new HttpException(
-          'Access denied. Verify your email address to use this service',
-          HttpStatus.FORBIDDEN,
-        );
-      }
+      // if (!app.customer.verified) {
+      //   throw new HttpException(
+      //     'Access denied. Verify your email address to use this service',
+      //     HttpStatus.FORBIDDEN,
+      //   );
+      // }
 
       const allowed = this.routesToIgnore.find((route) =>
         request.url.includes(route),
@@ -105,12 +105,12 @@ export class ActionsGuard implements CanActivate {
           request.url.includes(e.target),
         );
 
-        if (!permitted) {
-          throw new HttpException(
-            'Access denied. You are not allowed to use this service',
-            HttpStatus.FORBIDDEN,
-          );
-        }
+        // if (!permitted) {
+        //   throw new HttpException(
+        //     'Access denied. You are not allowed to use this service',
+        //     HttpStatus.FORBIDDEN,
+        //   );
+        // }
       }
 
       this.actionGuardEvent.emit(AppRequestEvents.NEW_REQUEST, appReq);

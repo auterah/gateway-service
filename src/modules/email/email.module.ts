@@ -12,6 +12,7 @@ import { TemplateController } from './controllers/template.controller';
 import { TemplateService } from './services/template.service';
 import Template from './entities/template.entity';
 import { TemplateRepository } from './repositories/template.repository';
+import { ResendEmailService } from 'src/_providers/resend/resend.email.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MailTransaction, Email, Smtp, Template])],
@@ -23,6 +24,7 @@ import { TemplateRepository } from './repositories/template.repository';
     EmailRepository,
     TemplateService,
     TemplateRepository,
+    ResendEmailService,
   ],
   exports: [EmailService],
   controllers: [TemplateController],
