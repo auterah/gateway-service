@@ -1,4 +1,4 @@
-import { MQTT_TOPICS } from 'src/shared/enums';
+import { EmailProcessors, MQTT_TOPICS } from 'src/shared/enums';
 import { EMailTransactionStatus } from '../enums/mail_transaction_status';
 
 type MailProvider = 'gmail' | 'office365';
@@ -45,6 +45,7 @@ export type SendMailResponse = {
 } & MailOptions;
 
 export interface IEmailService {
+  service: EmailProcessors;
   isConnected: boolean | null;
   connection(credentials: any): Promise<void>;
   sendMail(inputs: MailOptions): Promise<void>;
