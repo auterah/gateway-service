@@ -50,7 +50,10 @@ export class EmailService {
   @OnEvent(MailEvents.PUSH_MAIL)
   async sendMail(data) {
     try {
-      await this.mailer.sendMail(data);
+      await this.mailer.sendMail({
+        ...data,
+        from: 'noreply@sendpouch.cloud',
+      });
     } catch (e) {
       this.logger.error(`Error sending mail:`, JSON.stringify(e));
     }
