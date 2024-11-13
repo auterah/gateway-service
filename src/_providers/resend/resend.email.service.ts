@@ -12,8 +12,7 @@ export class ResendEmailService extends ResendService implements IEmailService {
   async sendMail(sendmailOpts: MailOptions): Promise<void> {
     this._exe.emails
       .send({
-        from: 'no-reply@tampay.co',
-        // to: 'godsgiftuko@gmail.com',
+        from: sendmailOpts.from,
         to: sendmailOpts.to,
         subject: sendmailOpts.subject,
         html: sendmailOpts.html,
