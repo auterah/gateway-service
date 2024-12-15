@@ -46,5 +46,6 @@ jobs:
               # upload new ENV
               echo "${{secrets.ENV}}" > .env && \
               # install npm packages
-              npm install && npm run start:staging
-              echo "Deployment completed ✅"
+              npm install && npm run start:prod
+              echo "Production Deployment Completed ✅"
+              

@@ -47,4 +47,5 @@ jobs:
               echo "${{secrets.ENV}}" > .env && \
               # install npm packages
               npm install && npm run start:staging
-              echo "Deployment completed ✅"
+              echo "Staging Deployment Completed ✅"
+              
